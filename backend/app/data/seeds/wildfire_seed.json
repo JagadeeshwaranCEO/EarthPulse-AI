@@ -1,0 +1,4710 @@
+{
+ "version": "california-wildfire-v1",
+ "generated_at": "2026-08-03T14:58:12.005798+00:00",
+ "is_synthetic": true,
+ "scope": "wildfire",
+ "sources": [
+  {
+   "id": "noaa-firewx",
+   "name": "NOAA Fire Weather Service",
+   "kind": "weather",
+   "url": "https://www.weather.gov/fire/",
+   "license": "US Gov / public domain",
+   "is_synthetic": true,
+   "description": "Fire weather watch inputs \u2014 humidity, sustained wind, rainfall."
+  },
+  {
+   "id": "viiirs-thermal",
+   "name": "VIIRS Thermal Anomaly",
+   "kind": "satellite",
+   "url": "https://firms.modaps.eosdis.nasa.gov/",
+   "license": "NASA LANCE/FS",
+   "is_synthetic": true,
+   "description": "Thermal anomaly clusters and dryness proxies from the VIIRS sensor."
+  },
+  {
+   "id": "gpm-nasa",
+   "name": "GPM/NASA Precipitation",
+   "kind": "satellite",
+   "url": "https://gpm.nasa.gov/",
+   "license": "NASA Open",
+   "is_synthetic": true,
+   "description": "Soil moisture / surface water proxies from GPM retrieval."
+  },
+  {
+   "id": "civic-reports",
+   "name": "Civic Hazard Reporter",
+   "kind": "citizen",
+   "url": "",
+   "license": "Community-verified",
+   "is_synthetic": true,
+   "description": "Verified smoke and ignition sightings from populated foothills."
+  },
+  {
+   "id": "news-eom",
+   "name": "EOM News Wire",
+   "kind": "news",
+   "url": "",
+   "license": "Editorial",
+   "is_synthetic": true,
+   "description": "County red-flag warnings and evacuation advisory feed."
+  }
+ ],
+ "zones": [
+  {
+   "id": "ca_santa_rosa",
+   "name": "Santa Rosa \u2014 WUI",
+   "region": "Sonoma County",
+   "lat": 38.4405,
+   "lon": -122.714,
+   "elevation_m": 164.0,
+   "drainage_capacity_mmh": 6.0,
+   "population": 178000,
+   "hazard_type": "wildfire",
+   "exposure": 1.35,
+   "weather": [
+    {
+     "captured_at": "2026-07-31T14:58:12.005798+00:00",
+     "rainfall_mm": 1.04,
+     "rain_forecast_mm": 2.08,
+     "humidity": 53.4,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-07-31T15:58:12.005798+00:00",
+     "rainfall_mm": 0.86,
+     "rain_forecast_mm": 1.54,
+     "humidity": 51.8,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-07-31T16:58:12.005798+00:00",
+     "rainfall_mm": 1.76,
+     "rain_forecast_mm": 1.23,
+     "humidity": 53.4,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-07-31T17:58:12.005798+00:00",
+     "rainfall_mm": 1.05,
+     "rain_forecast_mm": 1.04,
+     "humidity": 54.2,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-07-31T18:58:12.005798+00:00",
+     "rainfall_mm": 1.22,
+     "rain_forecast_mm": 1.47,
+     "humidity": 55.1,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-07-31T19:58:12.005798+00:00",
+     "rainfall_mm": 1.26,
+     "rain_forecast_mm": 0.72,
+     "humidity": 52.5,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-07-31T20:58:12.005798+00:00",
+     "rainfall_mm": 2.19,
+     "rain_forecast_mm": 0.43,
+     "humidity": 50.6,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-07-31T21:58:12.005798+00:00",
+     "rainfall_mm": 1.62,
+     "rain_forecast_mm": 0.95,
+     "humidity": 49.6,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-07-31T22:58:12.005798+00:00",
+     "rainfall_mm": 1.29,
+     "rain_forecast_mm": 0.08,
+     "humidity": 52.1,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-07-31T23:58:12.005798+00:00",
+     "rainfall_mm": 1.09,
+     "rain_forecast_mm": 0.26,
+     "humidity": 53.3,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T00:58:12.005798+00:00",
+     "rainfall_mm": 1.54,
+     "rain_forecast_mm": 0.27,
+     "humidity": 50.0,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T01:58:12.005798+00:00",
+     "rainfall_mm": 0.75,
+     "rain_forecast_mm": 0.04,
+     "humidity": 46.5,
+     "wind_kmh": 14.2,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T02:58:12.005798+00:00",
+     "rainfall_mm": 0.46,
+     "rain_forecast_mm": 0.17,
+     "humidity": 46.5,
+     "wind_kmh": 14.9,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T03:58:12.005798+00:00",
+     "rainfall_mm": 1.0,
+     "rain_forecast_mm": 0.74,
+     "humidity": 51.0,
+     "wind_kmh": 15.6,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T04:58:12.005798+00:00",
+     "rainfall_mm": 0.09,
+     "rain_forecast_mm": 0.13,
+     "humidity": 47.7,
+     "wind_kmh": 16.3,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T05:58:12.005798+00:00",
+     "rainfall_mm": 0.27,
+     "rain_forecast_mm": 0.0,
+     "humidity": 43.3,
+     "wind_kmh": 17.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T06:58:12.005798+00:00",
+     "rainfall_mm": 0.28,
+     "rain_forecast_mm": 0.0,
+     "humidity": 46.0,
+     "wind_kmh": 17.7,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T07:58:12.005798+00:00",
+     "rainfall_mm": 0.04,
+     "rain_forecast_mm": 0.74,
+     "humidity": 43.3,
+     "wind_kmh": 18.3,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T08:58:12.005798+00:00",
+     "rainfall_mm": 0.18,
+     "rain_forecast_mm": 0.88,
+     "humidity": 43.8,
+     "wind_kmh": 19.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T09:58:12.005798+00:00",
+     "rainfall_mm": 0.78,
+     "rain_forecast_mm": 1.31,
+     "humidity": 43.6,
+     "wind_kmh": 19.7,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T10:58:12.005798+00:00",
+     "rainfall_mm": 0.13,
+     "rain_forecast_mm": 1.21,
+     "humidity": 42.6,
+     "wind_kmh": 20.4,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T11:58:12.005798+00:00",
+     "rainfall_mm": 0.0,
+     "rain_forecast_mm": 1.36,
+     "humidity": 44.5,
+     "wind_kmh": 21.1,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T12:58:12.005798+00:00",
+     "rainfall_mm": 0.0,
+     "rain_forecast_mm": 1.37,
+     "humidity": 42.8,
+     "wind_kmh": 21.8,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T13:58:12.005798+00:00",
+     "rainfall_mm": 0.78,
+     "rain_forecast_mm": 1.5,
+     "humidity": 41.2,
+     "wind_kmh": 22.4,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T14:58:12.005798+00:00",
+     "rainfall_mm": 0.93,
+     "rain_forecast_mm": 1.77,
+     "humidity": 42.6,
+     "wind_kmh": 23.1,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T15:58:12.005798+00:00",
+     "rainfall_mm": 1.38,
+     "rain_forecast_mm": 1.51,
+     "humidity": 42.9,
+     "wind_kmh": 23.8,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T16:58:12.005798+00:00",
+     "rainfall_mm": 1.28,
+     "rain_forecast_mm": 1.6,
+     "humidity": 37.4,
+     "wind_kmh": 24.5,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T17:58:12.005798+00:00",
+     "rainfall_mm": 1.43,
+     "rain_forecast_mm": 2.14,
+     "humidity": 39.6,
+     "wind_kmh": 25.2,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T18:58:12.005798+00:00",
+     "rainfall_mm": 1.44,
+     "rain_forecast_mm": 1.43,
+     "humidity": 37.6,
+     "wind_kmh": 25.9,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T19:58:12.005798+00:00",
+     "rainfall_mm": 1.58,
+     "rain_forecast_mm": 0.45,
+     "humidity": 38.7,
+     "wind_kmh": 26.6,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T20:58:12.005798+00:00",
+     "rainfall_mm": 1.86,
+     "rain_forecast_mm": 1.51,
+     "humidity": 35.9,
+     "wind_kmh": 27.2,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T21:58:12.005798+00:00",
+     "rainfall_mm": 1.59,
+     "rain_forecast_mm": 0.79,
+     "humidity": 38.0,
+     "wind_kmh": 27.9,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T22:58:12.005798+00:00",
+     "rainfall_mm": 1.68,
+     "rain_forecast_mm": 0.12,
+     "humidity": 37.3,
+     "wind_kmh": 28.6,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T23:58:12.005798+00:00",
+     "rainfall_mm": 2.25,
+     "rain_forecast_mm": 0.69,
+     "humidity": 36.2,
+     "wind_kmh": 29.3,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T00:58:12.005798+00:00",
+     "rainfall_mm": 1.5,
+     "rain_forecast_mm": 0.25,
+     "humidity": 34.2,
+     "wind_kmh": 30.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T01:58:12.005798+00:00",
+     "rainfall_mm": 0.48,
+     "rain_forecast_mm": 0.0,
+     "humidity": 34.9,
+     "wind_kmh": 30.7,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T02:58:12.005798+00:00",
+     "rainfall_mm": 1.59,
+     "rain_forecast_mm": 0.0,
+     "humidity": 33.0,
+     "wind_kmh": 31.3,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T03:58:12.005798+00:00",
+     "rainfall_mm": 0.83,
+     "rain_forecast_mm": 0.0,
+     "humidity": 31.9,
+     "wind_kmh": 32.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T04:58:12.005798+00:00",
+     "rainfall_mm": 0.13,
+     "rain_forecast_mm": 0.38,
+     "humidity": 34.5,
+     "wind_kmh": 32.7,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T05:58:12.005798+00:00",
+     "rainfall_mm": 0.72,
+     "rain_forecast_mm": 0.91,
+     "humidity": 31.3,
+     "wind_kmh": 33.4,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T06:58:12.005798+00:00",
+     "rainfall_mm": 0.26,
+     "rain_forecast_mm": 0.56,
+     "humidity": 35.3,
+     "wind_kmh": 34.1,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T07:58:12.005798+00:00",
+     "rainfall_mm": 0.0,
+     "rain_forecast_mm": 1.04,
+     "humidity": 33.9,
+     "wind_kmh": 34.8,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T08:58:12.005798+00:00",
+     "rainfall_mm": 0.0,
+     "rain_forecast_mm": 1.8,
+     "humidity": 27.9,
+     "wind_kmh": 35.4,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T09:58:12.005798+00:00",
+     "rainfall_mm": 0.0,
+     "rain_forecast_mm": 0.81,
+     "humidity": 31.9,
+     "wind_kmh": 36.1,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T10:58:12.005798+00:00",
+     "rainfall_mm": 0.4,
+     "rain_forecast_mm": 1.54,
+     "humidity": 28.6,
+     "wind_kmh": 36.8,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T11:58:12.005798+00:00",
+     "rainfall_mm": 0.96,
+     "rain_forecast_mm": 1.46,
+     "humidity": 30.3,
+     "wind_kmh": 37.5,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T12:58:12.005798+00:00",
+     "rainfall_mm": 0.59,
+     "rain_forecast_mm": 1.27,
+     "humidity": 29.8,
+     "wind_kmh": 38.2,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T13:58:12.005798+00:00",
+     "rainfall_mm": 1.1,
+     "rain_forecast_mm": 1.32,
+     "humidity": 25.1,
+     "wind_kmh": 38.9,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T14:58:12.005798+00:00",
+     "rainfall_mm": 1.89,
+     "rain_forecast_mm": 1.69,
+     "humidity": 28.1,
+     "wind_kmh": 39.6,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T15:58:12.005798+00:00",
+     "rainfall_mm": 0.86,
+     "rain_forecast_mm": 1.79,
+     "humidity": 27.5,
+     "wind_kmh": 40.2,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T16:58:12.005798+00:00",
+     "rainfall_mm": 1.62,
+     "rain_forecast_mm": 1.31,
+     "humidity": 29.4,
+     "wind_kmh": 40.9,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T17:58:12.005798+00:00",
+     "rainfall_mm": 1.54,
+     "rain_forecast_mm": 1.38,
+     "humidity": 24.6,
+     "wind_kmh": 41.6,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T18:58:12.005798+00:00",
+     "rainfall_mm": 1.33,
+     "rain_forecast_mm": 1.46,
+     "humidity": 27.8,
+     "wind_kmh": 42.3,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T19:58:12.005798+00:00",
+     "rainfall_mm": 1.39,
+     "rain_forecast_mm": 1.1,
+     "humidity": 23.6,
+     "wind_kmh": 43.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T20:58:12.005798+00:00",
+     "rainfall_mm": 1.78,
+     "rain_forecast_mm": 1.11,
+     "humidity": 24.6,
+     "wind_kmh": 43.7,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T21:58:12.005798+00:00",
+     "rainfall_mm": 1.89,
+     "rain_forecast_mm": 0.77,
+     "humidity": 23.0,
+     "wind_kmh": 44.3,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T22:58:12.005798+00:00",
+     "rainfall_mm": 1.38,
+     "rain_forecast_mm": 0.62,
+     "humidity": 27.1,
+     "wind_kmh": 45.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T23:58:12.005798+00:00",
+     "rainfall_mm": 1.46,
+     "rain_forecast_mm": 1.0,
+     "humidity": 24.7,
+     "wind_kmh": 45.7,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T00:58:12.005798+00:00",
+     "rainfall_mm": 1.53,
+     "rain_forecast_mm": 0.46,
+     "humidity": 27.9,
+     "wind_kmh": 46.4,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T01:58:12.005798+00:00",
+     "rainfall_mm": 1.15,
+     "rain_forecast_mm": 0.24,
+     "humidity": 23.8,
+     "wind_kmh": 47.1,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T02:58:12.005798+00:00",
+     "rainfall_mm": 1.17,
+     "rain_forecast_mm": 0.48,
+     "humidity": 23.6,
+     "wind_kmh": 47.8,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T03:58:12.005798+00:00",
+     "rainfall_mm": 0.81,
+     "rain_forecast_mm": 0.0,
+     "humidity": 23.1,
+     "wind_kmh": 47.6,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T04:58:12.005798+00:00",
+     "rainfall_mm": 0.65,
+     "rain_forecast_mm": 0.28,
+     "humidity": 19.8,
+     "wind_kmh": 47.1,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T05:58:12.005798+00:00",
+     "rainfall_mm": 1.05,
+     "rain_forecast_mm": 0.87,
+     "humidity": 20.9,
+     "wind_kmh": 46.5,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T06:58:12.005798+00:00",
+     "rainfall_mm": 0.48,
+     "rain_forecast_mm": 0.99,
+     "humidity": 23.7,
+     "wind_kmh": 45.9,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T07:58:12.005798+00:00",
+     "rainfall_mm": 0.25,
+     "rain_forecast_mm": 1.54,
+     "humidity": 20.2,
+     "wind_kmh": 45.4,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T08:58:12.005798+00:00",
+     "rainfall_mm": 0.51,
+     "rain_forecast_mm": 1.54,
+     "humidity": 21.4,
+     "wind_kmh": 44.8,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T09:58:12.005798+00:00",
+     "rainfall_mm": 0.0,
+     "rain_forecast_mm": 1.54,
+     "humidity": 21.0,
+     "wind_kmh": 44.3,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T10:58:12.005798+00:00",
+     "rainfall_mm": 0.29,
+     "rain_forecast_mm": 1.54,
+     "humidity": 22.2,
+     "wind_kmh": 43.7,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T11:58:12.005798+00:00",
+     "rainfall_mm": 0.91,
+     "rain_forecast_mm": 1.54,
+     "humidity": 20.3,
+     "wind_kmh": 43.1,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T12:58:12.005798+00:00",
+     "rainfall_mm": 1.04,
+     "rain_forecast_mm": 1.54,
+     "humidity": 20.7,
+     "wind_kmh": 42.6,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T13:58:12.005798+00:00",
+     "rainfall_mm": 1.62,
+     "rain_forecast_mm": 1.54,
+     "humidity": 21.5,
+     "wind_kmh": 42.0,
+     "source_id": "noaa-firewx"
+    }
+   ],
+   "satellite": [
+    {
+     "captured_at": "2026-07-31T14:58:12.005798+00:00",
+     "soil_moisture_anomaly": 4.202,
+     "surface_water_index": 0.467,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-07-31T16:58:12.005798+00:00",
+     "soil_moisture_anomaly": 4.377,
+     "surface_water_index": 0.486,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-07-31T18:58:12.005798+00:00",
+     "soil_moisture_anomaly": 3.812,
+     "surface_water_index": 0.424,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-07-31T20:58:12.005798+00:00",
+     "soil_moisture_anomaly": 3.861,
+     "surface_water_index": 0.429,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-07-31T22:58:12.005798+00:00",
+     "soil_moisture_anomaly": 3.678,
+     "surface_water_index": 0.409,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-01T00:58:12.005798+00:00",
+     "soil_moisture_anomaly": 3.865,
+     "surface_water_index": 0.429,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-01T02:58:12.005798+00:00",
+     "soil_moisture_anomaly": 3.474,
+     "surface_water_index": 0.386,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-08-01T04:58:12.005798+00:00",
+     "soil_moisture_anomaly": 3.341,
+     "surface_water_index": 0.371,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-01T06:58:12.005798+00:00",
+     "soil_moisture_anomaly": 3.316,
+     "surface_water_index": 0.368,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-01T08:58:12.005798+00:00",
+     "soil_moisture_anomaly": 3.262,
+     "surface_water_index": 0.362,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-08-01T10:58:12.005798+00:00",
+     "soil_moisture_anomaly": 2.881,
+     "surface_water_index": 0.32,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-01T12:58:12.005798+00:00",
+     "soil_moisture_anomaly": 2.833,
+     "surface_water_index": 0.315,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-01T14:58:12.005798+00:00",
+     "soil_moisture_anomaly": 2.572,
+     "surface_water_index": 0.286,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-08-01T16:58:12.005798+00:00",
+     "soil_moisture_anomaly": 2.847,
+     "surface_water_index": 0.316,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-01T18:58:12.005798+00:00",
+     "soil_moisture_anomaly": 2.731,
+     "surface_water_index": 0.303,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-01T20:58:12.005798+00:00",
+     "soil_moisture_anomaly": 2.122,
+     "surface_water_index": 0.236,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-08-01T22:58:12.005798+00:00",
+     "soil_moisture_anomaly": 2.307,
+     "surface_water_index": 0.256,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-02T00:58:12.005798+00:00",
+     "soil_moisture_anomaly": 2.233,
+     "surface_water_index": 0.248,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-02T02:58:12.005798+00:00",
+     "soil_moisture_anomaly": 2.128,
+     "surface_water_index": 0.236,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-08-02T04:58:12.005798+00:00",
+     "soil_moisture_anomaly": 2.346,
+     "surface_water_index": 0.261,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-02T06:58:12.005798+00:00",
+     "soil_moisture_anomaly": 1.768,
+     "surface_water_index": 0.196,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-02T08:58:12.005798+00:00",
+     "soil_moisture_anomaly": 1.645,
+     "surface_water_index": 0.183,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-08-02T10:58:12.005798+00:00",
+     "soil_moisture_anomaly": 1.683,
+     "surface_water_index": 0.187,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-02T12:58:12.005798+00:00",
+     "soil_moisture_anomaly": 1.717,
+     "surface_water_index": 0.191,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-02T14:58:12.005798+00:00",
+     "soil_moisture_anomaly": 1.318,
+     "surface_water_index": 0.146,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-08-02T16:58:12.005798+00:00",
+     "soil_moisture_anomaly": 1.371,
+     "surface_water_index": 0.152,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-02T18:58:12.005798+00:00",
+     "soil_moisture_anomaly": 1.217,
+     "surface_water_index": 0.135,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-02T20:58:12.005798+00:00",
+     "soil_moisture_anomaly": 0.948,
+     "surface_water_index": 0.105,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-08-02T22:58:12.005798+00:00",
+     "soil_moisture_anomaly": 0.909,
+     "surface_water_index": 0.101,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-03T00:58:12.005798+00:00",
+     "soil_moisture_anomaly": 0.788,
+     "surface_water_index": 0.088,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-03T02:58:12.005798+00:00",
+     "soil_moisture_anomaly": 0.939,
+     "surface_water_index": 0.104,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-08-03T04:58:12.005798+00:00",
+     "soil_moisture_anomaly": 0.746,
+     "surface_water_index": 0.083,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-03T06:58:12.005798+00:00",
+     "soil_moisture_anomaly": 0.426,
+     "surface_water_index": 0.047,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-03T08:58:12.005798+00:00",
+     "soil_moisture_anomaly": 0.765,
+     "surface_water_index": 0.085,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-08-03T10:58:12.005798+00:00",
+     "soil_moisture_anomaly": 0.628,
+     "surface_water_index": 0.07,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-03T12:58:12.005798+00:00",
+     "soil_moisture_anomaly": 0.671,
+     "surface_water_index": 0.075,
+     "source_id": "gpm-nasa"
+    }
+   ],
+   "citizen": [
+    {
+     "location_id": "ca_santa_rosa",
+     "reported_at": "2026-08-02T02:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 2,
+     "text": "Smoke column reported near Santa Rosa \u2014 WUI foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_santa_rosa",
+     "reported_at": "2026-08-02T05:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 2,
+     "text": "Smoke column reported near Santa Rosa \u2014 WUI foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_santa_rosa",
+     "reported_at": "2026-08-02T08:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 3,
+     "text": "Smoke column reported near Santa Rosa \u2014 WUI foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_santa_rosa",
+     "reported_at": "2026-08-02T11:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 2,
+     "text": "Smoke column reported near Santa Rosa \u2014 WUI foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_santa_rosa",
+     "reported_at": "2026-08-02T14:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 3,
+     "text": "Smoke column reported near Santa Rosa \u2014 WUI foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_santa_rosa",
+     "reported_at": "2026-08-02T17:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 3,
+     "text": "Smoke column reported near Santa Rosa \u2014 WUI foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_santa_rosa",
+     "reported_at": "2026-08-02T20:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 3,
+     "text": "Smoke column reported near Santa Rosa \u2014 WUI foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_santa_rosa",
+     "reported_at": "2026-08-02T23:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 3,
+     "text": "Smoke column reported near Santa Rosa \u2014 WUI foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_santa_rosa",
+     "reported_at": "2026-08-03T02:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 3,
+     "text": "Smoke column reported near Santa Rosa \u2014 WUI foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_santa_rosa",
+     "reported_at": "2026-08-03T05:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 3,
+     "text": "Smoke column reported near Santa Rosa \u2014 WUI foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_santa_rosa",
+     "reported_at": "2026-08-03T08:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 3,
+     "text": "Smoke column reported near Santa Rosa \u2014 WUI foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_santa_rosa",
+     "reported_at": "2026-08-03T11:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 3,
+     "text": "Smoke column reported near Santa Rosa \u2014 WUI foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    }
+   ],
+   "news": [
+    {
+     "captured_at": "2026-08-03T00:58:12.005798+00:00",
+     "tags": [
+      "wildfire",
+      "california",
+      "red-flag"
+     ],
+     "warning_level": 3,
+     "credibility": 0.9,
+     "source_id": "news-eom"
+    }
+   ]
+  },
+  {
+   "id": "ca_paradise",
+   "name": "Paradise Ridge",
+   "region": "Butte County",
+   "lat": 39.7596,
+   "lon": -121.6219,
+   "elevation_m": 540.0,
+   "drainage_capacity_mmh": 6.5,
+   "population": 26000,
+   "hazard_type": "wildfire",
+   "exposure": 1.4,
+   "weather": [
+    {
+     "captured_at": "2026-07-31T14:58:12.005798+00:00",
+     "rainfall_mm": 1.49,
+     "rain_forecast_mm": 1.86,
+     "humidity": 53.7,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-07-31T15:58:12.005798+00:00",
+     "rainfall_mm": 2.06,
+     "rain_forecast_mm": 1.27,
+     "humidity": 55.6,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-07-31T16:58:12.005798+00:00",
+     "rainfall_mm": 2.11,
+     "rain_forecast_mm": 1.37,
+     "humidity": 55.9,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-07-31T17:58:12.005798+00:00",
+     "rainfall_mm": 0.8,
+     "rain_forecast_mm": 1.32,
+     "humidity": 55.3,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-07-31T18:58:12.005798+00:00",
+     "rainfall_mm": 2.29,
+     "rain_forecast_mm": 0.69,
+     "humidity": 56.3,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-07-31T19:58:12.005798+00:00",
+     "rainfall_mm": 2.1,
+     "rain_forecast_mm": 1.5,
+     "humidity": 51.4,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-07-31T20:58:12.005798+00:00",
+     "rainfall_mm": 1.96,
+     "rain_forecast_mm": 1.16,
+     "humidity": 52.7,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-07-31T21:58:12.005798+00:00",
+     "rainfall_mm": 1.34,
+     "rain_forecast_mm": 0.63,
+     "humidity": 50.3,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-07-31T22:58:12.005798+00:00",
+     "rainfall_mm": 1.44,
+     "rain_forecast_mm": 0.1,
+     "humidity": 47.6,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-07-31T23:58:12.005798+00:00",
+     "rainfall_mm": 1.39,
+     "rain_forecast_mm": 0.84,
+     "humidity": 48.5,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T00:58:12.005798+00:00",
+     "rainfall_mm": 0.73,
+     "rain_forecast_mm": 0.48,
+     "humidity": 49.6,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T01:58:12.005798+00:00",
+     "rainfall_mm": 1.57,
+     "rain_forecast_mm": 0.6,
+     "humidity": 47.0,
+     "wind_kmh": 14.4,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T02:58:12.005798+00:00",
+     "rainfall_mm": 1.23,
+     "rain_forecast_mm": 0.04,
+     "humidity": 47.9,
+     "wind_kmh": 15.1,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T03:58:12.005798+00:00",
+     "rainfall_mm": 0.66,
+     "rain_forecast_mm": 1.18,
+     "humidity": 50.0,
+     "wind_kmh": 15.8,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T04:58:12.005798+00:00",
+     "rainfall_mm": 0.11,
+     "rain_forecast_mm": 0.32,
+     "humidity": 48.3,
+     "wind_kmh": 16.5,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T05:58:12.005798+00:00",
+     "rainfall_mm": 0.88,
+     "rain_forecast_mm": 1.27,
+     "humidity": 47.8,
+     "wind_kmh": 17.2,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T06:58:12.005798+00:00",
+     "rainfall_mm": 0.5,
+     "rain_forecast_mm": 0.0,
+     "humidity": 46.8,
+     "wind_kmh": 17.8,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T07:58:12.005798+00:00",
+     "rainfall_mm": 0.63,
+     "rain_forecast_mm": 1.02,
+     "humidity": 45.2,
+     "wind_kmh": 18.5,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T08:58:12.005798+00:00",
+     "rainfall_mm": 0.05,
+     "rain_forecast_mm": 1.14,
+     "humidity": 41.2,
+     "wind_kmh": 19.2,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T09:58:12.005798+00:00",
+     "rainfall_mm": 1.24,
+     "rain_forecast_mm": 0.34,
+     "humidity": 46.4,
+     "wind_kmh": 19.9,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T10:58:12.005798+00:00",
+     "rainfall_mm": 0.34,
+     "rain_forecast_mm": 1.22,
+     "humidity": 40.9,
+     "wind_kmh": 20.6,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T11:58:12.005798+00:00",
+     "rainfall_mm": 1.34,
+     "rain_forecast_mm": 1.13,
+     "humidity": 43.8,
+     "wind_kmh": 21.3,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T12:58:12.005798+00:00",
+     "rainfall_mm": 0.0,
+     "rain_forecast_mm": 1.14,
+     "humidity": 42.6,
+     "wind_kmh": 21.9,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T13:58:12.005798+00:00",
+     "rainfall_mm": 1.08,
+     "rain_forecast_mm": 1.42,
+     "humidity": 42.5,
+     "wind_kmh": 22.6,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T14:58:12.005798+00:00",
+     "rainfall_mm": 1.2,
+     "rain_forecast_mm": 1.25,
+     "humidity": 42.2,
+     "wind_kmh": 23.3,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T15:58:12.005798+00:00",
+     "rainfall_mm": 0.36,
+     "rain_forecast_mm": 1.74,
+     "humidity": 40.4,
+     "wind_kmh": 24.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T16:58:12.005798+00:00",
+     "rainfall_mm": 1.28,
+     "rain_forecast_mm": 1.68,
+     "humidity": 42.4,
+     "wind_kmh": 24.7,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T17:58:12.005798+00:00",
+     "rainfall_mm": 1.19,
+     "rain_forecast_mm": 1.45,
+     "humidity": 37.4,
+     "wind_kmh": 25.4,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T18:58:12.005798+00:00",
+     "rainfall_mm": 1.2,
+     "rain_forecast_mm": 0.84,
+     "humidity": 41.0,
+     "wind_kmh": 26.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T19:58:12.005798+00:00",
+     "rainfall_mm": 1.5,
+     "rain_forecast_mm": 0.78,
+     "humidity": 35.5,
+     "wind_kmh": 26.7,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T20:58:12.005798+00:00",
+     "rainfall_mm": 1.31,
+     "rain_forecast_mm": 1.4,
+     "humidity": 40.7,
+     "wind_kmh": 27.4,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T21:58:12.005798+00:00",
+     "rainfall_mm": 1.83,
+     "rain_forecast_mm": 0.44,
+     "humidity": 36.8,
+     "wind_kmh": 28.1,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T22:58:12.005798+00:00",
+     "rainfall_mm": 1.76,
+     "rain_forecast_mm": 0.41,
+     "humidity": 38.0,
+     "wind_kmh": 28.8,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T23:58:12.005798+00:00",
+     "rainfall_mm": 1.52,
+     "rain_forecast_mm": 0.07,
+     "humidity": 39.7,
+     "wind_kmh": 29.5,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T00:58:12.005798+00:00",
+     "rainfall_mm": 0.89,
+     "rain_forecast_mm": 0.42,
+     "humidity": 31.8,
+     "wind_kmh": 30.1,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T01:58:12.005798+00:00",
+     "rainfall_mm": 0.82,
+     "rain_forecast_mm": 0.53,
+     "humidity": 35.0,
+     "wind_kmh": 30.8,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T02:58:12.005798+00:00",
+     "rainfall_mm": 1.47,
+     "rain_forecast_mm": 0.52,
+     "humidity": 36.2,
+     "wind_kmh": 31.5,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T03:58:12.005798+00:00",
+     "rainfall_mm": 0.47,
+     "rain_forecast_mm": 0.46,
+     "humidity": 36.3,
+     "wind_kmh": 32.2,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T04:58:12.005798+00:00",
+     "rainfall_mm": 0.43,
+     "rain_forecast_mm": 0.69,
+     "humidity": 36.7,
+     "wind_kmh": 32.9,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T05:58:12.005798+00:00",
+     "rainfall_mm": 0.07,
+     "rain_forecast_mm": 0.5,
+     "humidity": 34.6,
+     "wind_kmh": 33.6,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T06:58:12.005798+00:00",
+     "rainfall_mm": 0.44,
+     "rain_forecast_mm": 1.01,
+     "humidity": 33.9,
+     "wind_kmh": 34.3,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T07:58:12.005798+00:00",
+     "rainfall_mm": 0.55,
+     "rain_forecast_mm": 0.6,
+     "humidity": 32.5,
+     "wind_kmh": 34.9,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T08:58:12.005798+00:00",
+     "rainfall_mm": 0.55,
+     "rain_forecast_mm": 1.21,
+     "humidity": 32.3,
+     "wind_kmh": 35.6,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T09:58:12.005798+00:00",
+     "rainfall_mm": 0.48,
+     "rain_forecast_mm": 1.68,
+     "humidity": 31.3,
+     "wind_kmh": 36.3,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T10:58:12.005798+00:00",
+     "rainfall_mm": 0.73,
+     "rain_forecast_mm": 1.12,
+     "humidity": 32.6,
+     "wind_kmh": 37.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T11:58:12.005798+00:00",
+     "rainfall_mm": 0.53,
+     "rain_forecast_mm": 1.92,
+     "humidity": 30.4,
+     "wind_kmh": 37.7,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T12:58:12.005798+00:00",
+     "rainfall_mm": 1.06,
+     "rain_forecast_mm": 1.81,
+     "humidity": 30.9,
+     "wind_kmh": 38.4,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T13:58:12.005798+00:00",
+     "rainfall_mm": 0.63,
+     "rain_forecast_mm": 1.24,
+     "humidity": 32.2,
+     "wind_kmh": 39.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T14:58:12.005798+00:00",
+     "rainfall_mm": 1.27,
+     "rain_forecast_mm": 1.02,
+     "humidity": 30.8,
+     "wind_kmh": 39.7,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T15:58:12.005798+00:00",
+     "rainfall_mm": 1.77,
+     "rain_forecast_mm": 0.96,
+     "humidity": 27.2,
+     "wind_kmh": 40.4,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T16:58:12.005798+00:00",
+     "rainfall_mm": 1.18,
+     "rain_forecast_mm": 1.05,
+     "humidity": 27.1,
+     "wind_kmh": 41.1,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T17:58:12.005798+00:00",
+     "rainfall_mm": 2.02,
+     "rain_forecast_mm": 1.41,
+     "humidity": 28.3,
+     "wind_kmh": 41.8,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T18:58:12.005798+00:00",
+     "rainfall_mm": 1.91,
+     "rain_forecast_mm": 1.19,
+     "humidity": 25.0,
+     "wind_kmh": 42.5,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T19:58:12.005798+00:00",
+     "rainfall_mm": 1.31,
+     "rain_forecast_mm": 1.36,
+     "humidity": 22.0,
+     "wind_kmh": 43.1,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T20:58:12.005798+00:00",
+     "rainfall_mm": 1.08,
+     "rain_forecast_mm": 1.56,
+     "humidity": 23.1,
+     "wind_kmh": 43.8,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T21:58:12.005798+00:00",
+     "rainfall_mm": 1.01,
+     "rain_forecast_mm": 0.33,
+     "humidity": 25.7,
+     "wind_kmh": 44.5,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T22:58:12.005798+00:00",
+     "rainfall_mm": 1.11,
+     "rain_forecast_mm": 0.0,
+     "humidity": 23.6,
+     "wind_kmh": 45.2,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T23:58:12.005798+00:00",
+     "rainfall_mm": 1.48,
+     "rain_forecast_mm": 0.0,
+     "humidity": 22.8,
+     "wind_kmh": 45.9,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T00:58:12.005798+00:00",
+     "rainfall_mm": 1.25,
+     "rain_forecast_mm": 0.0,
+     "humidity": 24.4,
+     "wind_kmh": 46.6,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T01:58:12.005798+00:00",
+     "rainfall_mm": 1.43,
+     "rain_forecast_mm": 0.0,
+     "humidity": 20.3,
+     "wind_kmh": 47.3,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T02:58:12.005798+00:00",
+     "rainfall_mm": 1.64,
+     "rain_forecast_mm": 0.03,
+     "humidity": 26.4,
+     "wind_kmh": 47.9,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T03:58:12.005798+00:00",
+     "rainfall_mm": 0.35,
+     "rain_forecast_mm": 0.82,
+     "humidity": 21.3,
+     "wind_kmh": 47.6,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T04:58:12.005798+00:00",
+     "rainfall_mm": 0.0,
+     "rain_forecast_mm": 0.0,
+     "humidity": 20.4,
+     "wind_kmh": 47.1,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T05:58:12.005798+00:00",
+     "rainfall_mm": 0.0,
+     "rain_forecast_mm": 0.55,
+     "humidity": 25.1,
+     "wind_kmh": 46.5,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T06:58:12.005798+00:00",
+     "rainfall_mm": 0.0,
+     "rain_forecast_mm": 0.74,
+     "humidity": 18.8,
+     "wind_kmh": 45.9,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T07:58:12.005798+00:00",
+     "rainfall_mm": 0.0,
+     "rain_forecast_mm": 0.99,
+     "humidity": 20.0,
+     "wind_kmh": 45.4,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T08:58:12.005798+00:00",
+     "rainfall_mm": 0.04,
+     "rain_forecast_mm": 0.99,
+     "humidity": 20.8,
+     "wind_kmh": 44.8,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T09:58:12.005798+00:00",
+     "rainfall_mm": 0.86,
+     "rain_forecast_mm": 0.99,
+     "humidity": 19.1,
+     "wind_kmh": 44.3,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T10:58:12.005798+00:00",
+     "rainfall_mm": 0.0,
+     "rain_forecast_mm": 0.99,
+     "humidity": 20.3,
+     "wind_kmh": 43.7,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T11:58:12.005798+00:00",
+     "rainfall_mm": 0.58,
+     "rain_forecast_mm": 0.99,
+     "humidity": 22.2,
+     "wind_kmh": 43.1,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T12:58:12.005798+00:00",
+     "rainfall_mm": 0.78,
+     "rain_forecast_mm": 0.99,
+     "humidity": 21.3,
+     "wind_kmh": 42.6,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T13:58:12.005798+00:00",
+     "rainfall_mm": 1.04,
+     "rain_forecast_mm": 0.99,
+     "humidity": 20.9,
+     "wind_kmh": 42.0,
+     "source_id": "noaa-firewx"
+    }
+   ],
+   "satellite": [
+    {
+     "captured_at": "2026-07-31T14:58:12.005798+00:00",
+     "soil_moisture_anomaly": 4.099,
+     "surface_water_index": 0.455,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-07-31T16:58:12.005798+00:00",
+     "soil_moisture_anomaly": 4.042,
+     "surface_water_index": 0.449,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-07-31T18:58:12.005798+00:00",
+     "soil_moisture_anomaly": 4.062,
+     "surface_water_index": 0.451,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-07-31T20:58:12.005798+00:00",
+     "soil_moisture_anomaly": 4.107,
+     "surface_water_index": 0.456,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-07-31T22:58:12.005798+00:00",
+     "soil_moisture_anomaly": 3.697,
+     "surface_water_index": 0.411,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-01T00:58:12.005798+00:00",
+     "soil_moisture_anomaly": 3.6,
+     "surface_water_index": 0.4,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-01T02:58:12.005798+00:00",
+     "soil_moisture_anomaly": 3.406,
+     "surface_water_index": 0.378,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-08-01T04:58:12.005798+00:00",
+     "soil_moisture_anomaly": 3.393,
+     "surface_water_index": 0.377,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-01T06:58:12.005798+00:00",
+     "soil_moisture_anomaly": 3.36,
+     "surface_water_index": 0.373,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-01T08:58:12.005798+00:00",
+     "soil_moisture_anomaly": 3.467,
+     "surface_water_index": 0.385,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-08-01T10:58:12.005798+00:00",
+     "soil_moisture_anomaly": 2.914,
+     "surface_water_index": 0.324,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-01T12:58:12.005798+00:00",
+     "soil_moisture_anomaly": 3.084,
+     "surface_water_index": 0.343,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-01T14:58:12.005798+00:00",
+     "soil_moisture_anomaly": 2.805,
+     "surface_water_index": 0.312,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-08-01T16:58:12.005798+00:00",
+     "soil_moisture_anomaly": 2.633,
+     "surface_water_index": 0.293,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-01T18:58:12.005798+00:00",
+     "soil_moisture_anomaly": 2.761,
+     "surface_water_index": 0.307,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-01T20:58:12.005798+00:00",
+     "soil_moisture_anomaly": 2.251,
+     "surface_water_index": 0.25,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-08-01T22:58:12.005798+00:00",
+     "soil_moisture_anomaly": 2.354,
+     "surface_water_index": 0.262,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-02T00:58:12.005798+00:00",
+     "soil_moisture_anomaly": 2.26,
+     "surface_water_index": 0.251,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-02T02:58:12.005798+00:00",
+     "soil_moisture_anomaly": 1.788,
+     "surface_water_index": 0.199,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-08-02T04:58:12.005798+00:00",
+     "soil_moisture_anomaly": 2.09,
+     "surface_water_index": 0.232,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-02T06:58:12.005798+00:00",
+     "soil_moisture_anomaly": 1.645,
+     "surface_water_index": 0.183,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-02T08:58:12.005798+00:00",
+     "soil_moisture_anomaly": 1.81,
+     "surface_water_index": 0.201,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-08-02T10:58:12.005798+00:00",
+     "soil_moisture_anomaly": 1.373,
+     "surface_water_index": 0.153,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-02T12:58:12.005798+00:00",
+     "soil_moisture_anomaly": 1.597,
+     "surface_water_index": 0.177,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-02T14:58:12.005798+00:00",
+     "soil_moisture_anomaly": 1.518,
+     "surface_water_index": 0.169,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-08-02T16:58:12.005798+00:00",
+     "soil_moisture_anomaly": 1.438,
+     "surface_water_index": 0.16,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-02T18:58:12.005798+00:00",
+     "soil_moisture_anomaly": 1.164,
+     "surface_water_index": 0.129,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-02T20:58:12.005798+00:00",
+     "soil_moisture_anomaly": 1.093,
+     "surface_water_index": 0.121,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-08-02T22:58:12.005798+00:00",
+     "soil_moisture_anomaly": 1.134,
+     "surface_water_index": 0.126,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-03T00:58:12.005798+00:00",
+     "soil_moisture_anomaly": 1.074,
+     "surface_water_index": 0.119,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-03T02:58:12.005798+00:00",
+     "soil_moisture_anomaly": 0.907,
+     "surface_water_index": 0.101,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-08-03T04:58:12.005798+00:00",
+     "soil_moisture_anomaly": 0.618,
+     "surface_water_index": 0.069,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-03T06:58:12.005798+00:00",
+     "soil_moisture_anomaly": 0.639,
+     "surface_water_index": 0.071,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-03T08:58:12.005798+00:00",
+     "soil_moisture_anomaly": 0.368,
+     "surface_water_index": 0.041,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-08-03T10:58:12.005798+00:00",
+     "soil_moisture_anomaly": 0.339,
+     "surface_water_index": 0.038,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-03T12:58:12.005798+00:00",
+     "soil_moisture_anomaly": 0.492,
+     "surface_water_index": 0.055,
+     "source_id": "gpm-nasa"
+    }
+   ],
+   "citizen": [
+    {
+     "location_id": "ca_paradise",
+     "reported_at": "2026-08-02T02:58:12.005798+00:00",
+     "category": "smoke_sighting",
+     "severity_hint": 2,
+     "text": "Smoke column reported near Paradise Ridge foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_paradise",
+     "reported_at": "2026-08-02T05:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 2,
+     "text": "Smoke column reported near Paradise Ridge foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_paradise",
+     "reported_at": "2026-08-02T08:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 2,
+     "text": "Smoke column reported near Paradise Ridge foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_paradise",
+     "reported_at": "2026-08-02T11:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 2,
+     "text": "Smoke column reported near Paradise Ridge foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_paradise",
+     "reported_at": "2026-08-02T14:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 2,
+     "text": "Smoke column reported near Paradise Ridge foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_paradise",
+     "reported_at": "2026-08-02T17:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 3,
+     "text": "Smoke column reported near Paradise Ridge foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_paradise",
+     "reported_at": "2026-08-02T20:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 3,
+     "text": "Smoke column reported near Paradise Ridge foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_paradise",
+     "reported_at": "2026-08-02T23:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 3,
+     "text": "Smoke column reported near Paradise Ridge foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_paradise",
+     "reported_at": "2026-08-03T02:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 3,
+     "text": "Smoke column reported near Paradise Ridge foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_paradise",
+     "reported_at": "2026-08-03T05:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 3,
+     "text": "Smoke column reported near Paradise Ridge foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_paradise",
+     "reported_at": "2026-08-03T08:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 3,
+     "text": "Smoke column reported near Paradise Ridge foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_paradise",
+     "reported_at": "2026-08-03T11:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 3,
+     "text": "Smoke column reported near Paradise Ridge foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    }
+   ],
+   "news": [
+    {
+     "captured_at": "2026-08-03T00:58:12.005798+00:00",
+     "tags": [
+      "wildfire",
+      "california",
+      "red-flag"
+     ],
+     "warning_level": 3,
+     "credibility": 0.9,
+     "source_id": "news-eom"
+    }
+   ]
+  },
+  {
+   "id": "ca_mariposa",
+   "name": "Mariposa Foothills",
+   "region": "Mariposa County",
+   "lat": 37.4849,
+   "lon": -119.9663,
+   "elevation_m": 670.0,
+   "drainage_capacity_mmh": 6.5,
+   "population": 1800,
+   "hazard_type": "wildfire",
+   "exposure": 1.45,
+   "weather": [
+    {
+     "captured_at": "2026-07-31T14:58:12.005798+00:00",
+     "rainfall_mm": 0.89,
+     "rain_forecast_mm": 1.22,
+     "humidity": 57.3,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-07-31T15:58:12.005798+00:00",
+     "rainfall_mm": 0.91,
+     "rain_forecast_mm": 1.51,
+     "humidity": 55.8,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-07-31T16:58:12.005798+00:00",
+     "rainfall_mm": 1.93,
+     "rain_forecast_mm": 1.23,
+     "humidity": 55.6,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-07-31T17:58:12.005798+00:00",
+     "rainfall_mm": 2.5,
+     "rain_forecast_mm": 0.61,
+     "humidity": 50.9,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-07-31T18:58:12.005798+00:00",
+     "rainfall_mm": 2.0,
+     "rain_forecast_mm": 1.34,
+     "humidity": 54.3,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-07-31T19:58:12.005798+00:00",
+     "rainfall_mm": 1.88,
+     "rain_forecast_mm": 0.91,
+     "humidity": 51.7,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-07-31T20:58:12.005798+00:00",
+     "rainfall_mm": 1.28,
+     "rain_forecast_mm": 0.46,
+     "humidity": 51.1,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-07-31T21:58:12.005798+00:00",
+     "rainfall_mm": 1.59,
+     "rain_forecast_mm": 0.0,
+     "humidity": 53.2,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-07-31T22:58:12.005798+00:00",
+     "rainfall_mm": 1.29,
+     "rain_forecast_mm": 0.57,
+     "humidity": 49.5,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-07-31T23:58:12.005798+00:00",
+     "rainfall_mm": 0.65,
+     "rain_forecast_mm": 0.79,
+     "humidity": 47.2,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T00:58:12.005798+00:00",
+     "rainfall_mm": 1.42,
+     "rain_forecast_mm": 0.25,
+     "humidity": 48.3,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T01:58:12.005798+00:00",
+     "rainfall_mm": 0.96,
+     "rain_forecast_mm": 0.0,
+     "humidity": 46.3,
+     "wind_kmh": 14.6,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T02:58:12.005798+00:00",
+     "rainfall_mm": 0.49,
+     "rain_forecast_mm": 0.46,
+     "humidity": 44.5,
+     "wind_kmh": 15.3,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T03:58:12.005798+00:00",
+     "rainfall_mm": 0.0,
+     "rain_forecast_mm": 0.0,
+     "humidity": 47.3,
+     "wind_kmh": 16.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T04:58:12.005798+00:00",
+     "rainfall_mm": 0.6,
+     "rain_forecast_mm": 0.0,
+     "humidity": 47.9,
+     "wind_kmh": 16.6,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T05:58:12.005798+00:00",
+     "rainfall_mm": 0.83,
+     "rain_forecast_mm": 1.26,
+     "humidity": 42.2,
+     "wind_kmh": 17.3,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T06:58:12.005798+00:00",
+     "rainfall_mm": 0.26,
+     "rain_forecast_mm": 1.44,
+     "humidity": 46.0,
+     "wind_kmh": 18.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T07:58:12.005798+00:00",
+     "rainfall_mm": 0.0,
+     "rain_forecast_mm": 0.88,
+     "humidity": 45.9,
+     "wind_kmh": 18.7,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T08:58:12.005798+00:00",
+     "rainfall_mm": 0.48,
+     "rain_forecast_mm": 1.22,
+     "humidity": 45.2,
+     "wind_kmh": 19.4,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T09:58:12.005798+00:00",
+     "rainfall_mm": 0.0,
+     "rain_forecast_mm": 2.01,
+     "humidity": 41.8,
+     "wind_kmh": 20.1,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T10:58:12.005798+00:00",
+     "rainfall_mm": 0.0,
+     "rain_forecast_mm": 1.11,
+     "humidity": 43.1,
+     "wind_kmh": 20.7,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T11:58:12.005798+00:00",
+     "rainfall_mm": 1.32,
+     "rain_forecast_mm": 1.68,
+     "humidity": 42.8,
+     "wind_kmh": 21.4,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T12:58:12.005798+00:00",
+     "rainfall_mm": 1.51,
+     "rain_forecast_mm": 2.03,
+     "humidity": 43.5,
+     "wind_kmh": 22.1,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T13:58:12.005798+00:00",
+     "rainfall_mm": 0.93,
+     "rain_forecast_mm": 2.37,
+     "humidity": 39.5,
+     "wind_kmh": 22.8,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T14:58:12.005798+00:00",
+     "rainfall_mm": 1.29,
+     "rain_forecast_mm": 1.36,
+     "humidity": 42.3,
+     "wind_kmh": 23.5,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T15:58:12.005798+00:00",
+     "rainfall_mm": 2.11,
+     "rain_forecast_mm": 1.26,
+     "humidity": 43.0,
+     "wind_kmh": 24.2,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T16:58:12.005798+00:00",
+     "rainfall_mm": 1.17,
+     "rain_forecast_mm": 1.51,
+     "humidity": 35.9,
+     "wind_kmh": 24.9,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T17:58:12.005798+00:00",
+     "rainfall_mm": 1.77,
+     "rain_forecast_mm": 1.04,
+     "humidity": 40.3,
+     "wind_kmh": 25.5,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T18:58:12.005798+00:00",
+     "rainfall_mm": 2.13,
+     "rain_forecast_mm": 1.66,
+     "humidity": 36.3,
+     "wind_kmh": 26.2,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T19:58:12.005798+00:00",
+     "rainfall_mm": 2.49,
+     "rain_forecast_mm": 0.58,
+     "humidity": 38.5,
+     "wind_kmh": 26.9,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T20:58:12.005798+00:00",
+     "rainfall_mm": 1.43,
+     "rain_forecast_mm": 0.74,
+     "humidity": 36.9,
+     "wind_kmh": 27.6,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T21:58:12.005798+00:00",
+     "rainfall_mm": 1.33,
+     "rain_forecast_mm": 0.56,
+     "humidity": 40.2,
+     "wind_kmh": 28.3,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T22:58:12.005798+00:00",
+     "rainfall_mm": 1.58,
+     "rain_forecast_mm": 0.25,
+     "humidity": 37.3,
+     "wind_kmh": 29.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T23:58:12.005798+00:00",
+     "rainfall_mm": 1.1,
+     "rain_forecast_mm": 0.0,
+     "humidity": 38.2,
+     "wind_kmh": 29.6,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T00:58:12.005798+00:00",
+     "rainfall_mm": 1.74,
+     "rain_forecast_mm": 0.7,
+     "humidity": 33.9,
+     "wind_kmh": 30.3,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T01:58:12.005798+00:00",
+     "rainfall_mm": 0.61,
+     "rain_forecast_mm": 0.27,
+     "humidity": 36.4,
+     "wind_kmh": 31.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T02:58:12.005798+00:00",
+     "rainfall_mm": 0.78,
+     "rain_forecast_mm": 0.51,
+     "humidity": 37.8,
+     "wind_kmh": 31.7,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T03:58:12.005798+00:00",
+     "rainfall_mm": 0.59,
+     "rain_forecast_mm": 0.57,
+     "humidity": 33.0,
+     "wind_kmh": 32.4,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T04:58:12.005798+00:00",
+     "rainfall_mm": 0.26,
+     "rain_forecast_mm": 0.28,
+     "humidity": 35.2,
+     "wind_kmh": 33.1,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T05:58:12.005798+00:00",
+     "rainfall_mm": 0.0,
+     "rain_forecast_mm": 0.5,
+     "humidity": 34.3,
+     "wind_kmh": 33.7,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T06:58:12.005798+00:00",
+     "rainfall_mm": 0.74,
+     "rain_forecast_mm": 0.7,
+     "humidity": 32.6,
+     "wind_kmh": 34.4,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T07:58:12.005798+00:00",
+     "rainfall_mm": 0.29,
+     "rain_forecast_mm": 1.5,
+     "humidity": 29.7,
+     "wind_kmh": 35.1,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T08:58:12.005798+00:00",
+     "rainfall_mm": 0.54,
+     "rain_forecast_mm": 1.06,
+     "humidity": 32.2,
+     "wind_kmh": 35.8,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T09:58:12.005798+00:00",
+     "rainfall_mm": 0.61,
+     "rain_forecast_mm": 0.57,
+     "humidity": 30.5,
+     "wind_kmh": 36.5,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T10:58:12.005798+00:00",
+     "rainfall_mm": 0.29,
+     "rain_forecast_mm": 1.45,
+     "humidity": 31.7,
+     "wind_kmh": 37.2,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T11:58:12.005798+00:00",
+     "rainfall_mm": 0.53,
+     "rain_forecast_mm": 1.31,
+     "humidity": 31.5,
+     "wind_kmh": 37.8,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T12:58:12.005798+00:00",
+     "rainfall_mm": 0.73,
+     "rain_forecast_mm": 2.06,
+     "humidity": 32.5,
+     "wind_kmh": 38.5,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T13:58:12.005798+00:00",
+     "rainfall_mm": 1.58,
+     "rain_forecast_mm": 1.45,
+     "humidity": 27.2,
+     "wind_kmh": 39.2,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T14:58:12.005798+00:00",
+     "rainfall_mm": 1.11,
+     "rain_forecast_mm": 1.79,
+     "humidity": 30.1,
+     "wind_kmh": 39.9,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T15:58:12.005798+00:00",
+     "rainfall_mm": 0.6,
+     "rain_forecast_mm": 1.51,
+     "humidity": 29.2,
+     "wind_kmh": 40.6,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T16:58:12.005798+00:00",
+     "rainfall_mm": 1.52,
+     "rain_forecast_mm": 1.44,
+     "humidity": 27.4,
+     "wind_kmh": 41.3,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T17:58:12.005798+00:00",
+     "rainfall_mm": 1.38,
+     "rain_forecast_mm": 0.86,
+     "humidity": 27.9,
+     "wind_kmh": 42.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T18:58:12.005798+00:00",
+     "rainfall_mm": 2.17,
+     "rain_forecast_mm": 0.82,
+     "humidity": 26.4,
+     "wind_kmh": 42.6,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T19:58:12.005798+00:00",
+     "rainfall_mm": 1.52,
+     "rain_forecast_mm": 0.77,
+     "humidity": 26.9,
+     "wind_kmh": 43.3,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T20:58:12.005798+00:00",
+     "rainfall_mm": 1.88,
+     "rain_forecast_mm": 0.78,
+     "humidity": 25.8,
+     "wind_kmh": 44.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T21:58:12.005798+00:00",
+     "rainfall_mm": 1.58,
+     "rain_forecast_mm": 0.59,
+     "humidity": 23.4,
+     "wind_kmh": 44.7,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T22:58:12.005798+00:00",
+     "rainfall_mm": 1.52,
+     "rain_forecast_mm": 0.0,
+     "humidity": 24.1,
+     "wind_kmh": 45.4,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T23:58:12.005798+00:00",
+     "rainfall_mm": 0.9,
+     "rain_forecast_mm": 0.1,
+     "humidity": 24.7,
+     "wind_kmh": 46.1,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T00:58:12.005798+00:00",
+     "rainfall_mm": 0.87,
+     "rain_forecast_mm": 0.55,
+     "humidity": 21.1,
+     "wind_kmh": 46.7,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T01:58:12.005798+00:00",
+     "rainfall_mm": 0.81,
+     "rain_forecast_mm": 0.47,
+     "humidity": 21.5,
+     "wind_kmh": 47.4,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T02:58:12.005798+00:00",
+     "rainfall_mm": 0.82,
+     "rain_forecast_mm": 0.06,
+     "humidity": 24.4,
+     "wind_kmh": 48.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T03:58:12.005798+00:00",
+     "rainfall_mm": 0.62,
+     "rain_forecast_mm": 0.2,
+     "humidity": 21.8,
+     "wind_kmh": 47.6,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T04:58:12.005798+00:00",
+     "rainfall_mm": 0.0,
+     "rain_forecast_mm": 1.13,
+     "humidity": 19.8,
+     "wind_kmh": 47.1,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T05:58:12.005798+00:00",
+     "rainfall_mm": 0.11,
+     "rain_forecast_mm": 1.0,
+     "humidity": 19.9,
+     "wind_kmh": 46.5,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T06:58:12.005798+00:00",
+     "rainfall_mm": 0.58,
+     "rain_forecast_mm": 0.28,
+     "humidity": 23.8,
+     "wind_kmh": 45.9,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T07:58:12.005798+00:00",
+     "rainfall_mm": 0.49,
+     "rain_forecast_mm": 1.92,
+     "humidity": 21.9,
+     "wind_kmh": 45.4,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T08:58:12.005798+00:00",
+     "rainfall_mm": 0.06,
+     "rain_forecast_mm": 1.92,
+     "humidity": 17.2,
+     "wind_kmh": 44.8,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T09:58:12.005798+00:00",
+     "rainfall_mm": 0.21,
+     "rain_forecast_mm": 1.92,
+     "humidity": 22.1,
+     "wind_kmh": 44.3,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T10:58:12.005798+00:00",
+     "rainfall_mm": 1.19,
+     "rain_forecast_mm": 1.92,
+     "humidity": 19.2,
+     "wind_kmh": 43.7,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T11:58:12.005798+00:00",
+     "rainfall_mm": 1.05,
+     "rain_forecast_mm": 1.92,
+     "humidity": 20.8,
+     "wind_kmh": 43.1,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T12:58:12.005798+00:00",
+     "rainfall_mm": 0.29,
+     "rain_forecast_mm": 1.92,
+     "humidity": 17.8,
+     "wind_kmh": 42.6,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T13:58:12.005798+00:00",
+     "rainfall_mm": 2.02,
+     "rain_forecast_mm": 1.92,
+     "humidity": 20.5,
+     "wind_kmh": 42.0,
+     "source_id": "noaa-firewx"
+    }
+   ],
+   "satellite": [
+    {
+     "captured_at": "2026-07-31T14:58:12.005798+00:00",
+     "soil_moisture_anomaly": 4.273,
+     "surface_water_index": 0.475,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-07-31T16:58:12.005798+00:00",
+     "soil_moisture_anomaly": 3.981,
+     "surface_water_index": 0.442,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-07-31T18:58:12.005798+00:00",
+     "soil_moisture_anomaly": 3.843,
+     "surface_water_index": 0.427,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-07-31T20:58:12.005798+00:00",
+     "soil_moisture_anomaly": 3.651,
+     "surface_water_index": 0.406,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-07-31T22:58:12.005798+00:00",
+     "soil_moisture_anomaly": 3.919,
+     "surface_water_index": 0.435,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-01T00:58:12.005798+00:00",
+     "soil_moisture_anomaly": 3.683,
+     "surface_water_index": 0.409,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-01T02:58:12.005798+00:00",
+     "soil_moisture_anomaly": 3.387,
+     "surface_water_index": 0.376,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-08-01T04:58:12.005798+00:00",
+     "soil_moisture_anomaly": 3.359,
+     "surface_water_index": 0.373,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-01T06:58:12.005798+00:00",
+     "soil_moisture_anomaly": 3.295,
+     "surface_water_index": 0.366,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-01T08:58:12.005798+00:00",
+     "soil_moisture_anomaly": 3.088,
+     "surface_water_index": 0.343,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-08-01T10:58:12.005798+00:00",
+     "soil_moisture_anomaly": 3.033,
+     "surface_water_index": 0.337,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-01T12:58:12.005798+00:00",
+     "soil_moisture_anomaly": 2.87,
+     "surface_water_index": 0.319,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-01T14:58:12.005798+00:00",
+     "soil_moisture_anomaly": 2.842,
+     "surface_water_index": 0.316,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-08-01T16:58:12.005798+00:00",
+     "soil_moisture_anomaly": 2.956,
+     "surface_water_index": 0.328,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-01T18:58:12.005798+00:00",
+     "soil_moisture_anomaly": 2.379,
+     "surface_water_index": 0.264,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-01T20:58:12.005798+00:00",
+     "soil_moisture_anomaly": 2.225,
+     "surface_water_index": 0.247,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-08-01T22:58:12.005798+00:00",
+     "soil_moisture_anomaly": 2.314,
+     "surface_water_index": 0.257,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-02T00:58:12.005798+00:00",
+     "soil_moisture_anomaly": 2.462,
+     "surface_water_index": 0.274,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-02T02:58:12.005798+00:00",
+     "soil_moisture_anomaly": 2.055,
+     "surface_water_index": 0.228,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-08-02T04:58:12.005798+00:00",
+     "soil_moisture_anomaly": 1.694,
+     "surface_water_index": 0.188,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-02T06:58:12.005798+00:00",
+     "soil_moisture_anomaly": 1.913,
+     "surface_water_index": 0.213,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-02T08:58:12.005798+00:00",
+     "soil_moisture_anomaly": 1.975,
+     "surface_water_index": 0.219,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-08-02T10:58:12.005798+00:00",
+     "soil_moisture_anomaly": 1.618,
+     "surface_water_index": 0.18,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-02T12:58:12.005798+00:00",
+     "soil_moisture_anomaly": 1.602,
+     "surface_water_index": 0.178,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-02T14:58:12.005798+00:00",
+     "soil_moisture_anomaly": 1.334,
+     "surface_water_index": 0.148,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-08-02T16:58:12.005798+00:00",
+     "soil_moisture_anomaly": 1.25,
+     "surface_water_index": 0.139,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-02T18:58:12.005798+00:00",
+     "soil_moisture_anomaly": 1.259,
+     "surface_water_index": 0.14,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-02T20:58:12.005798+00:00",
+     "soil_moisture_anomaly": 1.114,
+     "surface_water_index": 0.124,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-08-02T22:58:12.005798+00:00",
+     "soil_moisture_anomaly": 0.783,
+     "surface_water_index": 0.087,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-03T00:58:12.005798+00:00",
+     "soil_moisture_anomaly": 0.7,
+     "surface_water_index": 0.078,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-03T02:58:12.005798+00:00",
+     "soil_moisture_anomaly": 1.002,
+     "surface_water_index": 0.111,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-08-03T04:58:12.005798+00:00",
+     "soil_moisture_anomaly": 0.558,
+     "surface_water_index": 0.062,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-03T06:58:12.005798+00:00",
+     "soil_moisture_anomaly": 0.567,
+     "surface_water_index": 0.063,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-03T08:58:12.005798+00:00",
+     "soil_moisture_anomaly": 0.503,
+     "surface_water_index": 0.056,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-08-03T10:58:12.005798+00:00",
+     "soil_moisture_anomaly": 0.671,
+     "surface_water_index": 0.075,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-03T12:58:12.005798+00:00",
+     "soil_moisture_anomaly": 0.784,
+     "surface_water_index": 0.087,
+     "source_id": "gpm-nasa"
+    }
+   ],
+   "citizen": [
+    {
+     "location_id": "ca_mariposa",
+     "reported_at": "2026-08-02T02:58:12.005798+00:00",
+     "category": "smoke_sighting",
+     "severity_hint": 2,
+     "text": "Smoke column reported near Mariposa Foothills foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_mariposa",
+     "reported_at": "2026-08-02T05:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 2,
+     "text": "Smoke column reported near Mariposa Foothills foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_mariposa",
+     "reported_at": "2026-08-02T08:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 2,
+     "text": "Smoke column reported near Mariposa Foothills foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_mariposa",
+     "reported_at": "2026-08-02T11:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 2,
+     "text": "Smoke column reported near Mariposa Foothills foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_mariposa",
+     "reported_at": "2026-08-02T14:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 3,
+     "text": "Smoke column reported near Mariposa Foothills foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_mariposa",
+     "reported_at": "2026-08-02T17:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 3,
+     "text": "Smoke column reported near Mariposa Foothills foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_mariposa",
+     "reported_at": "2026-08-02T20:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 3,
+     "text": "Smoke column reported near Mariposa Foothills foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_mariposa",
+     "reported_at": "2026-08-02T23:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 3,
+     "text": "Smoke column reported near Mariposa Foothills foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_mariposa",
+     "reported_at": "2026-08-03T02:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 3,
+     "text": "Smoke column reported near Mariposa Foothills foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_mariposa",
+     "reported_at": "2026-08-03T05:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 3,
+     "text": "Smoke column reported near Mariposa Foothills foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_mariposa",
+     "reported_at": "2026-08-03T08:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 3,
+     "text": "Smoke column reported near Mariposa Foothills foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_mariposa",
+     "reported_at": "2026-08-03T11:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 3,
+     "text": "Smoke column reported near Mariposa Foothills foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    }
+   ],
+   "news": [
+    {
+     "captured_at": "2026-08-03T00:58:12.005798+00:00",
+     "tags": [
+      "wildfire",
+      "california",
+      "red-flag"
+     ],
+     "warning_level": 3,
+     "credibility": 0.9,
+     "source_id": "news-eom"
+    }
+   ]
+  },
+  {
+   "id": "ca_la_basin",
+   "name": "Los Angeles Basin Rim",
+   "region": "Los Angeles County",
+   "lat": 34.2032,
+   "lon": -118.2216,
+   "elevation_m": 300.0,
+   "drainage_capacity_mmh": 6.0,
+   "population": 1900000,
+   "hazard_type": "wildfire",
+   "exposure": 1.25,
+   "weather": [
+    {
+     "captured_at": "2026-07-31T14:58:12.005798+00:00",
+     "rainfall_mm": 0.66,
+     "rain_forecast_mm": 1.7,
+     "humidity": 57.9,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-07-31T15:58:12.005798+00:00",
+     "rainfall_mm": 0.82,
+     "rain_forecast_mm": 2.38,
+     "humidity": 54.7,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-07-31T16:58:12.005798+00:00",
+     "rainfall_mm": 1.23,
+     "rain_forecast_mm": 1.49,
+     "humidity": 54.4,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-07-31T17:58:12.005798+00:00",
+     "rainfall_mm": 1.44,
+     "rain_forecast_mm": 1.94,
+     "humidity": 55.1,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-07-31T18:58:12.005798+00:00",
+     "rainfall_mm": 1.31,
+     "rain_forecast_mm": 1.72,
+     "humidity": 53.7,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-07-31T19:58:12.005798+00:00",
+     "rainfall_mm": 1.27,
+     "rain_forecast_mm": 0.96,
+     "humidity": 55.3,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-07-31T20:58:12.005798+00:00",
+     "rainfall_mm": 1.79,
+     "rain_forecast_mm": 0.2,
+     "humidity": 49.4,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-07-31T21:58:12.005798+00:00",
+     "rainfall_mm": 2.5,
+     "rain_forecast_mm": 0.44,
+     "humidity": 52.9,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-07-31T22:58:12.005798+00:00",
+     "rainfall_mm": 1.57,
+     "rain_forecast_mm": 0.58,
+     "humidity": 50.8,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-07-31T23:58:12.005798+00:00",
+     "rainfall_mm": 2.04,
+     "rain_forecast_mm": 0.76,
+     "humidity": 52.6,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T00:58:12.005798+00:00",
+     "rainfall_mm": 1.82,
+     "rain_forecast_mm": 0.27,
+     "humidity": 52.0,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T01:58:12.005798+00:00",
+     "rainfall_mm": 1.01,
+     "rain_forecast_mm": 0.0,
+     "humidity": 50.7,
+     "wind_kmh": 14.2,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T02:58:12.005798+00:00",
+     "rainfall_mm": 0.21,
+     "rain_forecast_mm": 0.86,
+     "humidity": 47.3,
+     "wind_kmh": 14.9,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T03:58:12.005798+00:00",
+     "rainfall_mm": 0.46,
+     "rain_forecast_mm": 0.27,
+     "humidity": 46.8,
+     "wind_kmh": 15.6,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T04:58:12.005798+00:00",
+     "rainfall_mm": 0.61,
+     "rain_forecast_mm": 0.28,
+     "humidity": 47.6,
+     "wind_kmh": 16.3,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T05:58:12.005798+00:00",
+     "rainfall_mm": 0.8,
+     "rain_forecast_mm": 0.62,
+     "humidity": 45.8,
+     "wind_kmh": 17.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T06:58:12.005798+00:00",
+     "rainfall_mm": 0.28,
+     "rain_forecast_mm": 0.0,
+     "humidity": 42.4,
+     "wind_kmh": 17.7,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T07:58:12.005798+00:00",
+     "rainfall_mm": 0.0,
+     "rain_forecast_mm": 1.15,
+     "humidity": 42.8,
+     "wind_kmh": 18.3,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T08:58:12.005798+00:00",
+     "rainfall_mm": 0.91,
+     "rain_forecast_mm": 0.24,
+     "humidity": 45.8,
+     "wind_kmh": 19.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T09:58:12.005798+00:00",
+     "rainfall_mm": 0.28,
+     "rain_forecast_mm": 0.96,
+     "humidity": 42.4,
+     "wind_kmh": 19.7,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T10:58:12.005798+00:00",
+     "rainfall_mm": 0.29,
+     "rain_forecast_mm": 0.61,
+     "humidity": 43.3,
+     "wind_kmh": 20.4,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T11:58:12.005798+00:00",
+     "rainfall_mm": 0.65,
+     "rain_forecast_mm": 1.13,
+     "humidity": 43.4,
+     "wind_kmh": 21.1,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T12:58:12.005798+00:00",
+     "rainfall_mm": 0.0,
+     "rain_forecast_mm": 1.94,
+     "humidity": 40.0,
+     "wind_kmh": 21.8,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T13:58:12.005798+00:00",
+     "rainfall_mm": 1.21,
+     "rain_forecast_mm": 2.29,
+     "humidity": 41.5,
+     "wind_kmh": 22.4,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T14:58:12.005798+00:00",
+     "rainfall_mm": 0.25,
+     "rain_forecast_mm": 2.03,
+     "humidity": 44.4,
+     "wind_kmh": 23.1,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T15:58:12.005798+00:00",
+     "rainfall_mm": 1.01,
+     "rain_forecast_mm": 1.87,
+     "humidity": 43.9,
+     "wind_kmh": 23.8,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T16:58:12.005798+00:00",
+     "rainfall_mm": 0.64,
+     "rain_forecast_mm": 0.83,
+     "humidity": 41.6,
+     "wind_kmh": 24.5,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T17:58:12.005798+00:00",
+     "rainfall_mm": 1.19,
+     "rain_forecast_mm": 2.27,
+     "humidity": 41.1,
+     "wind_kmh": 25.2,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T18:58:12.005798+00:00",
+     "rainfall_mm": 2.05,
+     "rain_forecast_mm": 1.2,
+     "humidity": 39.0,
+     "wind_kmh": 25.9,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T19:58:12.005798+00:00",
+     "rainfall_mm": 2.41,
+     "rain_forecast_mm": 1.38,
+     "humidity": 39.1,
+     "wind_kmh": 26.6,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T20:58:12.005798+00:00",
+     "rainfall_mm": 2.14,
+     "rain_forecast_mm": 1.18,
+     "humidity": 40.0,
+     "wind_kmh": 27.2,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T21:58:12.005798+00:00",
+     "rainfall_mm": 1.97,
+     "rain_forecast_mm": 0.97,
+     "humidity": 34.8,
+     "wind_kmh": 27.9,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T22:58:12.005798+00:00",
+     "rainfall_mm": 0.87,
+     "rain_forecast_mm": 0.02,
+     "humidity": 36.5,
+     "wind_kmh": 28.6,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T23:58:12.005798+00:00",
+     "rainfall_mm": 2.39,
+     "rain_forecast_mm": 0.34,
+     "humidity": 36.1,
+     "wind_kmh": 29.3,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T00:58:12.005798+00:00",
+     "rainfall_mm": 1.26,
+     "rain_forecast_mm": 0.52,
+     "humidity": 37.8,
+     "wind_kmh": 30.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T01:58:12.005798+00:00",
+     "rainfall_mm": 1.46,
+     "rain_forecast_mm": 0.0,
+     "humidity": 33.6,
+     "wind_kmh": 30.7,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T02:58:12.005798+00:00",
+     "rainfall_mm": 1.24,
+     "rain_forecast_mm": 0.29,
+     "humidity": 38.9,
+     "wind_kmh": 31.3,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T03:58:12.005798+00:00",
+     "rainfall_mm": 1.02,
+     "rain_forecast_mm": 0.12,
+     "humidity": 33.1,
+     "wind_kmh": 32.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T04:58:12.005798+00:00",
+     "rainfall_mm": 0.02,
+     "rain_forecast_mm": 0.0,
+     "humidity": 38.1,
+     "wind_kmh": 32.7,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T05:58:12.005798+00:00",
+     "rainfall_mm": 0.36,
+     "rain_forecast_mm": 0.55,
+     "humidity": 33.4,
+     "wind_kmh": 33.4,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T06:58:12.005798+00:00",
+     "rainfall_mm": 0.55,
+     "rain_forecast_mm": 0.63,
+     "humidity": 33.2,
+     "wind_kmh": 34.1,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T07:58:12.005798+00:00",
+     "rainfall_mm": 0.0,
+     "rain_forecast_mm": 1.48,
+     "humidity": 35.7,
+     "wind_kmh": 34.8,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T08:58:12.005798+00:00",
+     "rainfall_mm": 0.3,
+     "rain_forecast_mm": 1.05,
+     "humidity": 28.4,
+     "wind_kmh": 35.4,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T09:58:12.005798+00:00",
+     "rainfall_mm": 0.13,
+     "rain_forecast_mm": 1.72,
+     "humidity": 32.7,
+     "wind_kmh": 36.1,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T10:58:12.005798+00:00",
+     "rainfall_mm": 0.0,
+     "rain_forecast_mm": 1.59,
+     "humidity": 34.2,
+     "wind_kmh": 36.8,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T11:58:12.005798+00:00",
+     "rainfall_mm": 0.57,
+     "rain_forecast_mm": 2.05,
+     "humidity": 28.4,
+     "wind_kmh": 37.5,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T12:58:12.005798+00:00",
+     "rainfall_mm": 0.66,
+     "rain_forecast_mm": 0.94,
+     "humidity": 31.2,
+     "wind_kmh": 38.2,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T13:58:12.005798+00:00",
+     "rainfall_mm": 1.56,
+     "rain_forecast_mm": 1.81,
+     "humidity": 28.0,
+     "wind_kmh": 38.9,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T14:58:12.005798+00:00",
+     "rainfall_mm": 1.11,
+     "rain_forecast_mm": 1.43,
+     "humidity": 30.3,
+     "wind_kmh": 39.6,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T15:58:12.005798+00:00",
+     "rainfall_mm": 1.81,
+     "rain_forecast_mm": 1.89,
+     "humidity": 27.4,
+     "wind_kmh": 40.2,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T16:58:12.005798+00:00",
+     "rainfall_mm": 1.67,
+     "rain_forecast_mm": 1.4,
+     "humidity": 29.7,
+     "wind_kmh": 40.9,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T17:58:12.005798+00:00",
+     "rainfall_mm": 2.16,
+     "rain_forecast_mm": 1.37,
+     "humidity": 26.0,
+     "wind_kmh": 41.6,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T18:58:12.005798+00:00",
+     "rainfall_mm": 0.99,
+     "rain_forecast_mm": 1.19,
+     "humidity": 25.4,
+     "wind_kmh": 42.3,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T19:58:12.005798+00:00",
+     "rainfall_mm": 1.91,
+     "rain_forecast_mm": 1.22,
+     "humidity": 25.2,
+     "wind_kmh": 43.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T20:58:12.005798+00:00",
+     "rainfall_mm": 1.51,
+     "rain_forecast_mm": 0.6,
+     "humidity": 23.3,
+     "wind_kmh": 43.7,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T21:58:12.005798+00:00",
+     "rainfall_mm": 1.98,
+     "rain_forecast_mm": 0.81,
+     "humidity": 27.6,
+     "wind_kmh": 44.3,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T22:58:12.005798+00:00",
+     "rainfall_mm": 1.48,
+     "rain_forecast_mm": 0.53,
+     "humidity": 25.5,
+     "wind_kmh": 45.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T23:58:12.005798+00:00",
+     "rainfall_mm": 1.44,
+     "rain_forecast_mm": 0.34,
+     "humidity": 26.1,
+     "wind_kmh": 45.7,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T00:58:12.005798+00:00",
+     "rainfall_mm": 1.25,
+     "rain_forecast_mm": 0.01,
+     "humidity": 25.3,
+     "wind_kmh": 46.4,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T01:58:12.005798+00:00",
+     "rainfall_mm": 1.28,
+     "rain_forecast_mm": 0.65,
+     "humidity": 25.3,
+     "wind_kmh": 47.1,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T02:58:12.005798+00:00",
+     "rainfall_mm": 0.63,
+     "rain_forecast_mm": 0.43,
+     "humidity": 19.8,
+     "wind_kmh": 47.8,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T03:58:12.005798+00:00",
+     "rainfall_mm": 0.86,
+     "rain_forecast_mm": 0.47,
+     "humidity": 22.1,
+     "wind_kmh": 47.6,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T04:58:12.005798+00:00",
+     "rainfall_mm": 0.56,
+     "rain_forecast_mm": 0.95,
+     "humidity": 20.7,
+     "wind_kmh": 47.1,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T05:58:12.005798+00:00",
+     "rainfall_mm": 0.35,
+     "rain_forecast_mm": 0.48,
+     "humidity": 21.1,
+     "wind_kmh": 46.5,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T06:58:12.005798+00:00",
+     "rainfall_mm": 0.01,
+     "rain_forecast_mm": 0.95,
+     "humidity": 21.0,
+     "wind_kmh": 45.9,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T07:58:12.005798+00:00",
+     "rainfall_mm": 0.69,
+     "rain_forecast_mm": 0.86,
+     "humidity": 17.9,
+     "wind_kmh": 45.4,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T08:58:12.005798+00:00",
+     "rainfall_mm": 0.45,
+     "rain_forecast_mm": 0.86,
+     "humidity": 18.1,
+     "wind_kmh": 44.8,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T09:58:12.005798+00:00",
+     "rainfall_mm": 0.49,
+     "rain_forecast_mm": 0.86,
+     "humidity": 16.6,
+     "wind_kmh": 44.3,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T10:58:12.005798+00:00",
+     "rainfall_mm": 1.0,
+     "rain_forecast_mm": 0.86,
+     "humidity": 23.2,
+     "wind_kmh": 43.7,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T11:58:12.005798+00:00",
+     "rainfall_mm": 0.5,
+     "rain_forecast_mm": 0.86,
+     "humidity": 20.9,
+     "wind_kmh": 43.1,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T12:58:12.005798+00:00",
+     "rainfall_mm": 1.0,
+     "rain_forecast_mm": 0.86,
+     "humidity": 19.3,
+     "wind_kmh": 42.6,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T13:58:12.005798+00:00",
+     "rainfall_mm": 0.91,
+     "rain_forecast_mm": 0.86,
+     "humidity": 21.1,
+     "wind_kmh": 42.0,
+     "source_id": "noaa-firewx"
+    }
+   ],
+   "satellite": [
+    {
+     "captured_at": "2026-07-31T14:58:12.005798+00:00",
+     "soil_moisture_anomaly": 4.353,
+     "surface_water_index": 0.484,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-07-31T16:58:12.005798+00:00",
+     "soil_moisture_anomaly": 4.033,
+     "surface_water_index": 0.448,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-07-31T18:58:12.005798+00:00",
+     "soil_moisture_anomaly": 4.014,
+     "surface_water_index": 0.446,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-07-31T20:58:12.005798+00:00",
+     "soil_moisture_anomaly": 3.992,
+     "surface_water_index": 0.444,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-07-31T22:58:12.005798+00:00",
+     "soil_moisture_anomaly": 3.733,
+     "surface_water_index": 0.415,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-01T00:58:12.005798+00:00",
+     "soil_moisture_anomaly": 3.414,
+     "surface_water_index": 0.379,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-01T02:58:12.005798+00:00",
+     "soil_moisture_anomaly": 3.484,
+     "surface_water_index": 0.387,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-08-01T04:58:12.005798+00:00",
+     "soil_moisture_anomaly": 3.364,
+     "surface_water_index": 0.374,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-01T06:58:12.005798+00:00",
+     "soil_moisture_anomaly": 3.398,
+     "surface_water_index": 0.378,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-01T08:58:12.005798+00:00",
+     "soil_moisture_anomaly": 2.982,
+     "surface_water_index": 0.331,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-08-01T10:58:12.005798+00:00",
+     "soil_moisture_anomaly": 3.288,
+     "surface_water_index": 0.365,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-01T12:58:12.005798+00:00",
+     "soil_moisture_anomaly": 3.064,
+     "surface_water_index": 0.34,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-01T14:58:12.005798+00:00",
+     "soil_moisture_anomaly": 2.849,
+     "surface_water_index": 0.317,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-08-01T16:58:12.005798+00:00",
+     "soil_moisture_anomaly": 2.622,
+     "surface_water_index": 0.291,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-01T18:58:12.005798+00:00",
+     "soil_moisture_anomaly": 2.823,
+     "surface_water_index": 0.314,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-01T20:58:12.005798+00:00",
+     "soil_moisture_anomaly": 2.381,
+     "surface_water_index": 0.265,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-08-01T22:58:12.005798+00:00",
+     "soil_moisture_anomaly": 2.366,
+     "surface_water_index": 0.263,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-02T00:58:12.005798+00:00",
+     "soil_moisture_anomaly": 2.428,
+     "surface_water_index": 0.27,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-02T02:58:12.005798+00:00",
+     "soil_moisture_anomaly": 1.961,
+     "surface_water_index": 0.218,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-08-02T04:58:12.005798+00:00",
+     "soil_moisture_anomaly": 1.918,
+     "surface_water_index": 0.213,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-02T06:58:12.005798+00:00",
+     "soil_moisture_anomaly": 1.944,
+     "surface_water_index": 0.216,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-02T08:58:12.005798+00:00",
+     "soil_moisture_anomaly": 1.79,
+     "surface_water_index": 0.199,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-08-02T10:58:12.005798+00:00",
+     "soil_moisture_anomaly": 1.56,
+     "surface_water_index": 0.173,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-02T12:58:12.005798+00:00",
+     "soil_moisture_anomaly": 1.314,
+     "surface_water_index": 0.146,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-02T14:58:12.005798+00:00",
+     "soil_moisture_anomaly": 1.296,
+     "surface_water_index": 0.144,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-08-02T16:58:12.005798+00:00",
+     "soil_moisture_anomaly": 1.407,
+     "surface_water_index": 0.156,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-02T18:58:12.005798+00:00",
+     "soil_moisture_anomaly": 1.068,
+     "surface_water_index": 0.119,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-02T20:58:12.005798+00:00",
+     "soil_moisture_anomaly": 1.068,
+     "surface_water_index": 0.119,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-08-02T22:58:12.005798+00:00",
+     "soil_moisture_anomaly": 0.941,
+     "surface_water_index": 0.105,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-03T00:58:12.005798+00:00",
+     "soil_moisture_anomaly": 0.865,
+     "surface_water_index": 0.096,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-03T02:58:12.005798+00:00",
+     "soil_moisture_anomaly": 0.56,
+     "surface_water_index": 0.062,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-08-03T04:58:12.005798+00:00",
+     "soil_moisture_anomaly": 0.772,
+     "surface_water_index": 0.086,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-03T06:58:12.005798+00:00",
+     "soil_moisture_anomaly": 0.367,
+     "surface_water_index": 0.041,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-03T08:58:12.005798+00:00",
+     "soil_moisture_anomaly": 0.584,
+     "surface_water_index": 0.065,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-08-03T10:58:12.005798+00:00",
+     "soil_moisture_anomaly": 0.282,
+     "surface_water_index": 0.031,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-03T12:58:12.005798+00:00",
+     "soil_moisture_anomaly": 0.433,
+     "surface_water_index": 0.048,
+     "source_id": "gpm-nasa"
+    }
+   ],
+   "citizen": [
+    {
+     "location_id": "ca_la_basin",
+     "reported_at": "2026-08-02T02:58:12.005798+00:00",
+     "category": "smoke_sighting",
+     "severity_hint": 1,
+     "text": "Smoke column reported near Los Angeles Basin Rim foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_la_basin",
+     "reported_at": "2026-08-02T05:58:12.005798+00:00",
+     "category": "smoke_sighting",
+     "severity_hint": 2,
+     "text": "Smoke column reported near Los Angeles Basin Rim foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_la_basin",
+     "reported_at": "2026-08-02T08:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 2,
+     "text": "Smoke column reported near Los Angeles Basin Rim foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_la_basin",
+     "reported_at": "2026-08-02T11:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 2,
+     "text": "Smoke column reported near Los Angeles Basin Rim foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_la_basin",
+     "reported_at": "2026-08-02T14:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 2,
+     "text": "Smoke column reported near Los Angeles Basin Rim foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_la_basin",
+     "reported_at": "2026-08-02T17:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 3,
+     "text": "Smoke column reported near Los Angeles Basin Rim foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_la_basin",
+     "reported_at": "2026-08-02T20:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 3,
+     "text": "Smoke column reported near Los Angeles Basin Rim foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_la_basin",
+     "reported_at": "2026-08-02T23:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 3,
+     "text": "Smoke column reported near Los Angeles Basin Rim foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_la_basin",
+     "reported_at": "2026-08-03T02:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 3,
+     "text": "Smoke column reported near Los Angeles Basin Rim foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_la_basin",
+     "reported_at": "2026-08-03T05:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 3,
+     "text": "Smoke column reported near Los Angeles Basin Rim foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_la_basin",
+     "reported_at": "2026-08-03T08:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 3,
+     "text": "Smoke column reported near Los Angeles Basin Rim foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_la_basin",
+     "reported_at": "2026-08-03T11:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 3,
+     "text": "Smoke column reported near Los Angeles Basin Rim foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    }
+   ],
+   "news": [
+    {
+     "captured_at": "2026-08-03T00:58:12.005798+00:00",
+     "tags": [
+      "wildfire",
+      "california",
+      "red-flag"
+     ],
+     "warning_level": 3,
+     "credibility": 0.9,
+     "source_id": "news-eom"
+    }
+   ]
+  },
+  {
+   "id": "ca_sd_backcountry",
+   "name": "San Diego Backcountry",
+   "region": "San Diego County",
+   "lat": 33.0138,
+   "lon": -116.7704,
+   "elevation_m": 620.0,
+   "drainage_capacity_mmh": 6.5,
+   "population": 640000,
+   "hazard_type": "wildfire",
+   "exposure": 1.3,
+   "weather": [
+    {
+     "captured_at": "2026-07-31T14:58:12.005798+00:00",
+     "rainfall_mm": 0.43,
+     "rain_forecast_mm": 1.71,
+     "humidity": 56.0,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-07-31T15:58:12.005798+00:00",
+     "rainfall_mm": 1.65,
+     "rain_forecast_mm": 2.35,
+     "humidity": 57.1,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-07-31T16:58:12.005798+00:00",
+     "rainfall_mm": 1.8,
+     "rain_forecast_mm": 1.16,
+     "humidity": 54.3,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-07-31T17:58:12.005798+00:00",
+     "rainfall_mm": 1.48,
+     "rain_forecast_mm": 1.3,
+     "humidity": 50.2,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-07-31T18:58:12.005798+00:00",
+     "rainfall_mm": 1.34,
+     "rain_forecast_mm": 1.16,
+     "humidity": 52.9,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-07-31T19:58:12.005798+00:00",
+     "rainfall_mm": 2.17,
+     "rain_forecast_mm": 0.96,
+     "humidity": 52.3,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-07-31T20:58:12.005798+00:00",
+     "rainfall_mm": 1.8,
+     "rain_forecast_mm": 0.74,
+     "humidity": 50.4,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-07-31T21:58:12.005798+00:00",
+     "rainfall_mm": 2.47,
+     "rain_forecast_mm": 0.53,
+     "humidity": 47.8,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-07-31T22:58:12.005798+00:00",
+     "rainfall_mm": 1.22,
+     "rain_forecast_mm": 0.22,
+     "humidity": 50.3,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-07-31T23:58:12.005798+00:00",
+     "rainfall_mm": 1.37,
+     "rain_forecast_mm": 0.0,
+     "humidity": 46.1,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T00:58:12.005798+00:00",
+     "rainfall_mm": 1.22,
+     "rain_forecast_mm": 0.27,
+     "humidity": 49.0,
+     "wind_kmh": 14.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T01:58:12.005798+00:00",
+     "rainfall_mm": 1.02,
+     "rain_forecast_mm": 0.35,
+     "humidity": 48.8,
+     "wind_kmh": 14.4,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T02:58:12.005798+00:00",
+     "rainfall_mm": 0.78,
+     "rain_forecast_mm": 0.33,
+     "humidity": 53.2,
+     "wind_kmh": 15.1,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T03:58:12.005798+00:00",
+     "rainfall_mm": 0.56,
+     "rain_forecast_mm": 0.0,
+     "humidity": 49.9,
+     "wind_kmh": 15.8,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T04:58:12.005798+00:00",
+     "rainfall_mm": 0.23,
+     "rain_forecast_mm": 0.67,
+     "humidity": 49.0,
+     "wind_kmh": 16.5,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T05:58:12.005798+00:00",
+     "rainfall_mm": 0.0,
+     "rain_forecast_mm": 1.34,
+     "humidity": 47.6,
+     "wind_kmh": 17.2,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T06:58:12.005798+00:00",
+     "rainfall_mm": 0.29,
+     "rain_forecast_mm": 1.23,
+     "humidity": 45.6,
+     "wind_kmh": 17.8,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T07:58:12.005798+00:00",
+     "rainfall_mm": 0.37,
+     "rain_forecast_mm": 0.47,
+     "humidity": 45.0,
+     "wind_kmh": 18.5,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T08:58:12.005798+00:00",
+     "rainfall_mm": 0.35,
+     "rain_forecast_mm": 0.98,
+     "humidity": 43.9,
+     "wind_kmh": 19.2,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T09:58:12.005798+00:00",
+     "rainfall_mm": 0.0,
+     "rain_forecast_mm": 1.06,
+     "humidity": 46.1,
+     "wind_kmh": 19.9,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T10:58:12.005798+00:00",
+     "rainfall_mm": 0.7,
+     "rain_forecast_mm": 1.78,
+     "humidity": 46.7,
+     "wind_kmh": 20.6,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T11:58:12.005798+00:00",
+     "rainfall_mm": 1.41,
+     "rain_forecast_mm": 1.61,
+     "humidity": 42.7,
+     "wind_kmh": 21.3,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T12:58:12.005798+00:00",
+     "rainfall_mm": 1.29,
+     "rain_forecast_mm": 1.69,
+     "humidity": 42.6,
+     "wind_kmh": 21.9,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T13:58:12.005798+00:00",
+     "rainfall_mm": 0.5,
+     "rain_forecast_mm": 2.25,
+     "humidity": 43.7,
+     "wind_kmh": 22.6,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T14:58:12.005798+00:00",
+     "rainfall_mm": 1.03,
+     "rain_forecast_mm": 2.05,
+     "humidity": 44.6,
+     "wind_kmh": 23.3,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T15:58:12.005798+00:00",
+     "rainfall_mm": 1.11,
+     "rain_forecast_mm": 1.61,
+     "humidity": 44.2,
+     "wind_kmh": 24.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T16:58:12.005798+00:00",
+     "rainfall_mm": 1.87,
+     "rain_forecast_mm": 2.04,
+     "humidity": 45.0,
+     "wind_kmh": 24.7,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T17:58:12.005798+00:00",
+     "rainfall_mm": 1.7,
+     "rain_forecast_mm": 0.95,
+     "humidity": 41.5,
+     "wind_kmh": 25.4,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T18:58:12.005798+00:00",
+     "rainfall_mm": 1.78,
+     "rain_forecast_mm": 1.6,
+     "humidity": 41.0,
+     "wind_kmh": 26.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T19:58:12.005798+00:00",
+     "rainfall_mm": 2.37,
+     "rain_forecast_mm": 0.55,
+     "humidity": 41.5,
+     "wind_kmh": 26.7,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T20:58:12.005798+00:00",
+     "rainfall_mm": 2.16,
+     "rain_forecast_mm": 1.45,
+     "humidity": 36.9,
+     "wind_kmh": 27.4,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T21:58:12.005798+00:00",
+     "rainfall_mm": 1.69,
+     "rain_forecast_mm": 0.78,
+     "humidity": 39.5,
+     "wind_kmh": 28.1,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T22:58:12.005798+00:00",
+     "rainfall_mm": 2.15,
+     "rain_forecast_mm": 0.29,
+     "humidity": 37.5,
+     "wind_kmh": 28.8,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-01T23:58:12.005798+00:00",
+     "rainfall_mm": 1.0,
+     "rain_forecast_mm": 0.22,
+     "humidity": 38.6,
+     "wind_kmh": 29.5,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T00:58:12.005798+00:00",
+     "rainfall_mm": 1.69,
+     "rain_forecast_mm": 0.0,
+     "humidity": 36.1,
+     "wind_kmh": 30.1,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T01:58:12.005798+00:00",
+     "rainfall_mm": 0.58,
+     "rain_forecast_mm": 0.08,
+     "humidity": 35.8,
+     "wind_kmh": 30.8,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T02:58:12.005798+00:00",
+     "rainfall_mm": 1.52,
+     "rain_forecast_mm": 0.37,
+     "humidity": 33.9,
+     "wind_kmh": 31.5,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T03:58:12.005798+00:00",
+     "rainfall_mm": 0.82,
+     "rain_forecast_mm": 0.16,
+     "humidity": 37.0,
+     "wind_kmh": 32.2,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T04:58:12.005798+00:00",
+     "rainfall_mm": 0.3,
+     "rain_forecast_mm": 0.71,
+     "humidity": 35.4,
+     "wind_kmh": 32.9,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T05:58:12.005798+00:00",
+     "rainfall_mm": 0.23,
+     "rain_forecast_mm": 0.59,
+     "humidity": 34.8,
+     "wind_kmh": 33.6,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T06:58:12.005798+00:00",
+     "rainfall_mm": 0.0,
+     "rain_forecast_mm": 0.53,
+     "humidity": 31.3,
+     "wind_kmh": 34.3,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T07:58:12.005798+00:00",
+     "rainfall_mm": 0.08,
+     "rain_forecast_mm": 1.11,
+     "humidity": 32.4,
+     "wind_kmh": 34.9,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T08:58:12.005798+00:00",
+     "rainfall_mm": 0.39,
+     "rain_forecast_mm": 0.89,
+     "humidity": 34.3,
+     "wind_kmh": 35.6,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T09:58:12.005798+00:00",
+     "rainfall_mm": 0.17,
+     "rain_forecast_mm": 1.08,
+     "humidity": 34.5,
+     "wind_kmh": 36.3,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T10:58:12.005798+00:00",
+     "rainfall_mm": 0.75,
+     "rain_forecast_mm": 0.86,
+     "humidity": 32.5,
+     "wind_kmh": 37.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T11:58:12.005798+00:00",
+     "rainfall_mm": 0.62,
+     "rain_forecast_mm": 1.79,
+     "humidity": 29.3,
+     "wind_kmh": 37.7,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T12:58:12.005798+00:00",
+     "rainfall_mm": 0.56,
+     "rain_forecast_mm": 0.97,
+     "humidity": 31.3,
+     "wind_kmh": 38.4,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T13:58:12.005798+00:00",
+     "rainfall_mm": 1.17,
+     "rain_forecast_mm": 2.38,
+     "humidity": 31.1,
+     "wind_kmh": 39.0,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T14:58:12.005798+00:00",
+     "rainfall_mm": 0.94,
+     "rain_forecast_mm": 1.64,
+     "humidity": 27.5,
+     "wind_kmh": 39.7,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T15:58:12.005798+00:00",
+     "rainfall_mm": 1.14,
+     "rain_forecast_mm": 1.91,
+     "humidity": 27.8,
+     "wind_kmh": 40.4,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T16:58:12.005798+00:00",
+     "rainfall_mm": 0.9,
+     "rain_forecast_mm": 2.02,
+     "humidity": 28.5,
+     "wind_kmh": 41.1,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T17:58:12.005798+00:00",
+     "rainfall_mm": 1.88,
+     "rain_forecast_mm": 1.15,
+     "humidity": 29.3,
+     "wind_kmh": 41.8,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T18:58:12.005798+00:00",
+     "rainfall_mm": 1.02,
+     "rain_forecast_mm": 1.2,
+     "humidity": 26.6,
+     "wind_kmh": 42.5,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T19:58:12.005798+00:00",
+     "rainfall_mm": 2.5,
+     "rain_forecast_mm": 0.34,
+     "humidity": 22.7,
+     "wind_kmh": 43.1,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T20:58:12.005798+00:00",
+     "rainfall_mm": 1.72,
+     "rain_forecast_mm": 0.65,
+     "humidity": 24.6,
+     "wind_kmh": 43.8,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T21:58:12.005798+00:00",
+     "rainfall_mm": 2.01,
+     "rain_forecast_mm": 1.18,
+     "humidity": 26.5,
+     "wind_kmh": 44.5,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T22:58:12.005798+00:00",
+     "rainfall_mm": 2.12,
+     "rain_forecast_mm": 0.19,
+     "humidity": 23.7,
+     "wind_kmh": 45.2,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-02T23:58:12.005798+00:00",
+     "rainfall_mm": 1.21,
+     "rain_forecast_mm": 0.15,
+     "humidity": 22.7,
+     "wind_kmh": 45.9,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T00:58:12.005798+00:00",
+     "rainfall_mm": 1.26,
+     "rain_forecast_mm": 0.44,
+     "humidity": 21.6,
+     "wind_kmh": 46.6,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T01:58:12.005798+00:00",
+     "rainfall_mm": 0.36,
+     "rain_forecast_mm": 0.0,
+     "humidity": 21.5,
+     "wind_kmh": 47.3,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T02:58:12.005798+00:00",
+     "rainfall_mm": 0.69,
+     "rain_forecast_mm": 0.1,
+     "humidity": 21.3,
+     "wind_kmh": 47.9,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T03:58:12.005798+00:00",
+     "rainfall_mm": 1.24,
+     "rain_forecast_mm": 0.32,
+     "humidity": 22.1,
+     "wind_kmh": 47.6,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T04:58:12.005798+00:00",
+     "rainfall_mm": 0.2,
+     "rain_forecast_mm": 1.06,
+     "humidity": 18.2,
+     "wind_kmh": 47.1,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T05:58:12.005798+00:00",
+     "rainfall_mm": 0.16,
+     "rain_forecast_mm": 0.7,
+     "humidity": 18.2,
+     "wind_kmh": 46.5,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T06:58:12.005798+00:00",
+     "rainfall_mm": 0.46,
+     "rain_forecast_mm": 1.51,
+     "humidity": 18.0,
+     "wind_kmh": 45.9,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T07:58:12.005798+00:00",
+     "rainfall_mm": 0.0,
+     "rain_forecast_mm": 0.95,
+     "humidity": 21.7,
+     "wind_kmh": 45.4,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T08:58:12.005798+00:00",
+     "rainfall_mm": 0.11,
+     "rain_forecast_mm": 0.95,
+     "humidity": 21.0,
+     "wind_kmh": 44.8,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T09:58:12.005798+00:00",
+     "rainfall_mm": 0.33,
+     "rain_forecast_mm": 0.95,
+     "humidity": 19.3,
+     "wind_kmh": 44.3,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T10:58:12.005798+00:00",
+     "rainfall_mm": 1.11,
+     "rain_forecast_mm": 0.95,
+     "humidity": 23.3,
+     "wind_kmh": 43.7,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T11:58:12.005798+00:00",
+     "rainfall_mm": 0.74,
+     "rain_forecast_mm": 0.95,
+     "humidity": 23.3,
+     "wind_kmh": 43.1,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T12:58:12.005798+00:00",
+     "rainfall_mm": 1.59,
+     "rain_forecast_mm": 0.95,
+     "humidity": 22.6,
+     "wind_kmh": 42.6,
+     "source_id": "noaa-firewx"
+    },
+    {
+     "captured_at": "2026-08-03T13:58:12.005798+00:00",
+     "rainfall_mm": 1.0,
+     "rain_forecast_mm": 0.95,
+     "humidity": 21.4,
+     "wind_kmh": 42.0,
+     "source_id": "noaa-firewx"
+    }
+   ],
+   "satellite": [
+    {
+     "captured_at": "2026-07-31T14:58:12.005798+00:00",
+     "soil_moisture_anomaly": 4.293,
+     "surface_water_index": 0.477,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-07-31T16:58:12.005798+00:00",
+     "soil_moisture_anomaly": 4.226,
+     "surface_water_index": 0.47,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-07-31T18:58:12.005798+00:00",
+     "soil_moisture_anomaly": 3.764,
+     "surface_water_index": 0.418,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-07-31T20:58:12.005798+00:00",
+     "soil_moisture_anomaly": 3.74,
+     "surface_water_index": 0.416,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-07-31T22:58:12.005798+00:00",
+     "soil_moisture_anomaly": 3.824,
+     "surface_water_index": 0.425,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-01T00:58:12.005798+00:00",
+     "soil_moisture_anomaly": 3.408,
+     "surface_water_index": 0.379,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-01T02:58:12.005798+00:00",
+     "soil_moisture_anomaly": 3.681,
+     "surface_water_index": 0.409,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-08-01T04:58:12.005798+00:00",
+     "soil_moisture_anomaly": 3.735,
+     "surface_water_index": 0.415,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-01T06:58:12.005798+00:00",
+     "soil_moisture_anomaly": 3.084,
+     "surface_water_index": 0.343,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-01T08:58:12.005798+00:00",
+     "soil_moisture_anomaly": 3.126,
+     "surface_water_index": 0.347,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-08-01T10:58:12.005798+00:00",
+     "soil_moisture_anomaly": 3.005,
+     "surface_water_index": 0.334,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-01T12:58:12.005798+00:00",
+     "soil_moisture_anomaly": 3.151,
+     "surface_water_index": 0.35,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-01T14:58:12.005798+00:00",
+     "soil_moisture_anomaly": 2.742,
+     "surface_water_index": 0.305,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-08-01T16:58:12.005798+00:00",
+     "soil_moisture_anomaly": 2.786,
+     "surface_water_index": 0.31,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-01T18:58:12.005798+00:00",
+     "soil_moisture_anomaly": 2.723,
+     "surface_water_index": 0.303,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-01T20:58:12.005798+00:00",
+     "soil_moisture_anomaly": 2.464,
+     "surface_water_index": 0.274,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-08-01T22:58:12.005798+00:00",
+     "soil_moisture_anomaly": 2.47,
+     "surface_water_index": 0.274,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-02T00:58:12.005798+00:00",
+     "soil_moisture_anomaly": 2.439,
+     "surface_water_index": 0.271,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-02T02:58:12.005798+00:00",
+     "soil_moisture_anomaly": 2.039,
+     "surface_water_index": 0.227,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-08-02T04:58:12.005798+00:00",
+     "soil_moisture_anomaly": 2.108,
+     "surface_water_index": 0.234,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-02T06:58:12.005798+00:00",
+     "soil_moisture_anomaly": 1.446,
+     "surface_water_index": 0.161,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-02T08:58:12.005798+00:00",
+     "soil_moisture_anomaly": 1.977,
+     "surface_water_index": 0.22,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-08-02T10:58:12.005798+00:00",
+     "soil_moisture_anomaly": 2.02,
+     "surface_water_index": 0.224,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-02T12:58:12.005798+00:00",
+     "soil_moisture_anomaly": 1.259,
+     "surface_water_index": 0.14,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-02T14:58:12.005798+00:00",
+     "soil_moisture_anomaly": 1.376,
+     "surface_water_index": 0.153,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-08-02T16:58:12.005798+00:00",
+     "soil_moisture_anomaly": 1.558,
+     "surface_water_index": 0.173,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-02T18:58:12.005798+00:00",
+     "soil_moisture_anomaly": 1.508,
+     "surface_water_index": 0.168,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-02T20:58:12.005798+00:00",
+     "soil_moisture_anomaly": 1.271,
+     "surface_water_index": 0.141,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-08-02T22:58:12.005798+00:00",
+     "soil_moisture_anomaly": 0.886,
+     "surface_water_index": 0.098,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-03T00:58:12.005798+00:00",
+     "soil_moisture_anomaly": 0.746,
+     "surface_water_index": 0.083,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-03T02:58:12.005798+00:00",
+     "soil_moisture_anomaly": 0.638,
+     "surface_water_index": 0.071,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-08-03T04:58:12.005798+00:00",
+     "soil_moisture_anomaly": 0.402,
+     "surface_water_index": 0.045,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-03T06:58:12.005798+00:00",
+     "soil_moisture_anomaly": 0.346,
+     "surface_water_index": 0.038,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-03T08:58:12.005798+00:00",
+     "soil_moisture_anomaly": 0.51,
+     "surface_water_index": 0.057,
+     "source_id": "viiirs-thermal"
+    },
+    {
+     "captured_at": "2026-08-03T10:58:12.005798+00:00",
+     "soil_moisture_anomaly": 0.642,
+     "surface_water_index": 0.071,
+     "source_id": "gpm-nasa"
+    },
+    {
+     "captured_at": "2026-08-03T12:58:12.005798+00:00",
+     "soil_moisture_anomaly": 0.69,
+     "surface_water_index": 0.077,
+     "source_id": "gpm-nasa"
+    }
+   ],
+   "citizen": [
+    {
+     "location_id": "ca_sd_backcountry",
+     "reported_at": "2026-08-02T02:58:12.005798+00:00",
+     "category": "smoke_sighting",
+     "severity_hint": 2,
+     "text": "Smoke column reported near San Diego Backcountry foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_sd_backcountry",
+     "reported_at": "2026-08-02T05:58:12.005798+00:00",
+     "category": "smoke_sighting",
+     "severity_hint": 2,
+     "text": "Smoke column reported near San Diego Backcountry foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_sd_backcountry",
+     "reported_at": "2026-08-02T08:58:12.005798+00:00",
+     "category": "smoke_sighting",
+     "severity_hint": 2,
+     "text": "Smoke column reported near San Diego Backcountry foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_sd_backcountry",
+     "reported_at": "2026-08-02T11:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 2,
+     "text": "Smoke column reported near San Diego Backcountry foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_sd_backcountry",
+     "reported_at": "2026-08-02T14:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 3,
+     "text": "Smoke column reported near San Diego Backcountry foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_sd_backcountry",
+     "reported_at": "2026-08-02T17:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 2,
+     "text": "Smoke column reported near San Diego Backcountry foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_sd_backcountry",
+     "reported_at": "2026-08-02T20:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 3,
+     "text": "Smoke column reported near San Diego Backcountry foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_sd_backcountry",
+     "reported_at": "2026-08-02T23:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 3,
+     "text": "Smoke column reported near San Diego Backcountry foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_sd_backcountry",
+     "reported_at": "2026-08-03T02:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 3,
+     "text": "Smoke column reported near San Diego Backcountry foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_sd_backcountry",
+     "reported_at": "2026-08-03T05:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 3,
+     "text": "Smoke column reported near San Diego Backcountry foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_sd_backcountry",
+     "reported_at": "2026-08-03T08:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 3,
+     "text": "Smoke column reported near San Diego Backcountry foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    },
+    {
+     "location_id": "ca_sd_backcountry",
+     "reported_at": "2026-08-03T11:58:12.005798+00:00",
+     "category": "flame_sighting",
+     "severity_hint": 3,
+     "text": "Smoke column reported near San Diego Backcountry foothills; ember cast on ridgeline wind",
+     "verified": true,
+     "source_id": "civic-reports"
+    }
+   ],
+   "news": [
+    {
+     "captured_at": "2026-08-03T00:58:12.005798+00:00",
+     "tags": [
+      "wildfire",
+      "california",
+      "red-flag"
+     ],
+     "warning_level": 3,
+     "credibility": 0.9,
+     "source_id": "news-eom"
+    }
+   ]
+  }
+ ]
+}

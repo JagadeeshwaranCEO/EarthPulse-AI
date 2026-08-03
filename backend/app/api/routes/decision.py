@@ -10,6 +10,7 @@ from app.core.models import Location
 from app.services.decision_optimizer import (
     DecisionOptimizer, ResourceInventory, ZoneRisk, build_execution_timeline,
 )
+from app.services.comparative_analysis import comparative_analysis
 from app.services.environmental_memory import memory_view
 from app.services.mission_brief import build_mission_brief
 from app.services.risk_evolution import evolution as risk_evolution
@@ -77,7 +78,7 @@ def memory(location_id: str, db: Session = Depends(get_db)):
         raise HTTPException(404, "location not found")
     outputs, _ = build_agent_outputs(db, location_id)
     components = outputs.get("risk_fusion", {}).get("components", {})
-    view = memory_view(location_id, components)
+    view = memory_view(location_id, components, loc.hazard_type)
     view["location_name"] = loc.name
     view["components_now"] = {k: round(v, 3) for k, v in components.items()}
     view["provenance"] = {
@@ -110,7 +111,7 @@ def mission_brief(inventory: dict | None = None, db: Session = Depends(get_db)):
     loc = db.get(Location, db.query(Location).first().id)
     outputs, _ = build_agent_outputs(db, loc.id)
     components = outputs.get("risk_fusion", {}).get("components", {})
-    mem = memory_view(loc.id, components)
+    mem = memory_view(loc.id, components, loc.hazard_type)
     ev = risk_evolution(db, loc, lookback_h=24, horizon_h=24)
     recommended.execution_timeline = build_execution_timeline(ev["peak_at_hour"])
     trust = compute_trust(db, loc.id)
@@ -126,6 +127,17 @@ def mission_brief(inventory: dict | None = None, db: Session = Depends(get_db)):
         memory_line=mem["headline"],
         trust=trust,
     )
+
+
+@router.get("/compare/{location_id}")
+def compare(location_id: str, db: Session = Depends(get_db)):
+    """Comparative live analysis — current telemetry vs the historical record."""
+    if db.get(Location, location_id) is None:
+        raise HTTPException(404, "location not found")
+    try:
+        return comparative_analysis(db, location_id)
+    except Exception as exc:
+        raise HTTPException(422, f"comparative analysis failed: {exc}")
 
 
 @router.get("/trust/{location_id}")

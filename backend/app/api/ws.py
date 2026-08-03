@@ -23,8 +23,9 @@ def _payload() -> dict:
     from app.api.routes.dashboard import get_dashboard
     from app.core.db import SessionLocal
 
-    db = SessionLocal()
+    db = None
     try:
+        db = SessionLocal()
         dash = get_dashboard(db)
         dumped = dash.model_dump(mode="json")
         return {
@@ -36,10 +37,11 @@ def _payload() -> dict:
             "top_risks": dumped["risks"][:6],
             "tick_seconds": dumped["tick_seconds"],
         }
-    except Exception as exc:  # seed not ready yet
+    except Exception as exc:  # seed not ready / engine disposed during teardown
         return {"type": "tick", "time": datetime.now(timezone.utc).isoformat(), "error": str(exc)}
     finally:
-        db.close()
+        if db is not None:
+            db.close()
 
 
 async def broadcaster() -> None:

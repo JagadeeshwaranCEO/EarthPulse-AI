@@ -81,22 +81,19 @@ class Forecaster:
 
 
 def probability_from_components(components: dict[str, float]) -> float:
-    """Single canonical risk probability for flood from fused 0-12 components.
+    """Canonical flood risk probability from fused 0-12 components.
 
-    Weights encode the causal model (attribution): headroom deficit binds hardest,
-    rain drives onset, soil moisture saturates absorption, drainage stress and
-    citizen pressure modulate. Calibrated (scale=52) so the Chennai storm profile
-    yields: warning p~0.3-0.5, crisis p>=0.75, easing p<0.6 — and zones spread
-    0.15-0.9 by elevation exposure.
+    Kept as the flood-specific entry point for back-compat; the pipeline
+    dispatches through `probability_for` so every hazard owns its formula.
     """
-    signal = (
-        1.0 * components.get("rain_intensity", 0)
-        + 0.8 * components.get("soil_moisture", 0)
-        + 1.2 * components.get("headroom_deficit", 0)
-        + 0.7 * components.get("drainage_stress", 0)
-        + 0.3 * components.get("citizen_pressure", 0)
-    )
-    return DEFAULT_FORECASTER.to_probability(signal, scale=52.0)
+    return probability_for("flood", components)
+
+
+def probability_for(hazard: str | None, components: dict[str, float]) -> float:
+    """Hazard-templated risk probability — dispatch via the hazard registry."""
+    from app.hazards.registry import get_hazard
+
+    return get_hazard(hazard).probability(components)
 
 
 DEFAULT_FORECASTER = Forecaster()

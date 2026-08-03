@@ -9,10 +9,13 @@ export function useMissionControl() {
   const [wsLive, setWsLive] = useState(false);
   const [clock, setClock] = useState<{ hour: number; max: number } | null>(null);
   const wsRef = useRef<WebSocket | null>(null);
+  const scopeRef = useRef<string>("chennai");
 
   const refresh = useCallback(async () => {
     try {
-      setDash(await api.dashboard());
+      const d = await api.dashboard();
+      scopeRef.current = d.scope ?? "chennai";
+      setDash(d);
     } catch {
       /* backend warming up */
     }
@@ -30,7 +33,7 @@ export function useMissionControl() {
     ws.onmessage = (e) => {
       const msg = JSON.parse(e.data);
       if (msg.type === "tick" && msg.pulse) {
-        setDash({ pulse: msg.pulse, alerts: msg.alerts, risks: msg.top_risks, crisis: msg.crisis, time: msg.time, tick_seconds: msg.tick_seconds });
+        setDash({ pulse: msg.pulse, alerts: msg.alerts, risks: msg.top_risks, crisis: msg.crisis, time: msg.time, tick_seconds: msg.tick_seconds, scope: scopeRef.current });
         setWsLive(true);
       }
     };

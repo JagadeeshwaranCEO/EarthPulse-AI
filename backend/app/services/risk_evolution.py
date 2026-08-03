@@ -12,7 +12,6 @@ from __future__ import annotations
 from datetime import datetime, timezone
 
 from app.core.models import Location, SatelliteFrame, WeatherSnapshot
-from app.ml.forecaster import probability_from_components
 from app.services.ticker import current_hour
 
 
@@ -33,30 +32,29 @@ def _satellite_soil(frames: list[dict], hour: int) -> float:
     return min(12.0, max(0.0, last * (0.94 ** over)))
 
 
-def components_at_hour(weather: list[dict], sat: list[dict], hour: float,
-                       exposure: float, cap_mmh: float) -> dict[str, float]:
-    """Replicates pipeline component math for a single simulated hour."""
+def _window(weather: list[dict], hour: float) -> list[dict]:
+    """Weather window at a simulated hour — matches orchestrator consumption."""
     h = int(hour)
     n = min(72, max(1, h))
     window = weather[max(0, n - 6):n]
     if h > 72 and weather:
         last = weather[-1]
         for k in range(1, min(h - 72, 8) + 1):
-            window.append({**last, "rainfall_mm": last["rainfall_mm"] * (0.86 ** k)})
+            window.append({**last, "rainfall_mm": last["rainfall_mm"] * (0.86 ** k),
+                           "wind_kmh": last.get("wind_kmh", 0)})
+    return window
 
-    acc = sum(w["rainfall_mm"] for w in window[-6:])
-    rain = min(12.0, acc / 16.0 * exposure)
-    headroom = min(12.0, acc / 26.0 * exposure)
-    stress = min(12.0, max(0.0, (acc / max(0.5, cap_mmh) - 8.0) / 3.0 * exposure))
-    citizen = min(8.0, max(0.0, (stress - 9.0) * 0.8))
-    soil = _satellite_soil(sat, h)
-    return {
-        "rain_intensity": round(rain, 3),
-        "soil_moisture": round(soil, 3),
-        "headroom_deficit": round(headroom, 3),
-        "drainage_stress": round(stress, 3),
-        "citizen_pressure": round(citizen, 3),
-    }
+
+def hour_components(hazard_id: str, weather: list[dict], sat: list[dict], hour: float,
+                    exposure: float, cap_mmh: float) -> dict[str, float]:
+    """Hazard-templated components at a simulated hour."""
+    from app.hazards.registry import get_hazard
+
+    hazard = get_hazard(hazard_id)
+    soil = _satellite_soil(sat, hour)
+    if hazard.hourly:
+        return hazard.hourly(_window(weather, hour), soil, exposure, cap_mmh)
+    return hazard.fusion({})
 
 
 def _level(p: float) -> str:
@@ -65,12 +63,15 @@ def _level(p: float) -> str:
 
 def evolution(db, location: Location, lookback_h: int = 48, horizon_h: int = 24) -> dict:
     """Hourly risk curve from (current − lookback) → (current + horizon)."""
+    from app.hazards.registry import get_hazard
+
+    hazard = get_hazard(location.hazard_type)
     hour = current_hour()
     exposure = (location.attributes or {}).get("exposure", 1.0)
     cap = location.drainage_capacity_mmh
 
     weather = [
-        {"rainfall_mm": w.rainfall_mm} for w in (
+        {"rainfall_mm": w.rainfall_mm, "humidity": w.humidity, "wind_kmh": w.wind_kmh} for w in (
             db.query(WeatherSnapshot).filter_by(location_id=location.id)
             .order_by(WeatherSnapshot.captured_at).all())
     ]
@@ -83,13 +84,13 @@ def evolution(db, location: Location, lookback_h: int = 48, horizon_h: int = 24)
     start = max(0, int(hour) - lookback_h)
     points = []
     for h in range(start, int(hour) + horizon_h + 1):
-        comps = components_at_hour(weather, sat, h, exposure, cap)
-        p = probability_from_components(comps)
+        comps = hour_components(hazard.id, weather, sat, h, exposure, cap)
+        p = hazard.probability(comps)
         points.append({
             "hour": h,
             "simulated_at": datetime.now(timezone.utc),
             "risk_probability": round(p, 3),
-            "level": _level(p),
+            "level": hazard.level(p),
             "components": comps,
             "is_now": h == int(hour),
         })

@@ -18,10 +18,6 @@ from app.services.llm import llm_mode
 router = APIRouter(prefix="/risks", tags=["risks"])
 
 
-def _level(p: float) -> str:
-    return "critical" if p >= 0.75 else "high" if p >= 0.55 else "moderate" if p >= 0.3 else "low"
-
-
 @router.get("", response_model=list[RiskSummary])
 def list_risks(db: Session = Depends(get_db)):
     return live_risk_summaries(db)
@@ -44,7 +40,7 @@ def get_risk(location_id: str, db: Session = Depends(get_db)):
 
     pred = (
         db.query(Prediction)
-        .filter_by(location_id=location_id, event_type="flood")
+        .filter_by(location_id=location_id, event_type=loc.hazard_type)
         .order_by(desc(Prediction.generated_at))
         .first()
     )
@@ -54,7 +50,7 @@ def get_risk(location_id: str, db: Session = Depends(get_db)):
 
     return RiskDetail(
         location_id=loc.id, location_name=loc.name, lat=loc.lat, lon=loc.lon,
-        event_type="flood", level=summary["level"],
+        event_type=loc.hazard_type, level=summary["level"],
         risk_probability=summary["risk_probability"], severity=summary["severity"],
         confidence=summary["confidence"],
         trend=summary["trend"],
@@ -113,9 +109,12 @@ def get_attribution(location_id: str, db: Session = Depends(get_db)):
 
 @router.get("/{location_id}/evidence", response_model=list[Evidence])
 def get_evidence(location_id: str, db: Session = Depends(get_db)):
+    loc = db.get(Location, location_id)
+    if loc is None:
+        raise HTTPException(404, "location not found")
     pred = (
         db.query(Prediction)
-        .filter_by(location_id=location_id, event_type="flood")
+        .filter_by(location_id=location_id, event_type=loc.hazard_type)
         .order_by(desc(Prediction.generated_at))
         .first()
     )
@@ -127,10 +126,13 @@ def get_evidence(location_id: str, db: Session = Depends(get_db)):
 
 @router.get("/{location_id}/recommendations")
 def get_recommendations(location_id: str, db: Session = Depends(get_db)):
+    loc = db.get(Location, location_id)
+    if loc is None:
+        raise HTTPException(404, "location not found")
     outputs, _ = build_agent_outputs(db, location_id)
     pred = (
         db.query(Prediction)
-        .filter_by(location_id=location_id, event_type="flood")
+        .filter_by(location_id=location_id, event_type=loc.hazard_type)
         .order_by(desc(Prediction.generated_at))
         .first()
     )

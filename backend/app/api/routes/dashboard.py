@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.agents.orchestrator import build_agent_outputs
+from app.config import get_settings
 from app.core.db import get_db
 from app.core.models import Alert, Location, PulseScore
 from app.ml.pulse import compute_pulse
@@ -15,12 +16,10 @@ from app.services.ticker import get_state, set_hour
 router = APIRouter(tags=["dashboard"])
 
 
-def _level(p: float) -> str:
-    return "critical" if p >= 0.75 else "high" if p >= 0.55 else "moderate" if p >= 0.3 else "low"
-
-
 def live_risk_summaries(db: Session) -> list[dict]:
     """Risk summaries computed live from the pipeline — follows the sim clock."""
+    from app.hazards.levels import level_for
+
     rows = []
     for loc in db.query(Location).all():
         outputs, _ = build_agent_outputs(db, loc.id)
@@ -32,10 +31,11 @@ def live_risk_summaries(db: Session) -> list[dict]:
         rows.append({
             "location_id": loc.id,
             "location_name": loc.name,
+            "region": loc.region,
             "lat": loc.lat,
             "lon": loc.lon,
-            "event_type": "flood",
-            "level": _level(pred.get("risk_probability", 0)),
+            "event_type": loc.hazard_type,
+            "level": level_for(loc.hazard_type, pred.get("risk_probability", 0)),
             "risk_probability": pred.get("risk_probability", 0),
             "severity": pred.get("severity", 0),
             "confidence": pred.get("confidence", 0),
@@ -75,6 +75,7 @@ def get_dashboard(db: Session = Depends(get_db)):
         crisis=any(r["level"] == "critical" for r in top_risks),
         time=datetime.now(timezone.utc),
         tick_seconds=3.0,
+        scope=get_settings().scope,
     )
 
 

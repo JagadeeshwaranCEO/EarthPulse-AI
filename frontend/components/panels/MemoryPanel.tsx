@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { api, type Evolution, type MemoryView, type ScientistExplanation } from "@/lib/api";
+import { api, type CompareAnalysis, type Evolution, type MemoryView, type ScientistExplanation } from "@/lib/api";
 import { Badge, Panel } from "@/components/ui/Panel";
 import { EvolutionChart } from "@/components/viz/EvolutionChart";
 
@@ -9,15 +9,18 @@ export function MemoryPanel({ riskId }: { riskId: string }) {
   const [mem, setMem] = useState<MemoryView | null>(null);
   const [ev, setEv] = useState<Evolution | null>(null);
   const [scientist, setScientist] = useState<ScientistExplanation | null>(null);
-  const [mode, setMode] = useState<"operator" | "scientist">("operator");
+  const [cmp, setCmp] = useState<CompareAnalysis | null>(null);
+  const [mode, setMode] = useState<"operator" | "compare" | "scientist">("operator");
 
   useEffect(() => {
     let alive = true;
     setMode("operator");
     setScientist(null);
+    setCmp(null);
     api.memory(riskId).then((m) => alive && setMem(m)).catch(() => {});
     api.evolution(riskId).then((e) => alive && setEv(e)).catch(() => {});
     api.scientist(riskId).then((s) => alive && setScientist(s)).catch(() => {});
+    api.compare(riskId).then((c) => alive && setCmp(c)).catch(() => {});
     return () => { alive = false; };
   }, [riskId]);
 
@@ -27,12 +30,98 @@ export function MemoryPanel({ riskId }: { riskId: string }) {
       right={
         <div className="flex items-center gap-1 rounded border border-edge p-0.5">
           <button onClick={() => setMode("operator")} className={`telemetry rounded px-1.5 py-0.5 text-[9px] uppercase tracking-widest ${mode === "operator" ? "bg-accent-blue/20 text-accent-blue" : "text-mono"}`}>operator</button>
+          <button onClick={() => setMode("compare")} className={`telemetry rounded px-1.5 py-0.5 text-[9px] uppercase tracking-widest ${mode === "compare" ? "bg-accent-red/20 text-accent-red" : "text-mono"}`}>live analysis</button>
           <button onClick={() => setMode("scientist")} className={`telemetry rounded px-1.5 py-0.5 text-[9px] uppercase tracking-widest ${mode === "scientist" ? "bg-accent-amber/20 text-accent-amber" : "text-mono"}`}>explain like a scientist</button>
         </div>
       }
     >
-      {mode === "scientist" ? <ScientistPane s={scientist} /> : <OperatorPane mem={mem} ev={ev} />}
+      {mode === "scientist" ? <ScientistPane s={scientist} /> : mode === "compare" ? <ComparePane cmp={cmp} /> : <OperatorPane mem={mem} ev={ev} />}
     </Panel>
+  );
+}
+
+const TONE_UI = {
+  red: { border: "border-accent-red/50", text: "text-accent-red", bg: "bg-accent-red/10" },
+  amber: { border: "border-accent-amber/50", text: "text-accent-amber", bg: "bg-accent-amber/10" },
+  blue: { border: "border-accent-blue/50", text: "text-accent-blue", bg: "bg-accent-blue/10" },
+} as const;
+
+function ComparePane({ cmp }: { cmp: CompareAnalysis | null }) {
+  const [showReport, setShowReport] = useState(false);
+  if (!cmp) return <p className="p-4 text-xs text-mono">running live comparative analysis…</p>;
+  const tone = TONE_UI[cmp.verdict.tone];
+  return (
+    <div className="space-y-3 p-3">
+      <div className={`rounded border ${tone.border} ${tone.bg} p-2.5`}>
+        <div className="flex items-center justify-between">
+          <span className={`telemetry text-[9px] uppercase tracking-widest ${tone.text}`}>verdict · {cmp.verdict.tone}</span>
+          <Badge tone={cmp.verdict.tone === "red" ? "red" : cmp.verdict.tone === "amber" ? "amber" : "blue"}>Δ24h {cmp.verdict.delta_24h >= 0 ? "+" : ""}{(cmp.verdict.delta_24h * 100).toFixed(0)}pp</Badge>
+        </div>
+        <p className="mt-1.5 text-[12px] font-medium leading-snug text-slate-100">{cmp.verdict.title}</p>
+        <p className="mt-1 text-[10px] leading-snug text-slate-300">{cmp.verdict.advice}</p>
+      </div>
+
+      <div className="grid grid-cols-3 gap-2">
+        <div className="rounded bg-panel p-2">
+          <div className="telemetry text-[9px] uppercase tracking-widest text-mono">live now</div>
+          <div className="mt-1 text-sm font-semibold text-slate-100">{(cmp.live.risk_probability * 100).toFixed(0)}%</div>
+          <div className="text-[9px] uppercase text-mono">{cmp.live.level} · h{cmp.live.hour}</div>
+        </div>
+        <div className="rounded bg-panel p-2">
+          <div className="telemetry text-[9px] uppercase tracking-widest text-mono">24h trajectory</div>
+          <div className={`mt-1 text-sm font-semibold ${cmp.evolution.trend === "rising" ? "text-accent-red" : cmp.evolution.trend === "easing" ? "text-accent-green" : "text-slate-100"}`}>{cmp.evolution.trend}</div>
+          <div className="text-[9px] uppercase text-mono">peak {(cmp.evolution.peak_probability * 100).toFixed(0)}% @ h{cmp.evolution.peak_at_hour}</div>
+        </div>
+        <div className="rounded bg-panel p-2">
+          <div className="telemetry text-[9px] uppercase tracking-widest text-mono">history / 10y</div>
+          <div className="mt-1 text-sm font-semibold text-slate-100">{cmp.history.events_10y} events</div>
+          <div className="text-[9px] uppercase text-mono">{cmp.analogues.length} analogue(s) pulled</div>
+        </div>
+      </div>
+
+      {cmp.previous_records.length > 0 && (
+        <div className="rounded border border-edge bg-panel2 p-2">
+          <div className="telemetry text-[9px] uppercase tracking-widest text-mono">previous saved predictions · same theatre</div>
+          <div className="mt-1.5 flex flex-wrap gap-1.5">
+            {cmp.previous_records.map((r, i) => (
+              <span key={i} className="rounded bg-panel px-2 py-1 telemetry text-[9px] text-slate-300">
+                {new Date(r.generated_at).toLocaleString(undefined, { hour: "2-digit", minute: "2-digit" })} · {(r.risk_probability * 100).toFixed(0)}%
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {cmp.analogues.length > 0 && (
+        <div className="rounded border border-edge bg-panel2 p-2">
+          <div className="telemetry text-[9px] uppercase tracking-widest text-mono">analogue matches · with live telemetry</div>
+          <div className="mt-1.5 space-y-1.5">
+            {cmp.analogues.map((a) => (
+              <div key={a.event + a.date} className="flex items-center justify-between gap-2 rounded bg-panel px-2 py-1.5">
+                <div className="min-w-0">
+                  <div className="truncate text-[11px] text-slate-200">{a.event} · {a.date}</div>
+                  <div className="truncate text-[9px] text-mono">{a.matching_drivers} drivers matched · {a.divergence}</div>
+                </div>
+                <div className="text-right">
+                  <div className="telemetry text-[11px] font-semibold text-accent-amber">{(a.similarity * 100).toFixed(0)}%</div>
+                  <div className="text-[9px] uppercase text-mono">{a.reliability}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <button
+        onClick={() => setShowReport(!showReport)}
+        className="telemetry w-full rounded border border-edge bg-panel px-2 py-1.5 text-[10px] uppercase tracking-widest text-accent-blue hover:border-accent-blue/60"
+      >
+        {showReport ? "hide" : "show"} briefing report · markdown
+      </button>
+      {showReport && (
+        <pre className="whitespace-pre-wrap break-words rounded border border-edge bg-panel p-2.5 font-mono text-[9px] leading-relaxed text-slate-300">{cmp.markdown}</pre>
+      )}
+    </div>
   );
 }
 
@@ -149,7 +238,7 @@ function ScientistPane({ s }: { s: ScientistExplanation | null }) {
         <div className="space-y-1.5">
           {s.dominant_factors.map((f) => (
             <div key={f.feature} className="flex items-center gap-2">
-              <span className="w-28 shrink-0 truncate text-[11px] text-slate-300">{f.feature.replace(/_/g, " ")}</span>
+              <span className="w-36 shrink-0 truncate text-[11px] text-slate-300">{f.feature.replace(/_/g, " ")}</span>
               <div className="h-2 flex-1 overflow-hidden rounded bg-panel2">
                 <div className="h-full rounded bg-accent-amber" style={{ width: `${Math.min(100, f.influence * 100)}%` }} />
               </div>

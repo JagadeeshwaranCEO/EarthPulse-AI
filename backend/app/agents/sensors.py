@@ -33,25 +33,27 @@ class SatelliteAgent(BaseAgent):
 
 class WeatherAgent(BaseAgent):
     name = "weather"
-    mission = "Nowcast rainfall accumulation and forecast pressure from gauge + forecast series."
+    mission = "Nowcast rainfall accumulation, wind and humidity pressure from gauge + forecast series."
     inputs = ["weather_snapshots"]
-    outputs = ["rain_intensity", "rain_forecast_mm", "humidity"]
+    outputs = ["rain_intensity", "rain_forecast_mm", "humidity", "wind_kmh", "rain6_mm"]
     failure_mode = "missing gauge → use forecast only with reduced confidence"
 
     def run(self, ctx: AgentContext) -> AgentResult:
         snaps = ctx.payload.get("weather_snapshots") or []
         if not snaps:
-            return AgentResult(confidence=0.15, failure="no weather snapshots", outputs={"rain_intensity": 0, "rain_forecast_mm": 0, "humidity": 0})
+            return AgentResult(confidence=0.15, failure="no weather snapshots", outputs={"rain_intensity": 0, "rain_forecast_mm": 0, "humidity": 0, "wind_kmh": 0, "rain6_mm": 0})
         recent = snaps[-6:]
         accumulation = sum(s.get("rainfall_mm", 0) for s in recent)
         exposure = ctx.payload.get("exposure", 1.0)
         intensity = min(12.0, accumulation / 16.0 * exposure)  # 6h accumulation vs design stress
         forecast = snaps[-1].get("rain_forecast_mm", 0.0)
         humidity = snaps[-1].get("humidity", 0.0)
+        wind = snaps[-1].get("wind_kmh", 0.0)
         return AgentResult(
-            outputs={"rain_intensity": round(intensity, 2), "rain_forecast_mm": forecast, "humidity": humidity},
+            outputs={"rain_intensity": round(intensity, 2), "rain_forecast_mm": forecast, "humidity": humidity,
+                     "wind_kmh": wind, "rain6_mm": round(accumulation, 2)},
             confidence=min(0.9, 0.5 + 0.3 * min(1.0, len(snaps) / 48.0)),
-            messages=[f"6-window rain intensity {intensity:.2f} mm/h, forecast {forecast:.1f} mm"],
+            messages=[f"6-window rain {accumulation:.1f} mm, wind {wind:.0f} km/h, humid {humidity:.0f}%"],
             used_sources=[snaps[-1]["source_id"]],
         )
 

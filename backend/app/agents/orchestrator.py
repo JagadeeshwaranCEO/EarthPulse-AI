@@ -68,7 +68,8 @@ def _load_payload(db: Session, location: models.Location) -> dict:
     # Truncate to the sim clock; beyond the seed window, extrapolate a decaying
     # storm tail (marked extrapolated so provenance stays honest).
     weather = [
-        {"rainfall_mm": w.rainfall_mm, "rain_forecast_mm": w.rain_forecast_mm, "humidity": w.humidity, "source_id": w.source_id}
+        {"rainfall_mm": w.rainfall_mm, "rain_forecast_mm": w.rain_forecast_mm, "humidity": w.humidity,
+         "wind_kmh": w.wind_kmh, "source_id": w.source_id}
         for w in weather_rows[:n_weather]
     ]
     if hour > 72 and weather:
@@ -79,6 +80,7 @@ def _load_payload(db: Session, location: models.Location) -> dict:
                 "rainfall_mm": last["rainfall_mm"] * decay,
                 "rain_forecast_mm": last["rain_forecast_mm"] * decay,
                 "humidity": max(55.0, last["humidity"] * (1.0 - 0.02 * k)),
+                "wind_kmh": last.get("wind_kmh", 0),
                 "source_id": f"imd-rain:extrapolated:h{72 + k}",
             })
     sat = [
@@ -99,15 +101,26 @@ def _load_payload(db: Session, location: models.Location) -> dict:
         if _report_hour(c.reported_at) <= n_reports
     ]
 
+    seismic = [
+        {"metric": d.metric, "value": d.value, "unit": d.unit, "source_id": d.source_id,
+         "captured_at": d.captured_at.isoformat(), "is_synthetic": d.is_synthetic}
+        for d in db.query(models.IngestedDatum)
+        .filter_by(location_id=location.id)
+        .order_by(models.IngestedDatum.captured_at)
+        .all()
+    ]
+
     return {
         "location_id": location.id,
-        "event_type": "flood",
+        "event_type": location.hazard_type,
+        "hazard_type": location.hazard_type,
         "population": location.population,
         "drainage_capacity_mmh": location.drainage_capacity_mmh,
         "exposure": (location.attributes or {}).get("exposure", 1.0),
         "sim_hour": hour,
         "satellite_frames": sat,
         "weather_snapshots": weather,
+        "seismic": seismic,
         "water_level_series": [
             {"level_m": 0.0, "capacity_m": 1.0, "inflow_m3s": 0.0, "source_id": "n/a", "source_ok": True}
         ],
@@ -139,33 +152,33 @@ def build_agent_outputs(db: Session, location_id: str, extras: dict | None = Non
     if location is None:
         raise KeyError(location_id)
 
-    payload = _load_payload(db, location)
-    water_levels = payload["water_level_series"]
-    if water_levels:
-        snaps = payload["weather_snapshots"]
-        exposure = payload.get("exposure", 1.0)
-        cap = payload.get("drainage_capacity_mmh", 8.0)
-        sum6 = sum(s["rainfall_mm"] for s in snaps[-6:])
-        deficit = min(12.0, sum6 / 26.0 * exposure)
-        stress = min(12.0, max(0.0, (sum6 / max(1.0, cap) - 8.0) / 3.0 * exposure))
-        level = min(1.0, 0.2 + sum6 / 156.0 * exposure)
-        water_levels[0] = {
-            "level_m": round(level, 3),
-            "capacity_m": 1.0,
-            "inflow_m3s": round(min(60.0, 8 + sum6 * 0.9), 1),
-            "headroom_deficit": round(deficit, 2),
-            "drainage_stress": round(stress, 2),
-            "source_id": "seed:cwprs-ccb",
-            "source_ok": True,
-        }
-    payload["water_level_series"] = water_levels
+    from app.hazards.registry import get_hazard
 
-    historical_features = [
-        {"rain_intensity": s["rainfall_mm"] * 1.0, "soil_moisture": 0.5, "headroom_deficit": 1.0,
-         "drainage_stress": 0.8, "citizen_pressure": 0.2}
-        for s in payload["weather_snapshots"][-48:]
-    ]
-    payload["historical_features"] = historical_features
+    hazard = get_hazard(location.hazard_type)
+
+    payload = _load_payload(db, location)
+    if hazard.id == "flood":
+        water_levels = payload["water_level_series"]
+        if water_levels:
+            snaps = payload["weather_snapshots"]
+            exposure = payload.get("exposure", 1.0)
+            cap = payload.get("drainage_capacity_mmh", 8.0)
+            sum6 = sum(s["rainfall_mm"] for s in snaps[-6:])
+            deficit = min(12.0, sum6 / 26.0 * exposure)
+            stress = min(12.0, max(0.0, (sum6 / max(1.0, cap) - 8.0) / 3.0 * exposure))
+            level = min(1.0, 0.2 + sum6 / 156.0 * exposure)
+            water_levels[0] = {
+                "level_m": round(level, 3),
+                "capacity_m": 1.0,
+                "inflow_m3s": round(min(60.0, 8 + sum6 * 0.9), 1),
+                "headroom_deficit": round(deficit, 2),
+                "drainage_stress": round(stress, 2),
+                "source_id": "seed:cwprs-ccb",
+                "source_ok": True,
+            }
+        payload["water_level_series"] = water_levels
+
+    payload["historical_features"] = hazard.history(payload)
     if extras:
         payload.update(extras)
 

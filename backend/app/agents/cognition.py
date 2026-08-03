@@ -1,10 +1,16 @@
-"""Cognition agents — Risk Fusion, Prediction, Explanation, Recommendation, Simulation."""
+"""Cognition agents — Risk Fusion, Prediction, Explanation, Recommendation, Simulation.
+
+Hazard-parametric: every agent reads the active hazard template from the
+payload (`hazard_type`) and dispatches its formula, graph or checklist through
+the hazard registry. Flood stays bit-for-bit the legacy behaviour.
+"""
 
 from __future__ import annotations
 
 from app.agents.base import AgentContext, AgentResult, BaseAgent
+from app.hazards.registry import get_hazard
 from app.ml.attribution import compute_attribution
-from app.ml.forecaster import DEFAULT_FORECASTER, probability_from_components
+from app.ml.forecaster import DEFAULT_FORECASTER, probability_for
 from app.services.simulation_engine import run_simulation
 
 
@@ -13,18 +19,12 @@ class RiskFusionAgent(BaseAgent):
     mission = "Fuse sensor + observer signals into per-location risk components with weighted confidence."
     inputs = ["satellite", "weather", "air_quality", "water", "citizen_report", "news"]
     outputs = ["components", "components_confidence", "anomaly_score"]
-    failure_mode = "missing agent output → component floors at 0, confidence penalized"
+    failure_mode = "missing agent output → component floors at risk, confidence penalized"
 
     def run(self, ctx: AgentContext) -> AgentResult:
+        hazard = get_hazard(ctx.payload.get("hazard_type"))
+        components = hazard.fusion(ctx.payload)
         agg = ctx.payload.get("agent_outputs") or {}
-        components: dict[str, float] = {
-            "rain_intensity": agg.get("weather", {}).get("rain_intensity", 0),
-            "soil_moisture": agg.get("satellite", {}).get("soil_moisture_anomaly", 0),
-            "headroom_deficit": agg.get("water", {}).get("headroom_deficit", 0),
-            "drainage_stress": agg.get("water", {}).get("drainage_stress", 0),
-            "citizen_pressure": agg.get("citizen_report", {}).get("citizen_pressure", 0),
-            "aq_anomaly": agg.get("air_quality", {}).get("aq_anomaly", 0),
-        }
         confs = [
             agg.get("weather", {}).get("_conf", 0.5),
             agg.get("satellite", {}).get("_conf", 0.5),
@@ -32,11 +32,12 @@ class RiskFusionAgent(BaseAgent):
             agg.get("citizen_report", {}).get("_conf", 0.3),
         ]
         fused_conf = round(sum(confs) / len(confs), 3)
-        anomaly = min(1.0, (components["rain_intensity"] / 10 + components["soil_moisture"] / 8) / 2)
+        top = sorted(components.values(), reverse=True)[:2] or [0.0]
+        anomaly = round(min(1.0, sum(top) / 24.0), 3)
         return AgentResult(
-            outputs={"components": components, "components_confidence": fused_conf, "anomaly_score": round(anomaly, 3)},
+            outputs={"components": components, "components_confidence": fused_conf, "anomaly_score": anomaly},
             confidence=fused_conf,
-            messages=[f"fused {len(components)} components, anomaly {anomaly:.2f}"],
+            messages=[f"fused {len(components)} {hazard.id} components, anomaly {anomaly:.2f}"],
         )
 
 
@@ -48,12 +49,13 @@ class PredictionAgent(BaseAgent):
     failure_mode = "insufficient history → widen bands, emit low confidence, never silent"
 
     def run(self, ctx: AgentContext) -> AgentResult:
+        hazard = get_hazard(ctx.payload.get("hazard_type"))
         components = ctx.payload.get("components") or {}
         hist = ctx.payload.get("historical_features") or []
         horizon = ctx.payload.get("horizon_h", 24)
 
         series = [dict(h) for h in hist[-72:]] + [components]
-        signal = [probability_from_components(r) for r in series]
+        signal = [probability_for(hazard.id, r) for r in series]
         t0 = ctx.payload.get("now")
         fc = DEFAULT_FORECASTER.fit_forecast(signal, t0, horizon)
 
@@ -76,7 +78,7 @@ class PredictionAgent(BaseAgent):
                 "residual_std": round(fc.residual_std, 4),
             },
             confidence=conf,
-            messages=[f"P(flood|state)={p_now:.2f}, peak {p_peak:.2f} in {horizon}h, conf {conf:.2f}"],
+            messages=[f"P({hazard.id}|state)={p_now:.2f}, peak {p_peak:.2f} in {horizon}h, conf {conf:.2f}"],
         )
 
 
@@ -88,44 +90,37 @@ class ExplanationAgent(BaseAgent):
     failure_mode = "missing attribution → emit chain from components only, mark partial"
 
     def run(self, ctx: AgentContext) -> AgentResult:
+        hazard = get_hazard(ctx.payload.get("hazard_type"))
         components = ctx.payload.get("components") or {}
         pred = ctx.payload.get("prediction") or {}
         attribution = compute_attribution(components)
-
-        nodes = [
-            {"id": "rain", "label": "Monsoon rainfall surge", "kind": "cause",
-             "value": f"{components.get('rain_intensity', 0):.1f} mm/h", "confidence": 0.9},
-            {"id": "soil", "label": "Pre-saturated soil", "kind": "cause",
-             "value": f"anomaly {components.get('soil_moisture', 0):.2f}", "confidence": 0.8},
-            {"id": "drainage", "label": "Stormwater network under load", "kind": "mechanism",
-             "value": f"stress {components.get('drainage_stress', 0):.2f}", "confidence": 0.75},
-            {"id": "headroom", "label": "Drainage headroom deficit", "kind": "mechanism",
-             "value": f"{components.get('headroom_deficit', 0):.2f}/10", "confidence": 0.8},
-            {"id": "reports", "label": "Verified waterlogging reports", "kind": "condition",
-             "value": f"pressure {components.get('citizen_pressure', 0):.2f}", "confidence": 0.6},
-            {"id": "risk", "label": f"Flood risk ({pred.get('risk_probability', 0):.0%})", "kind": "risk",
-             "value": f"severity {pred.get('severity', 0):.1f}/5", "confidence": pred.get("confidence", 0.5)},
-        ]
-        edges = [
-            {"source": "rain", "target": "drainage", "label": "exceeds design capacity"},
-            {"source": "soil", "target": "headroom", "label": "limits absorption"},
-            {"source": "rain", "target": "headroom", "label": "raises water level"},
-            {"source": "drainage", "target": "headroom", "label": "backlog reduces headroom"},
-            {"source": "headroom", "target": "risk", "label": "approaches breach"},
-            {"source": "reports", "target": "risk", "label": "ground truth confirms"},
-        ]
+        graph = hazard.causal(components, pred) if hazard.causal else _default_causal(hazard, components, pred)
         limitations = [
-            "Rainfall nowcast uncertainty widens beyond 24 h",
-            "Drainage capacity is a static design value, not live",
-            "Citizen reports bias toward populated wards",
+            f"{hazard.id} feature inputs carry sensor-level uncertainty",
+            "Forecast confidence decays beyond the operational horizon",
+            "Ground-truth reports bias toward populated areas",
         ]
         return AgentResult(
-            outputs={"causal_chain": {"nodes": nodes, "edges": edges},
-                     "attribution": [a.__dict__ for a in attribution],
+            outputs={"causal_chain": graph, "attribution": [a.__dict__ for a in attribution],
                      "limitations": limitations},
             confidence=0.8,
-            messages=[f"explained {len(nodes)} causal nodes, {len(attribution)} attributions"],
+            messages=[f"explained {len(graph['nodes'])} causal nodes, {len(attribution)} attributions"],
         )
+
+
+def _default_causal(hazard, components: dict, pred: dict) -> dict:
+    label = hazard.label.lower()
+    top = sorted(components.items(), key=lambda kv: kv[1], reverse=True)[:3]
+    nodes = [
+        {"id": f"{k}", "label": hazard.features.get(k, k), "kind": "cause",
+         "value": f"{v:.2f}", "confidence": 0.75}
+        for k, v in top
+    ]
+    nodes.append({"id": "risk", "label": f"{hazard.label} risk ({pred.get('risk_probability', 0):.0%})",
+                  "kind": "risk", "value": f"severity {pred.get('severity', 0):.1f}/5",
+                  "confidence": pred.get("confidence", 0.5)})
+    edges = [{"source": n["id"], "target": "risk", "label": "drives"} for n in nodes[:-1]]
+    return {"nodes": nodes, "edges": edges}
 
 
 class RecommendationAgent(BaseAgent):
@@ -136,30 +131,31 @@ class RecommendationAgent(BaseAgent):
     failure_mode = "no risk → advisory only, never fabricate severity claims"
 
     def run(self, ctx: AgentContext) -> AgentResult:
+        hazard = get_hazard(ctx.payload.get("hazard_type"))
         p = ctx.payload.get("risk_probability", 0.0)
         sev = ctx.payload.get("severity", 0.0)
-        recs = [
-            {"id": "rec_civic_1", "stakeholder": "civic", "priority": 1 if p > 0.55 else 2,
-             "action": "Deploy pre-positioned pumps to lowest-lying wards and clear stormwater inlets.",
-             "reasoning": "drainage stress is a top attribution feature; mechanical lift buys time.",
-             "evidence_ids": []},
-            {"id": "rec_responders_1", "stakeholder": "responders", "priority": 1 if sev >= 3 else 2,
-             "action": "Stand by rescue teams near river-adjacent blocks; stage boats and generators.",
-             "reasoning": "headroom deficit is approaching breach thresholds within the forecast horizon.",
-             "evidence_ids": []},
-            {"id": "rec_utilities_1", "stakeholder": "utilities", "priority": 2,
-             "action": "Protect substations in flood-prone wards; prepare rolling load cuts.",
-             "reasoning": "electrical infrastructure is vulnerable to water ingress.",
-             "evidence_ids": []},
-            {"id": "rec_public_1", "stakeholder": "public", "priority": 3,
-             "action": "Avoid low-lying routes during peak hours; share verified waterlogging reports.",
-             "reasoning": "ground reports improve nowcast precision for everyone.",
-             "evidence_ids": []},
-        ]
+        recs = hazard.recommend(p, sev) if hazard.recommend else _default_recommend(p, sev)
         if p < 0.3:
             recs = [r for r in recs if r["priority"] <= 2]
         return AgentResult(outputs={"recommendations": recs}, confidence=0.75,
                            messages=[f"{len(recs)} stakeholder actions prioritized"])
+
+
+def _default_recommend(p: float, sev: float) -> list:
+    return [
+        {"id": "rec_civic_1", "stakeholder": "civic", "priority": 1 if p > 0.55 else 2,
+         "action": "Deploy pre-positioned pumps to lowest-lying wards and clear stormwater inlets.",
+         "reasoning": "drainage stress is a top attribution feature; mechanical lift buys time.",
+         "evidence_ids": []},
+        {"id": "rec_responders_1", "stakeholder": "responders", "priority": 1 if sev >= 3 else 2,
+         "action": "Stand by rescue teams near river-adjacent blocks; stage boats and generators.",
+         "reasoning": "headroom deficit is approaching breach thresholds within the forecast horizon.",
+         "evidence_ids": []},
+        {"id": "rec_public_1", "stakeholder": "public", "priority": 3,
+         "action": "Avoid low-lying routes during peak hours; share verified waterlogging reports.",
+         "reasoning": "ground reports improve nowcast precision for everyone.",
+         "evidence_ids": []},
+    ]
 
 
 class SimulationAgent(BaseAgent):
@@ -167,7 +163,7 @@ class SimulationAgent(BaseAgent):
     mission = "Estimate impact of interventions via the what-if hazard engine."
     inputs = ["components", "interventions", "population"]
     outputs = ["before", "after", "deltas", "carbon_ledger"]
-    failure_mode = "unknown intervention id → ignore it, run with known subset"
+    failure_mode = "unknown intervention name → ignore it, run with known subset"
 
     def run(self, ctx: AgentContext) -> AgentResult:
         components = ctx.payload.get("components") or {}

@@ -22,8 +22,19 @@ class Settings(BaseSettings):
     llm_model: str = "gpt-4o-mini"
 
     seed_on_boot: bool = True
+    ws_enabled: bool = True  # set false in tests to avoid background broadcaster races
+    # Operational scope: "chennai" (pilot, 15 zones) or "tamilnadu" (state-wide, ~53 zones)
+    scope: str = "chennai"
     tick_seconds: float = 3.0
     simulated: bool = True  # synthetic data flag surfaced in provenance
+
+    # Real-data ingestion (optional live hooks; left empty the adapters run in honest demo mode)
+    imd_endpoint: str = ""
+    imd_token: str = ""
+    gpm_endpoint: str = ""
+    gpm_token: str = ""
+    reservoir_endpoint: str = ""
+    reservoir_token: str = ""
 
     cors_origins: str = "http://localhost:3000"
 

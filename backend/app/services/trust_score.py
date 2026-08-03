@@ -106,7 +106,7 @@ def compute_trust(db: Session, location_id: str) -> dict:
 
     outputs, _ = build_agent_outputs(db, location_id)
     comps = outputs.get("risk_fusion", {}).get("components", {})
-    mem = memory_view(location_id, comps)
+    mem = memory_view(location_id, comps, loc.hazard_type)
     top_sim = mem["top_analogues"][0]["similarity"] if mem["top_analogues"] else 0.0
     ana_ok = top_sim >= _ANALOGUE_SIMILARITY_FLOOR
     checks.append({

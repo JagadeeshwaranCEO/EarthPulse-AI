@@ -9,6 +9,7 @@ export interface PulseView {
 export interface RiskSummary {
   location_id: string;
   location_name: string;
+  region?: string;
   lat: number;
   lon: number;
   event_type: string;
@@ -112,6 +113,7 @@ export interface Dashboard {
   crisis: boolean;
   time: string;
   tick_seconds: number;
+  scope?: string;
 }
 
 export interface ResourceInventory {
@@ -236,6 +238,43 @@ export interface ScientistExplanation {
   provenance_note: string;
 }
 
+export interface CompareAnalysis {
+  location_id: string;
+  location_name: string;
+  live: {
+    risk_probability: number;
+    level: string;
+    severity: number;
+    confidence: number;
+    hour: number;
+    components: Record<string, number>;
+  };
+  history: {
+    events_10y: number;
+    known_vulnerabilities: string[];
+    choke_points: string[];
+  };
+  previous_records: { generated_at: string; risk_probability: number; severity: number }[];
+  analogues: {
+    event: string;
+    date: string;
+    severity: number;
+    similarity: number;
+    reliability: string;
+    matching_drivers: number;
+    divergence: string;
+  }[];
+  evolution: {
+    peak_probability: number;
+    peak_at_hour: number;
+    delta_24h: number;
+    trend: "rising" | "easing" | "steady";
+  };
+  verdict: { title: string; tone: "red" | "amber" | "blue"; advice: string; delta_24h: number };
+  markdown: string;
+  generated_at: string;
+}
+
 async function j<T>(url: string, init?: RequestInit): Promise<T> {
   const res = await fetch(url, init);
   if (!res.ok) throw new Error(`${res.status} ${res.statusText} — ${url}`);
@@ -282,6 +321,7 @@ export const api = {
     }),
   scientist: (locationId: string) => j<ScientistExplanation>(`/api/v1/decisions/scientist/${locationId}`),
   trust: (locationId: string) => j<TrustScore>(`/api/v1/decisions/trust/${locationId}`),
+  compare: (locationId: string) => j<CompareAnalysis>(`/api/v1/decisions/compare/${locationId}`),
 };
 
 export const levelColor = (level: string) =>

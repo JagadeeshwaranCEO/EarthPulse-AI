@@ -28,7 +28,7 @@ export function RiskDetail({ riskId }: { riskId: string }) {
     return () => { alive = false; };
   }, [riskId]);
 
-  if (!detail) {
+  if (!detail || typeof detail.severity !== "number") {
     return <Panel title="risk detail"><p className="p-4 text-xs text-mono">loading telemetry…</p></Panel>;
   }
 
@@ -99,7 +99,7 @@ function AttributionPane({ items }: { items: AttributionItem[] }) {
     <div className="space-y-1.5">
       {items.map((a) => (
         <div key={a.feature} className="flex items-center gap-2">
-          <span className="w-32 shrink-0 truncate text-[11px] text-slate-300">{a.feature.replace(/_/g, " ")}</span>
+          <span className="w-40 shrink-0 truncate text-[11px] text-slate-300">{a.feature.replace(/_/g, " ")}</span>
           <div className="h-2 flex-1 overflow-hidden rounded bg-panel2">
             <div className={`h-full rounded transition-all duration-500 ${a.direction === "raises" ? "bg-accent-red" : "bg-accent-green"}`} style={{ width: `${(a.influence / max) * 100}%` }} />
           </div>

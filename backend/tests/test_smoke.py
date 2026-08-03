@@ -1,23 +1,11 @@
 """Smoke tests for the EarthPulse pipeline — model, agents, simulation, API."""
 
-import os
-
-os.environ["SEED_ON_BOOT"] = "false"
-os.environ["DATABASE_URL"] = "sqlite:///:memory:"
-
 import pytest
 from fastapi.testclient import TestClient
 
 from app.config import get_settings
-from app.core.db import SessionLocal, engine, init_db
+from app.core.db import SessionLocal
 from app.main import app
-
-
-@pytest.fixture(scope="session", autouse=True)
-def boot():
-    init_db()
-    yield
-    engine.dispose()
 
 
 @pytest.fixture(scope="session")
@@ -37,9 +25,9 @@ def seeded(client):
     db = SessionLocal()
     try:
         if db.query(__import__("app.core.models", fromlist=["Location"]).Location).count() == 0:
-            from app.main import _seed_if_empty
+            from app.services.seeder import seed_if_empty
 
-            _seed_if_empty(db)
+            seed_if_empty(db, get_settings())
         yield db
     finally:
         db.close()

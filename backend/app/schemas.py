@@ -54,6 +54,7 @@ class CausalChain(BaseModel):
 class RiskSummary(BaseModel):
     location_id: str
     location_name: str
+    region: str | None = None
     lat: float
     lon: float
     event_type: str
@@ -155,6 +156,7 @@ class Dashboard(BaseModel):
     crisis: bool
     time: datetime
     tick_seconds: float
+    scope: str = "chennai"
 
 
 class AgentRoster(BaseModel):

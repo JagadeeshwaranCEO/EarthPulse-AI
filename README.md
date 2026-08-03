@@ -11,7 +11,7 @@
 **EarthPulse AI — Planetary Decision Intelligence & Emergency Command Platform.**
 
 [![Build](https://img.shields.io/badge/build-passing-brightgreen)](#tests)
-[![Tests](https://img.shields.io/badge/tests-12/12-passing-green)](#tests)
+[![Tests](https://img.shields.io/badge/tests-37/37-passing-green)](#run-the-tests)
 [![Stack](https://img.shields.io/badge/stack-Next.js_15_%7C_FastAPI-blue)](#tech-stack)
 [![AI](https://img.shields.io/badge/XAI-deterministic%2C_no_black--box-6a5acd)](#architecture)
 [![Keyless](https://img.shields.io/badge/LLM-keyless_by_default-orange)](#operations--data-integrity)
@@ -102,6 +102,12 @@ sensor coverage, temporal integrity, historical analogue, model stability, senso
 Rendered as a **live trust pill** (`High` / `Moderate` / `Low / —` ) that visibly *degrades*
 as telemetry ages. EarthPulse reports its own confidence.
 
+**🗺️ Precision Satellite Mission Map** — three keyless base channels (*Esri World Imagery /
+Maxar, NASA MODIS true color via GIBS, ops vector dark*) plus a **NASA VIIRS analysis
+overlay**, 5-decimal coordinate popups, scale bar, hover tooltips, and fine-grained zoom
+(0.5-step) up to street resolution. The GIBS date is auto-resolved to the newest archived
+pass over the theatre.
+
 **⏱️ Operator Timeline** — the decision engine anchors a **staging, mobilization, lock-down,
 impact** sequence to the forecast peak hour — not a wall-clock fiction. Commanders get a
 workable **when**, not just a *how many*.
@@ -169,8 +175,43 @@ npm run dev
 
 ```bash
 cd backend
-uv run pytest        # 12/12 green
+uv run pytest        # 37/37 green
 ```
+
+### Operational scope — Chennai ↔ Tamil Nadu ↔ All-India ↔ California ↔ Asia
+
+EarthPulse ships **hazard-templated theatres**. The default is the calibrated
+Chennai flood pilot; the state command covers all 38 districts (53 flood-command
+zones); the **all-India command covers 80 zones across all 28 states + 8 UTs
+on three hazard templates** (39 flood · 23 cyclone · 18 wildfire); a
+California wildland-urban-interface pack proves the seam for a second country;
+and the **Asia command covers 107 zones on all nine hazard templates** —
+earthquake · tsunami · volcanic · landslide · drought · heatwave · flood ·
+cyclone · wildfire — across the Ring of Fire, Alpine-Himalayan belt, MENA
+heat domes, Indochina dry belts and typhoon alley.
+
+```bash
+SCOPE=tamilnadu uv run uvicorn app.main:app --port 8000   # state-wide flood boot
+# …or switch live (no restart) from the header, or:
+curl -X POST localhost:8000/api/v1/scope -d '{"scope":"tamilnadu"}'
+curl -X POST localhost:8000/api/v1/scope -d '{"scope":"india"}'
+curl -X POST localhost:8000/api/v1/scope -d '{"scope":"wildfire"}'   # CA wildfire theatre
+curl -X POST localhost:8000/api/v1/scope -d '{"scope":"asia"}'       # all-Asia 9-hazard theatre
+```
+
+Every zone is stamped with a `hazard_type` (`flood` | `cyclone` | `wildfire` |
+`earthquake` | `tsunami` | `volcanic` | `landslide` | `drought` | `heatwave`).
+Fusion, history, causal graph, recommendations, evidence templates and risk
+levels all dispatch through the hazard registry (`backend/app/hazards/`), so a
+scope switch re-runs the **whole pipeline — sensing → fusion → prediction →
+explanation → memory → decision — for the new hazard**. Seismic and volcanic
+telemetry flows through the `IngestedDatum` archive, keeping the canonical
+weather tables untouched.
+
+Seed catalogs: `backend/app/data/seeds/generate_tn_districts.py`,
+`generate_india.py` (all states, hazard-typed per regional climatology),
+`generate_wildfire.py` (California), `generate_asia.py` (nine hazards across
+Asia). See `docs/13-tamilnadu-scaling.md`.
 
 ---
 
@@ -183,6 +224,8 @@ uv run pytest        # 12/12 green
 | `/simulations` | G/P | what-if sandbox, time-scrub, sim clock, damage-ledger |
 | `/agents` | G/P | multi-agent diagnostic & debate subsystem |
 | `/decisions` | G/P | **optimize · memory · evolution · scientist · trust · mission brief** |
+| `/scope` | G/P | live theatre switch — `chennai` ⇄ `tamilnadu` ⇄ `india` ⇄ `wildfire` ⇄ `asia` (reseed + re-run pipeline) |
+| `/data` | G/P | ingestion adapters — `sources` (live/demo) · `ingest` (trigger poll) |
 | `/chat` | P | grounding-only copilot (never invents readings) |
 | `/ws` | WS | live telemetry + sim-clock stream |
 
@@ -192,6 +235,7 @@ The Decision Layer endpoints:
 - `GET /decisions/evolution/{location}` — hour-by-hour forecast vs. observational risk
 - `GET /decisions/scientist/{location}` — full formula trace + factor weights
 - `GET /decisions/trust/{location}` — trust score decomposition (pill)
+- `GET /decisions/compare/{location}` — **live comparative analysis**: current telemetry vs. the archived historical record (analogue matches, per-driver deltas, evolution arc, verdict + markdown briefing report)
 - `POST /decisions/brief` — mission brief markdown
 
 ---
@@ -215,7 +259,7 @@ Earthmark-1
 
 For the full design contract: `docs/` (01 vision · 02 architecture · 03 AI · 04 UI · 05 data ·
 06 API · 07 wireframes · 08 structure · 09 roadmap · 10 risk · 11 demo strategy ·
-12 decision-intelligence-layer).
+12 decision-intelligence-layer · 13 tamil-nadu scaling).
 
 ---
 

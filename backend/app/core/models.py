@@ -35,6 +35,7 @@ class Location(Base):
     elevation_m: Mapped[float] = mapped_column(Float, default=0)
     drainage_capacity_mmh: Mapped[float] = mapped_column(Float, default=8.0)
     population: Mapped[int] = mapped_column(Integer, default=0)
+    hazard_type: Mapped[str] = mapped_column(String, default="flood")
     attributes: Mapped[dict] = mapped_column(JSON, default=dict)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
 
@@ -62,6 +63,23 @@ class WeatherSnapshot(Base):
     humidity: Mapped[float] = mapped_column(Float, default=0)
     wind_kmh: Mapped[float] = mapped_column(Float, default=0)
     source_id: Mapped[str] = mapped_column(String)
+
+
+class IngestedDatum(Base):
+    """Typed telemetry archive — holds adapter frames that don't map to a
+    canonical table (reservoir storage/release, gauge levels, …). Keeps a
+    per-row synthetic flag so provenance stays honest when live feeds attach."""
+
+    __tablename__ = "ingested_data"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    location_id: Mapped[str] = mapped_column(ForeignKey("locations.id"))
+    captured_at: Mapped[datetime] = mapped_column(DateTime, index=True)
+    source_id: Mapped[str] = mapped_column(String)
+    metric: Mapped[str] = mapped_column(String)
+    value: Mapped[float] = mapped_column(Float, default=0)
+    unit: Mapped[str] = mapped_column(String, default="")
+    is_synthetic: Mapped[bool] = mapped_column(default=True)
 
 
 class SatelliteFrame(Base):

@@ -18,6 +18,15 @@ import { DecisionPanel } from "@/components/panels/DecisionPanel";
 import { CrisisBanner } from "@/components/ui/CrisisBanner";
 
 const MapView = dynamic(() => import("@/components/map/MapView").then((m) => m.MapView), { ssr: false, loading: () => <div className="h-full w-full bg-panel" /> });
+import { SearchBar } from "@/components/map/SearchBar";
+
+function EmptyPanel({ label }: { label: string }) {
+  return (
+    <Panel title="risk detail">
+      <p className="p-4 text-xs text-mono">{label}</p>
+    </Panel>
+  );
+}
 
 const TABS = [
   { id: "detail", label: "Detail" },
@@ -57,11 +66,25 @@ export default function MissionControl() {
           <h1 className="text-[15px] font-bold tracking-wide text-slate-100">
             EARTHPULSE<span className="text-accent-blue"> AI</span>
           </h1>
-          <p className="telemetry text-[9px] uppercase tracking-widest text-mono">planetary early warning intelligence · chennai flood command</p>
+          <p className="telemetry text-[9px] uppercase tracking-widest text-mono">planetary early warning intelligence · {dash?.scope === "tamilnadu" ? "tamil nadu state command" : "chennai flood command"}</p>
         </div>
         <div className="ml-auto flex items-center gap-3">
           <Badge tone={wsLive ? "green" : "slate"}>{wsLive ? "live telemetry" : "connecting…"}</Badge>
-          <Badge tone="slate">pilot data · synthetic</Badge>
+          <Badge tone="slate">{dash?.scope === "tamilnadu" ? "tamil nadu · state" : "chennai · pilot"}</Badge>
+          <button
+            onClick={async () => {
+              const next = dash?.scope === "tamilnadu" ? "chennai" : "tamilnadu";
+              await fetch("/api/v1/scope", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ scope: next }),
+              });
+              window.location.reload();
+            }}
+            className="telemetry rounded border border-edge px-2 py-0.5 text-[9px] uppercase tracking-widest text-mono hover:border-accent-blue/60 hover:text-accent-blue"
+          >
+            ⟳ {dash?.scope === "tamilnadu" ? "switch to chennai" : "deploy tamil nadu"}
+          </button>
           <div className="telemetry text-[10px] text-mono">{dash?.time?.slice(0, 19).replace("T", " ") ?? "—"}</div>
         </div>
       </header>
@@ -83,6 +106,7 @@ export default function MissionControl() {
         {/* CENTER MAP */}
         <main className="relative min-w-0 flex-1 border-r border-edge">
           <MapView risks={dash?.risks ?? []} selectedId={selectedId} onSelect={(id) => { setSelectedId(id); setTab("detail"); }} />
+          <SearchBar risks={dash?.risks ?? []} onSelect={(id) => { setSelectedId(id); setTab("detail"); }} />
           <div className="pointer-events-none absolute left-3 top-3 space-y-1.5">
             <div className="rounded border border-edge bg-panel/90 px-2.5 py-1.5 backdrop-blur-sm">
               <div className="telemetry text-[9px] uppercase tracking-widest text-mono">legend · flood risk</div>
@@ -112,20 +136,22 @@ export default function MissionControl() {
         {/* RIGHT PANEL */}
         <aside className="flex w-[400px] shrink-0 flex-col">
           <Tabs tabs={TABS} active={tab} onChange={setTab} />
-          <div className="flex min-h-0 flex-1 flex-col p-3">
-            {tab === "detail" && <RiskDetailPanel riskId={selectedId ?? ""} />}
-            {tab === "causal" && <CausalChain riskId={selectedId ?? ""} />}
-            {tab === "memory" && <MemoryPanel riskId={selectedId ?? ""} />}
-            {tab === "decide" && <DecisionPanel riskName={selectedRisk?.location_name ?? "pilot"} />}
-            {tab === "simulate" && <SimulationSandbox riskId={selectedId ?? ""} />}
-            {tab === "agents" && <DebatePanel riskId={selectedId ?? ""} riskName={selectedRisk?.location_name ?? ""} />}
-            {tab === "copilot" && <Copilot riskId={selectedId ?? ""} />}
-          </div>
+          <div className="flex min-h-0 flex-1 flex-col overflow-hidden p-3">
+            <div className="min-h-0 flex-1 overflow-y-auto">
+              {tab === "detail" && (selectedId ? <RiskDetailPanel riskId={selectedId} /> : <EmptyPanel label="select a zone from the map or risk rail" />)}
+              {tab === "causal" && (selectedId ? <CausalChain riskId={selectedId} /> : <EmptyPanel label="select a zone from the map or risk rail" />)}
+              {tab === "memory" && (selectedId ? <MemoryPanel riskId={selectedId} /> : <EmptyPanel label="select a zone from the map or risk rail" />)}
+              {tab === "decide" && <DecisionPanel riskName={selectedRisk?.location_name ?? "pilot"} />}
+              {tab === "simulate" && (selectedId ? <SimulationSandbox riskId={selectedId} /> : <EmptyPanel label="select a zone from the map or risk rail" />)}
+              {tab === "agents" && (selectedId ? <DebatePanel riskId={selectedId} riskName={selectedRisk?.location_name ?? ""} /> : <EmptyPanel label="select a zone from the map or risk rail" />)}
+              {tab === "copilot" && (selectedId ? <Copilot riskId={selectedId} /> : <EmptyPanel label="select a zone from the map or risk rail" />)}
+            </div>
           {risk && risk.llm_mode && (
             <div className="border-t border-edge px-3 py-1.5 telemetry text-[9px] uppercase tracking-widest text-mono">
               every score is explainable · model {risk.model_name} · {risk.evidence.length} evidence objects
             </div>
           )}
+          </div>
         </aside>
       </div>
     </div>

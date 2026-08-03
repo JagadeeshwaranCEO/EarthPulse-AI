@@ -1,0 +1,1 @@
+"""Real-data ingestion adapters (IMD / GPM / reservoirs)."""
