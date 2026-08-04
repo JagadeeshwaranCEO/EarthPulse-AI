@@ -84,6 +84,7 @@ export function MapView({ risks, selectedId, onSelect }: { risks: RiskSummary[];
   const [base, setBase] = useState<BaseKey>("esri");
   const [viiirs, setViiirs] = useState(false);
   const [nasaDay, setNasaDay] = useState<string | null>(null);
+  const [fitTick, setFitTick] = useState(0);
 
   useEffect(() => {
     if (!container.current || mapRef.current) return;
@@ -155,11 +156,11 @@ export function MapView({ risks, selectedId, onSelect }: { risks: RiskSummary[];
       const lats = risks.map((r) => r.lat);
       const lons = risks.map((r) => r.lon);
       const key = `${Math.min(...lats).toFixed(2)},${Math.min(...lons).toFixed(2)},${Math.max(...lats).toFixed(2)},${Math.max(...lons).toFixed(2)}`;
-      if (key !== boundsKeyRef.current) {
+      if (key !== boundsKeyRef.current || fitTick > 0) {
         boundsKeyRef.current = key;
         const sw: L.LatLngTuple = [Math.min(...lats), Math.min(...lons)];
         const ne: L.LatLngTuple = [Math.max(...lats), Math.max(...lons)];
-        map.fitBounds(new L.LatLngBounds(sw, ne).pad(0.15), { animate: true, maxZoom: 10 });
+        map.fitBounds(new L.LatLngBounds(sw, ne).pad(0.12), { animate: true, maxZoom: 10 });
       }
     }
     risks.forEach((r) => {
@@ -180,7 +181,7 @@ export function MapView({ risks, selectedId, onSelect }: { risks: RiskSummary[];
         map.setView([r.lat, r.lon], Math.max(map.getZoom(), 13), { animate: true });
       }
     });
-  }, [risks, selectedId, onSelect]);
+  }, [risks, selectedId, onSelect, fitTick]);
 
   return (
     <div className="relative h-full w-full">
@@ -200,6 +201,12 @@ export function MapView({ risks, selectedId, onSelect }: { risks: RiskSummary[];
           className={`telemetry mt-1 rounded border-t border-edge px-2 py-1 text-left text-[9px] uppercase tracking-widest ${viiirs ? "bg-accent-red/25 text-accent-red" : "text-mono hover:bg-panel2"}`}
         >
           {viiirs ? "●" : "○"} nasa viirs analysis
+        </button>
+        <button
+          onClick={() => setFitTick((t) => t + 1)}
+          className="telemetry mt-1 rounded border-t border-edge px-2 py-1 text-left text-[9px] uppercase tracking-widest text-mono hover:bg-panel2"
+        >
+          ⤢ fit theatre
         </button>
       </div>
     </div>

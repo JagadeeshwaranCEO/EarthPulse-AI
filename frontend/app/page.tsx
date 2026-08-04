@@ -40,6 +40,14 @@ const TABS = [
   { id: "validation", label: "Validation" },
 ];
 
+const THEATRES: { id: string; label: string; cmd: string }[] = [
+  { id: "chennai", label: "chennai", cmd: "chennai flood command" },
+  { id: "tamilnadu", label: "tamil nadu", cmd: "tamil nadu state command" },
+  { id: "india", label: "india", cmd: "all-india command" },
+  { id: "wildfire", label: "california", cmd: "california wildfire command" },
+  { id: "asia", label: "asia", cmd: "asia continent command" },
+];
+
 export default function MissionControl() {
   const { dash, wsLive, clock, scrub } = useMissionControl();
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -68,25 +76,30 @@ export default function MissionControl() {
           <h1 className="text-[15px] font-bold tracking-wide text-slate-100">
             EARTHPULSE<span className="text-accent-blue"> AI</span>
           </h1>
-          <p className="telemetry text-[9px] uppercase tracking-widest text-mono">planetary early warning intelligence · {dash?.scope === "tamilnadu" ? "tamil nadu state command" : "chennai flood command"}</p>
+          <p className="telemetry text-[9px] uppercase tracking-widest text-mono">planetary early warning intelligence · {THEATRES.find((t) => t.id === dash?.scope)?.cmd ?? "chennai flood command"}</p>
         </div>
         <div className="ml-auto flex items-center gap-3">
           <Badge tone={wsLive ? "green" : "slate"}>{wsLive ? "live telemetry" : "connecting…"}</Badge>
-          <Badge tone="slate">{dash?.scope === "tamilnadu" ? "tamil nadu · state" : "chennai · pilot"}</Badge>
-          <button
-            onClick={async () => {
-              const next = dash?.scope === "tamilnadu" ? "chennai" : "tamilnadu";
-              await fetch("/api/v1/scope", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ scope: next }),
-              });
-              window.location.reload();
-            }}
-            className="telemetry rounded border border-edge px-2 py-0.5 text-[9px] uppercase tracking-widest text-mono hover:border-accent-blue/60 hover:text-accent-blue"
-          >
-            ⟳ {dash?.scope === "tamilnadu" ? "switch to chennai" : "deploy tamil nadu"}
-          </button>
+          <Badge tone="slate">{THEATRES.find((t) => t.id === dash?.scope)?.label ?? "chennai"} · theatre</Badge>
+          <div className="flex items-center gap-1 rounded border border-edge p-0.5">
+            {THEATRES.map((t) => (
+              <button
+                key={t.id}
+                onClick={async () => {
+                  if (t.id === dash?.scope) return;
+                  await fetch("/api/v1/scope", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ scope: t.id }),
+                  });
+                  window.location.reload();
+                }}
+                className={`telemetry rounded px-2 py-0.5 text-[9px] uppercase tracking-widest ${dash?.scope === t.id ? "bg-accent-blue/25 text-accent-blue" : "text-mono hover:bg-panel2"}`}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
           <div className="telemetry text-[10px] text-mono">{dash?.time?.slice(0, 19).replace("T", " ") ?? "—"}</div>
         </div>
       </header>
