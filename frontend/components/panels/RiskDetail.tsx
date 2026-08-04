@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { api, type AttributionItem, type Evidence, type ForecastPoint, type RiskDetail } from "@/lib/api";
+import { api, type AttributionItem, type Evidence, type ForecastPoint, type LeadRung, type PredictionResponse, type RiskDetail } from "@/lib/api";
 import { Badge, Meter, Panel } from "@/components/ui/Panel";
 import { ConfidenceMeter } from "@/components/viz/ConfidenceMeter";
 import { ForecastChart } from "@/components/viz/ForecastChart";
@@ -18,7 +18,7 @@ const COMPONENT_LABELS: Record<string, string> = {
 
 export function RiskDetail({ riskId }: { riskId: string }) {
   const [detail, setDetail] = useState<RiskDetail | null>(null);
-  const [forecast, setForecast] = useState<{ points: ForecastPoint[]; probability_now: number } | null>(null);
+  const [forecast, setForecast] = useState<PredictionResponse | null>(null);
   const [evidenceOpen, setEvidenceOpen] = useState(false);
 
   useEffect(() => {
@@ -63,9 +63,42 @@ export function RiskDetail({ riskId }: { riskId: string }) {
           <div className="rounded border border-edge bg-panel2 p-2">
             <div className="mb-1 flex justify-between px-1">
               <span className="telemetry text-[10px] uppercase tracking-widest text-mono">24h forecast · uncertainty band</span>
-              <span className="telemetry text-[10px] text-accent-blue">peak {(Math.max(...forecast.points.map((p) => p.mean)) * 100).toFixed(0)}%</span>
+              <span className="telemetry text-[10px] text-accent-blue">peak {(forecast.peak_probability * 100).toFixed(0)}% in +{forecast.peak_in_h}h</span>
             </div>
             <ForecastChart points={forecast.points} now={detail.risk_probability} />
+            {forecast.lead_ladder?.length > 0 && (
+              <div className="mt-2">
+                <span className="telemetry px-1 text-[10px] uppercase tracking-widest text-mono">lead ladder · forward-signal nowcast</span>
+                <LeadLadder ladders={forecast.lead_ladder} />
+              </div>
+            )}
+          </div>
+        )}
+
+        {detail.precision && (
+          <div className="rounded border border-edge bg-panel2 p-2.5">
+            <div className="mb-1.5 flex items-center justify-between">
+              <span className="telemetry text-[10px] uppercase tracking-widest text-mono">verified precision · rolling holdout</span>
+              <Badge tone={detail.precision.tier === "A" ? "green" : detail.precision.tier === "B" ? "blue" : "slate"}>tier {detail.precision.tier}</Badge>
+            </div>
+            <div className="grid grid-cols-3 gap-1.5 text-center">
+              <Metric label="brier" value={detail.precision.brier.toFixed(3)} />
+              <Metric label="skill vs clim" value={detail.precision.brier_skill.toFixed(2)} />
+              <Metric label="calibration gap" value={detail.precision.calibration ? detail.precision.calibration.gap.toFixed(2) : "—"} accent={detail.precision.calibration?.sign} />
+            </div>
+          </div>
+        )}
+
+        {detail.crossing?.high_band && (
+          <div className="rounded border border-edge bg-panel2 p-2.5">
+            <div className="mb-1.5 flex items-center justify-between">
+              <span className="telemetry text-[10px] uppercase tracking-widest text-mono">threshold crossings · if trajectory holds</span>
+              <span className="telemetry text-[9px] text-mono/70">{detail.crossing.method}</span>
+            </div>
+            <div className="space-y-1 text-[11px] text-slate-300">
+              {detail.crossing.high_band && <p>high band (&gt;{(detail.crossing.high_band.threshold * 100).toFixed(0)}%): <span className="text-accent-amber">{detail.crossing.high_band.crossing_in_h === null ? "not in 72h window" : `~${detail.crossing.high_band.crossing_in_h}h`}</span></p>}
+              {detail.crossing.moderate_band && <p>moderate band (&gt;{(detail.crossing.moderate_band.threshold * 100).toFixed(0)}%): <span className="text-accent-blue">{detail.crossing.moderate_band.crossing_in_h === null ? "not in 72h window" : `~${detail.crossing.moderate_band.crossing_in_h}h`}</span></p>}
+            </div>
           </div>
         )}
 
@@ -90,6 +123,33 @@ export function RiskDetail({ riskId }: { riskId: string }) {
         </div>
       </div>
     </Panel>
+  );
+}
+
+function Metric({ label, value, accent }: { label: string; value: string; accent?: string }) {
+  const tone = accent === "under-forecast" ? "text-accent-red" : accent === "over-forecast" ? "text-accent-amber" : "text-slate-300";
+  return (
+    <div className="rounded bg-panel1 px-2 py-1.5">
+      <div className={`telemetry text-[12px] ${tone}`}>{value}</div>
+      <div className="telemetry text-[9px] uppercase tracking-wider text-mono">{label}</div>
+    </div>
+  );
+}
+
+function LeadLadder({ ladders }: { ladders: LeadRung[] }) {
+  return (
+    <div className="mt-1 flex gap-1.5">
+      {ladders.map((r) => (
+        <div key={r.lead_h} className="flex-1 rounded border border-edge bg-panel1 p-1.5 text-center">
+          <div className="telemetry text-[9px] uppercase text-mono">+{r.lead_h}h</div>
+          <div className="telemetry text-[12px]" style={{ color: r.probability > 0.5 ? "#F59E0B" : r.probability > 0.25 ? "#3B82F6" : "#64748B" }}>{(r.probability * 100).toFixed(0)}%</div>
+          <div className="telemetry text-[9px] text-mono/70">{r.level}</div>
+          <div className="mt-0.5 flex h-1 overflow-hidden rounded bg-panel2">
+            <div className="bg-accent-blue transition-all duration-500" style={{ width: `${r.probability * 100}%` }} />
+          </div>
+        </div>
+      ))}
+    </div>
   );
 }
 

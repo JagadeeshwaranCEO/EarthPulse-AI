@@ -19,6 +19,7 @@ router = APIRouter(tags=["dashboard"])
 def live_risk_summaries(db: Session) -> list[dict]:
     """Risk summaries computed live from the pipeline — follows the sim clock."""
     from app.hazards.levels import level_for
+    from app.services.verification import zone_precision
 
     rows = []
     for loc in db.query(Location).all():
@@ -28,6 +29,10 @@ def live_risk_summaries(db: Session) -> list[dict]:
             continue
         comps = outputs.get("risk_fusion", {}).get("components", {})
         trend = "rising" if pred.get("forecast_series") and pred["forecast_series"].mean[-1] > pred.get("risk_probability", 0) * 1.05 else "steady"
+        try:
+            precision = zone_precision(db, loc)
+        except Exception:
+            precision = {}
         rows.append({
             "location_id": loc.id,
             "location_name": loc.name,
@@ -41,6 +46,7 @@ def live_risk_summaries(db: Session) -> list[dict]:
             "confidence": pred.get("confidence", 0),
             "trend": trend,
             "horizon_h": pred.get("horizon_h", 24),
+            "precision_tier": precision.get("tier"),
             "updated_at": datetime.now(timezone.utc),
         })
     return sorted(rows, key=lambda r: -r["risk_probability"])

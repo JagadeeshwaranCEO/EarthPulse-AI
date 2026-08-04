@@ -38,6 +38,15 @@ def get_risk(location_id: str, db: Session = Depends(get_db)):
     attribution = compute_attribution(components)
     pred_out = outputs.get("prediction") or {}
 
+    from app.services.crossing import project_crossing
+    from app.services.verification import zone_precision
+
+    precision = zone_precision(db, loc)
+    try:
+        crossing = project_crossing(db, loc)
+    except Exception:
+        crossing = None
+
     pred = (
         db.query(Prediction)
         .filter_by(location_id=location_id, event_type=loc.hazard_type)
@@ -55,6 +64,19 @@ def get_risk(location_id: str, db: Session = Depends(get_db)):
         confidence=summary["confidence"],
         trend=summary["trend"],
         horizon_h=summary["horizon_h"], updated_at=summary["updated_at"],
+        precision_tier=precision.get("tier"),
+        precision={
+            "tier": precision.get("tier"),
+            "brier": precision.get("brier"),
+            "brier_skill": precision.get("brier_skill"),
+            "auc": precision.get("auc"),
+            "climatology": precision.get("climatology"),
+            "calibration": precision.get("calibration"),
+            "band_tightness": precision.get("band_tightness"),
+            "verified_samples": precision.get("samples"),
+            "method": "rolling holdout verification vs realized telemetry",
+        },
+        crossing=crossing,
         components={k: round(v, 3) for k, v in components.items()},
         attribution=[
             {"feature": a.feature, "influence": a.influence, "direction": a.direction, "description": a.description}
@@ -78,14 +100,20 @@ def get_prediction(location_id: str, horizon: int = 24, db: Session = Depends(ge
     fc = pred.get("forecast_series")
     if fc is None:
         raise HTTPException(404, "no prediction state")
+    band = [up - lo for up, lo in zip(fc.upper, fc.lower)]
     return {
         "location_id": location_id,
         "model_name": pred.get("model_name", "earthpulse-stream-v1"),
         "generated_at": datetime.now(timezone.utc),
         "horizon_h": fc.horizon_h,
         "probability_now": pred.get("risk_probability", 0),
+        "peak_probability": pred.get("peak_probability", 0),
+        "peak_in_h": pred.get("peak_in_h", 0),
+        "lead_ladder": pred.get("lead_ladder", []),
         "bounds": pred.get("bounds", {}),
         "residual_std": round(fc.residual_std, 4),
+        "sharpness": round(float(sum(band) / len(band)) if band else 0.0, 4),
+        "outlook": pred.get("outlook", []),
         "points": [
             {"t": t.isoformat(), "mean": round(m, 3), "lower": round(lo, 3), "upper": round(up, 3)}
             for t, m, lo, up in zip(fc.series_t, fc.mean, fc.lower, fc.upper)

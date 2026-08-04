@@ -225,6 +225,7 @@ Asia). See `docs/13-tamilnadu-scaling.md`.
 | `/agents` | G/P | multi-agent diagnostic & debate subsystem |
 | `/decisions` | G/P | **optimize · memory · evolution · scientist · trust · mission brief** |
 | `/scope` | G/P | live theatre switch — `chennai` ⇄ `tamilnadu` ⇄ `india` ⇄ `wildfire` ⇄ `asia` (reseed + re-run pipeline) |
+| `/validation` | G | **computed precision report card** — Brier, skill vs climatology, ROC AUC, reliability table, calibration gap, per-zone tiers |
 | `/data` | G/P | ingestion adapters — `sources` (live/demo) · `ingest` (trigger poll) |
 | `/chat` | P | grounding-only copilot (never invents readings) |
 | `/ws` | WS | live telemetry + sim-clock stream |
@@ -259,12 +260,14 @@ Earthmark-1
 
 For the full design contract: `docs/` (01 vision · 02 architecture · 03 AI · 04 UI · 05 data ·
 06 API · 07 wireframes · 08 structure · 09 roadmap · 10 risk · 11 demo strategy ·
-12 decision-intelligence-layer · 13 tamil-nadu scaling).
+12 decision-intelligence-layer · 13 tamil-nadu scaling · 14 global scaling ·
+15 india-asia-roadmap). The build order is fixed in `docs/15-india-asia-roadmap.md`:
+**Phase 1 lead-aware forecast core ✅ → Phase 2 zones→systems → Phase 3 India-ready
+multi-hazard → Phase 4 Asia ontology.**
 
 ---
 
 ## 🔬 Data Integrity
-
 - Every pilot reading is **synthetic and provenance-tagged** (`is_synthetic: true`) — the
   system is transparent about what it does and doesn't know.
 - Production hooks (IMD, CWPRS, NASA GPM, Copernicus, NDMA) are explicitly declared as

@@ -65,6 +65,7 @@ class RiskSummary(BaseModel):
     trend: str  # rising | steady | falling
     horizon_h: int
     updated_at: datetime
+    precision_tier: str | None = None  # A | B | C — verified forecast skill grade
 
 
 class RiskDetail(RiskSummary):
@@ -75,6 +76,8 @@ class RiskDetail(RiskSummary):
     limitations: list[str] = Field(default_factory=list)
     model_name: str = ""
     llm_mode: str = "fallback"
+    precision: dict[str, Any] | None = None
+    crossing: dict[str, Any] | None = None
 
 
 class ForecastPoint(BaseModel):

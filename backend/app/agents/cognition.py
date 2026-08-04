@@ -11,6 +11,7 @@ from app.agents.base import AgentContext, AgentResult, BaseAgent
 from app.hazards.registry import get_hazard
 from app.ml.attribution import compute_attribution
 from app.ml.forecaster import DEFAULT_FORECASTER, probability_for
+from app.services.nowcast import lead_ladder, signal_from_payload
 from app.services.simulation_engine import run_simulation
 
 
@@ -59,26 +60,51 @@ class PredictionAgent(BaseAgent):
         t0 = ctx.payload.get("now")
         fc = DEFAULT_FORECASTER.fit_forecast(signal, t0, horizon)
 
+        # Stage A → B: lead-aware ladder from forward signals (rain forecast,
+        # upstream inflow, soil memory) fused onto the current driver state.
+        exposure = ctx.payload.get("exposure", 1.0)
+        ladder = lead_ladder(components, hazard.id, signal_from_payload(ctx.payload), exposure)
+
         p_now = float(signal[-1])
-        p_peak = max(fc.mean)
+        p_peak = max([p_now] + [r["probability"] for r in ladder])
+        peak_h = max([r["lead_h"] for r in ladder if r["probability"] >= p_peak - 1e-9] or [0])
         severity = p_now * 5.0
         # confidence = forecaster fit quality (residual dispersion) + data freshness
         freshness = min(1.0, (len(hist) + 1) / 48.0)
         conf = round(max(0.3, min(0.95, 0.85 * freshness - fc.residual_std * 2)), 3)
         band = max(0.05, min(0.25, fc.residual_std * 2 + 0.05))
+
+        # 7-day outlook — damped trend so long horizons converge, bands grow
+        outlook = []
+        try:
+            fc7 = DEFAULT_FORECASTER.fit_forecast(signal, t0, 168, trend_decay=0.02)
+            for d in range(1, 8):
+                idx = d * 24 - 1
+                outlook.append({
+                    "day": d,
+                    "horizon_h": d * 24,
+                    "mean": round(float(fc7.mean[idx]), 3),
+                    "lower": round(float(fc7.lower[idx]), 3),
+                    "upper": round(float(fc7.upper[idx]), 3),
+                })
+        except Exception:
+            outlook = []
         return AgentResult(
             outputs={
                 "forecast_series": fc,
                 "risk_probability": round(p_now, 3),
                 "severity": round(severity, 2),
                 "peak_probability": round(p_peak, 3),
+                "peak_in_h": peak_h,
+                "lead_ladder": ladder,
                 "confidence": conf,
                 "bounds": {"lower": round(max(0.0, p_now - band), 3), "upper": round(min(1.0, p_now + band), 3)},
+                "outlook": outlook,
                 "model_name": fc.model_name,
                 "residual_std": round(fc.residual_std, 4),
             },
             confidence=conf,
-            messages=[f"P({hazard.id}|state)={p_now:.2f}, peak {p_peak:.2f} in {horizon}h, conf {conf:.2f}"],
+            messages=[f"P({hazard.id}|state)={p_now:.2f}, peak {p_peak:.2f} at +{peak_h}h, conf {conf:.2f}"],
         )
 
 

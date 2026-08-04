@@ -61,6 +61,78 @@ export interface RiskDetail extends RiskSummary {
   limitations: string[];
   model_name: string;
   llm_mode: string;
+  precision?: PrecisionInfo;
+  crossing?: Crossing;
+}
+
+export interface PrecisionInfo {
+  location_id: string;
+  hazard: string;
+  samples: number;
+  brier: number;
+  brier_skill: number;
+  auc: number | null;
+  climatology: number;
+  calibration?: { mean_forecast: number; mean_realized: number; gap: number; sign: string };
+  band_tightness: number;
+  tier: "A" | "B" | "C";
+}
+
+export interface Crossing {
+  location_id: string;
+  hazard: string;
+  high_band: { threshold: number; crossing_in_h: number | null } | null;
+  moderate_band: { threshold: number; crossing_in_h: number | null } | null;
+  drivers: { driver: string; label: string; current: number; stress_line: number; crosses_stress_in_h: number | null }[];
+  confidence: number;
+  method: string;
+}
+
+export interface LeadRung {
+  lead_h: number;
+  probability: number;
+  level: string;
+  components: Record<string, number>;
+  reasons: string[];
+}
+
+export interface PredictionResponse {
+  location_id: string;
+  generated_at: string;
+  horizon_h: number;
+  probability_now: number;
+  peak_probability: number;
+  peak_in_h: number;
+  lead_ladder: LeadRung[];
+  bounds: { lower: number; upper: number };
+  outlook: { day: number; horizon_h: number; mean: number; lower: number; upper: number }[];
+  points: ForecastPoint[];
+  model_name: string;
+}
+
+export interface ReliabilityRow {
+  band: string;
+  forecasts: number;
+  mean_forecast: number;
+  observed_fraction: number;
+}
+
+export interface ValidationReport {
+  scope: string;
+  generated_at: string;
+  method: string;
+  overall: {
+    brier: number;
+    brier_skill: number;
+    auc: number | null;
+    samples: number;
+    zones: number;
+    reliability: ReliabilityRow[];
+    calibration: { mean_forecast: number; mean_realized: number; gap: number; sign: string };
+    sharpness: number;
+  };
+  hazards: Record<string, { zones: number; samples: number; brier: number | null; brier_skill: number | null; tiers: Record<string, number> }>;
+  zones: (PrecisionInfo & { location_name: string })[];
 }
 
 export interface ForecastPoint {
@@ -285,7 +357,8 @@ export const api = {
   dashboard: () => j<Dashboard>("/api/v1/dashboard"),
   risks: () => j<RiskSummary[]>("/api/v1/risks"),
   risk: (id: string) => j<RiskDetail>(`/api/v1/risks/${id}`),
-  prediction: (id: string) => j<{ points: ForecastPoint[]; probability_now: number; bounds: { lower: number; upper: number } }>(`/api/v1/risks/${id}/prediction`),
+  prediction: (id: string) => j<PredictionResponse>(`/api/v1/risks/${id}/prediction`),
+  validation: () => j<ValidationReport>(`/api/v1/validation`),
   recommendations: (id: string) => j<Recommendation[]>(`/api/v1/risks/${id}/recommendations`),
   debate: (riskId: string, force = false) =>
     j<DebateResult>(`/api/v1/agents/debate?risk_id=${riskId}${force ? "&force=true" : ""}`),

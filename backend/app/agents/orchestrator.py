@@ -155,7 +155,6 @@ def build_agent_outputs(db: Session, location_id: str, extras: dict | None = Non
     from app.hazards.registry import get_hazard
 
     hazard = get_hazard(location.hazard_type)
-
     payload = _load_payload(db, location)
     if hazard.id == "flood":
         water_levels = payload["water_level_series"]
