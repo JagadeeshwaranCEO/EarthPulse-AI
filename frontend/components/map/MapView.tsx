@@ -63,12 +63,17 @@ function LabelsLayer() {
 }
 
 function popupHtml(r: RiskSummary) {
+  const dot = levelFill(r.level);
   return (
-    `<div style="font: 11px ui-monospace, monospace; min-width: 180px">` +
-    `<div style="font-weight:600; font-size:12px; color:#111">${r.location_name}</div>` +
-    `<div style="margin-top:4px; color:#333">P(risk) <b>${(r.risk_probability * 100).toFixed(0)}%</b> · ${r.level}</div>` +
-    `<div style="color:#555">conf ${(r.confidence * 100).toFixed(0)}% · sev ${r.severity.toFixed(1)}/5 · ${r.trend}</div>` +
-    `<div style="margin-top:2px; color:#777">${r.lat.toFixed(5)}, ${r.lon.toFixed(5)}</div>` +
+    `<div style="font: 11px ui-monospace, monospace; min-width: 200px">` +
+    `<div style="display:flex; align-items:center; gap:6px">` +
+    `<span style="width:8px; height:8px; border-radius:9999px; background:${dot}; box-shadow:0 0 6px ${dot}"></span>` +
+    `<span style="font-weight:600; font-size:12px; color:#e2e8f0">${r.location_name}</span></div>` +
+    `<div style="margin-top:6px; display:flex; align-items:center; gap:8px">` +
+    `<div style="flex:1; height:5px; background:#1e293b; border-radius:9999px; overflow:hidden"><div style="width:${(r.risk_probability * 100).toFixed(0)}%; height:100%; background:${dot}"></div></div>` +
+    `<span style="color:#e2e8f0; font-weight:600">${(r.risk_probability * 100).toFixed(0)}%</span></div>` +
+    `<div style="color:#7c8fa6">${r.level} · conf ${(r.confidence * 100).toFixed(0)}% · sev ${r.severity.toFixed(1)}/5 · ${r.trend}</div>` +
+    `<div style="margin-top:2px; color:#526070">${r.lat.toFixed(4)}, ${r.lon.toFixed(4)}</div>` +
     `</div>`
   );
 }
@@ -81,6 +86,7 @@ export function MapView({ risks, selectedId, onSelect }: { risks: RiskSummary[];
   const viirsRef = useRef<L.TileLayer | null>(null);
   const markersRef = useRef<L.LayerGroup | null>(null);
   const boundsKeyRef = useRef<string>("");
+  const lastSelRef = useRef<string | null>(null);
   const [base, setBase] = useState<BaseKey>("esri");
   const [viiirs, setViiirs] = useState(false);
   const [nasaDay, setNasaDay] = useState<string | null>(null);
@@ -165,9 +171,10 @@ export function MapView({ risks, selectedId, onSelect }: { risks: RiskSummary[];
     }
     risks.forEach((r) => {
       const color = levelFill(r.level);
+      const isHot = r.level === "critical" || r.level === "high";
       const radius = Math.max(5, 8 + r.risk_probability * 26 + (r.severity - 3) * 2);
-      const ring = L.circleMarker([r.lat, r.lon], { radius, color: "#FFFFFF", weight: 1.5, fillColor: color, fillOpacity: 0.8 });
-      const halo = L.circleMarker([r.lat, r.lon], { radius: radius + 5, color, weight: 1, fill: false, opacity: 0.4, dashArray: "3 5" });
+      const ring = L.circleMarker([r.lat, r.lon], { radius, color: "#FFFFFF", weight: 1.5, fillColor: color, fillOpacity: 0.85, className: isHot ? "risk-pulse" : "" });
+      const halo = L.circleMarker([r.lat, r.lon], { radius: radius + 5, color, weight: 1, fill: false, opacity: isHot ? 0.55 : 0.4, dashArray: "3 5", className: isHot ? "risk-pulse-halo" : "" });
       const selected = r.location_id === selectedId;
       ring.bindPopup(popupHtml(r), { closeButton: false });
       ring.bindTooltip(`${r.location_name} · ${(r.risk_probability * 100).toFixed(0)}%`, { direction: "top", offset: [0, -radius], opacity: 0.95 });
@@ -175,10 +182,17 @@ export function MapView({ risks, selectedId, onSelect }: { risks: RiskSummary[];
       group.addLayer(halo);
       group.addLayer(ring);
       if (selected) {
-        const sel = L.circleMarker([r.lat, r.lon], { radius: radius + 9, color, weight: 2, fillColor: color, fillOpacity: 0.15 });
+        const sel = L.circleMarker([r.lat, r.lon], { radius: radius + 9, color, weight: 2, fillColor: color, fillOpacity: 0.15, className: "risk-selected" });
         sel.bindTooltip(`${r.location_name} · selected`, { permanent: true, direction: "top", offset: [0, -radius - 9], className: "risk-selected-tip" });
         sel.addTo(group);
-        map.setView([r.lat, r.lon], Math.max(map.getZoom(), 13), { animate: true });
+        // Center only when the selection actually changed AND the zone is off-screen —
+        // never re-snap on every WS tick (that is what made zoom-out impossible).
+        if (selected && lastSelRef.current !== r.location_id) {
+          lastSelRef.current = r.location_id;
+          if (!map.getBounds().contains([r.lat, r.lon])) {
+            map.setView([r.lat, r.lon], Math.max(map.getZoom(), 8), { animate: true });
+          }
+        }
       }
     });
   }, [risks, selectedId, onSelect, fitTick]);
@@ -186,6 +200,18 @@ export function MapView({ risks, selectedId, onSelect }: { risks: RiskSummary[];
   return (
     <div className="relative h-full w-full">
       <div ref={container} className="h-full w-full" />
+      <div className="absolute bottom-3 left-3 z-[500] rounded border border-edge bg-panel/90 p-2 backdrop-blur-sm">
+        <div className="telemetry mb-1 text-[9px] uppercase tracking-widest text-mono">risk level</div>
+        <div className="space-y-0.5">
+          {[{ l: "critical", c: "#EF4444" }, { l: "high", c: "#F59E0B" }, { l: "moderate", c: "#3B82F6" }, { l: "low", c: "#22C55E" }].map((x) => (
+            <div key={x.l} className="flex items-center gap-1.5">
+              <span className="h-2 w-2 rounded-full" style={{ background: x.c, boxShadow: `0 0 6px ${x.c}` }} />
+              <span className="telemetry text-[9px] text-slate-300">{x.l}</span>
+            </div>
+          ))}
+        </div>
+        <div className="telemetry mt-1 text-[8px] uppercase tracking-wider text-mono/60">size ∝ P(risk)</div>
+      </div>
       <div className="absolute right-2 top-14 z-[500] flex flex-col gap-1 rounded border border-edge bg-panel/90 p-1 backdrop-blur-sm">
         {(Object.keys(BASES) as BaseKey[]).map((k) => (
           <button

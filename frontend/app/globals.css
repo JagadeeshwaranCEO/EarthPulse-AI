@@ -53,6 +53,55 @@ body {
   animation: pulseRing 1.8s ease-out infinite;
 }
 
+@keyframes softPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+.leaflet-interactive.risk-pulse {
+  animation: softPulse 1.6s ease-in-out infinite;
+}
+.leaflet-interactive.risk-pulse-halo {
+  animation: softPulse 2.2s ease-in-out infinite;
+}
+.leaflet-interactive.risk-selected {
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.5));
+}
+
+.ep-legend {
+  background: rgba(13, 18, 26, 0.88);
+  border: 1px solid #243043;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  backdrop-filter: blur(4px);
+}
+.ep-legend-title {
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #7c8fa6;
+  margin-bottom: 5px;
+}
+.ep-legend-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 10px;
+  color: #cbd5e1;
+  line-height: 1.5;
+}
+.ep-legend-row span {
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+}
+.ep-legend-note {
+  margin-top: 5px;
+  font-size: 8px;
+  color: #526070;
+  letter-spacing: 0.08em;
+}
+
 @keyframes tickerScroll {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
