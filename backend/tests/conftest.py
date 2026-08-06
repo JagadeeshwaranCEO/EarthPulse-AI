@@ -9,7 +9,7 @@ test_smoke continues on the restored chennai theatre.
 import os
 
 os.environ["SEED_ON_BOOT"] = "false"
-os.environ["DATABASE_URL"] = "sqlite:///:memory:"
+os.environ.setdefault("DATABASE_URL", "sqlite:///:memory:")
 os.environ["WS_ENABLED"] = "false"
 
 import pytest

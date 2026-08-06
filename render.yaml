@@ -1,0 +1,28 @@
+# Render blueprint — deploys the backend API + its Postgres in one click.
+# Create via: https://dashboard.render.com → "New" → "Blueprint" → this repo.
+# The service listens on ${PORT:-8000} (Dockerfile CMD) and seeds itself on boot.
+
+services:
+  - type: web
+    name: earthpulse-api
+    runtime: docker
+    repo: https://github.com/JagadeeshwaranCEO/EarthPulse-AI
+    dockerfilePath: ./backend/Dockerfile
+    plan: free
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: earthpulse-db
+          property: connectionString
+      - key: CORS_ORIGINS
+        value: http://localhost:3000
+      - key: SEED_ON_BOOT
+        value: "true"
+
+databases:
+  - name: earthpulse-db
+    plan: free
+    databaseName: earthpulse
+    user: earthpulse
+    ipAllowList: []

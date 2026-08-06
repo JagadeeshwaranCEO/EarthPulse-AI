@@ -37,7 +37,7 @@ class Location(Base):
     population: Mapped[int] = mapped_column(Integer, default=0)
     hazard_type: Mapped[str] = mapped_column(String, default="flood")
     attributes: Mapped[dict] = mapped_column(JSON, default=dict)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
 
 class Source(Base):
@@ -57,7 +57,7 @@ class WeatherSnapshot(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     location_id: Mapped[str] = mapped_column(ForeignKey("locations.id"))
-    captured_at: Mapped[datetime] = mapped_column(DateTime, index=True)
+    captured_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True)
     rainfall_mm: Mapped[float] = mapped_column(Float, default=0)
     rain_forecast_mm: Mapped[float] = mapped_column(Float, default=0)
     humidity: Mapped[float] = mapped_column(Float, default=0)
@@ -74,7 +74,7 @@ class IngestedDatum(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     location_id: Mapped[str] = mapped_column(ForeignKey("locations.id"))
-    captured_at: Mapped[datetime] = mapped_column(DateTime, index=True)
+    captured_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True)
     source_id: Mapped[str] = mapped_column(String)
     metric: Mapped[str] = mapped_column(String)
     value: Mapped[float] = mapped_column(Float, default=0)
@@ -87,7 +87,7 @@ class SatelliteFrame(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     location_id: Mapped[str] = mapped_column(ForeignKey("locations.id"))
-    captured_at: Mapped[datetime] = mapped_column(DateTime, index=True)
+    captured_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True)
     soil_moisture_anomaly: Mapped[float] = mapped_column(Float, default=0)
     surface_water_index: Mapped[float] = mapped_column(Float, default=0)
     source_id: Mapped[str] = mapped_column(String)
@@ -98,7 +98,7 @@ class CitizenReport(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     location_id: Mapped[str] = mapped_column(ForeignKey("locations.id"))
-    reported_at: Mapped[datetime] = mapped_column(DateTime, index=True)
+    reported_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True)
     category: Mapped[str] = mapped_column(String)  # flooding | drain_blocked | waterlogging
     severity_hint: Mapped[int] = mapped_column(Integer, default=1)
     text: Mapped[str] = mapped_column(Text)
@@ -112,7 +112,7 @@ class Event(Base):
     id: Mapped[str] = mapped_column(String, primary_key=True)
     location_id: Mapped[str] = mapped_column(ForeignKey("locations.id"))
     event_type: Mapped[str] = mapped_column(String, index=True)  # flood | wildfire | dumping
-    started_at: Mapped[datetime] = mapped_column(DateTime)
+    started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     severity: Mapped[int] = mapped_column(Integer, default=0)  # 0-5
     status: Mapped[str] = mapped_column(String, default="forming")
     attributes: Mapped[dict] = mapped_column(JSON, default=dict)
@@ -124,7 +124,7 @@ class Prediction(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     location_id: Mapped[str] = mapped_column(ForeignKey("locations.id"))
     event_type: Mapped[str] = mapped_column(String, index=True)
-    generated_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow, index=True)
+    generated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True)
     horizon_h: Mapped[int] = mapped_column(Integer, default=24)
     risk_probability: Mapped[float] = mapped_column(Float, default=0)
     severity: Mapped[float] = mapped_column(Float, default=0)
@@ -146,7 +146,7 @@ class EvidenceObject(Base):
     prediction_id: Mapped[int | None] = mapped_column(ForeignKey("predictions.id"), nullable=True)
     source_id: Mapped[str] = mapped_column(String)
     kind: Mapped[str] = mapped_column(String)  # observation | forecast | report | citation
-    captured_at: Mapped[datetime] = mapped_column(DateTime)
+    captured_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     description: Mapped[str] = mapped_column(Text)
     value: Mapped[float | None] = mapped_column(Float, nullable=True)
     payload: Mapped[dict] = mapped_column(JSON, default=dict)
@@ -158,7 +158,7 @@ class Alert(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     location_id: Mapped[str] = mapped_column(ForeignKey("locations.id"))
     event_type: Mapped[str] = mapped_column(String, index=True)
-    raised_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow, index=True)
+    raised_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True)
     level: Mapped[str] = mapped_column(String, default="advisory")  # advisory|watch|warning|critical
     title: Mapped[str] = mapped_column(String)
     summary: Mapped[str] = mapped_column(Text)
@@ -183,7 +183,7 @@ class SimulationRun(Base):
     id: Mapped[str] = mapped_column(String, primary_key=True)
     location_id: Mapped[str] = mapped_column(ForeignKey("locations.id"))
     event_type: Mapped[str] = mapped_column(String, default="flood")
-    run_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
+    run_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
     params: Mapped[dict] = mapped_column(JSON, default=dict)
     result: Mapped[dict] = mapped_column(JSON, default=dict)  # before/after + deltas
 
@@ -194,7 +194,7 @@ class AgentMessage(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     run_id: Mapped[str] = mapped_column(String, index=True)
     agent: Mapped[str] = mapped_column(String, index=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
     role: Mapped[str] = mapped_column(String, default="producer")  # producer|receiver|verdict
     content: Mapped[str] = mapped_column(Text)
     confidence: Mapped[float] = mapped_column(Float, default=0)
@@ -207,6 +207,6 @@ class PulseScore(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     location_id: Mapped[str] = mapped_column(ForeignKey("locations.id"))
-    recorded_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow, index=True)
+    recorded_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True)
     score: Mapped[float] = mapped_column(Float, default=1000)
     factors: Mapped[dict] = mapped_column(JSON, default=dict)
