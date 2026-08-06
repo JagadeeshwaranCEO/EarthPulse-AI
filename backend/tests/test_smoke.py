@@ -164,6 +164,18 @@ def test_decision_optimizer_strategies_differ():
     assert plans["strat_a"] != plans["strat_b"]
 
 
+def test_balanced_priority_responds_to_population_share():
+    from app.services.decision_optimizer import balanced_priority
+
+    sparse = balanced_priority(50_000, 1_000_000, 4.0)
+    dense = balanced_priority(500_000, 1_000_000, 4.0)
+    assert dense > sparse
+    assert sparse > 0 and dense < 1.8
+    same_sev = balanced_priority(100_000, 1_000_000, 4.0)
+    same_sev_smaller_pop = balanced_priority(20_000, 1_000_000, 4.0)
+    assert same_sev > same_sev_smaller_pop
+
+
 def test_api_decision_endpoints(client, seeded):
     from app.services import ticker
 

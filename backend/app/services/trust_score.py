@@ -86,8 +86,10 @@ def compute_trust(db: Session, location_id: str) -> dict:
     # 2 · satellite freshness: last frame within the freshness window
     age_h = _latest_satellite_age_h(db, location_id)
     sat_ok = age_h is not None and age_h <= _FRESH_SATELLITE_HOURS
+    age_text = "none on record" if age_h is None else (
+        f"{age_h:.1f}h old" if sat_ok else f"stale · {age_h:.1f}h old")
     checks.append({
-        "label": f"Satellite telemetry · {'< ' + f'{age_h:.1f}h' if age_h is not None else 'none'} old",
+        "label": f"Satellite telemetry · {age_text}",
         "ok": sat_ok,
         "detail": "Copernicus SWI / NASA GPM frame cadence" if sat_ok else "stale or missing frames",
     })

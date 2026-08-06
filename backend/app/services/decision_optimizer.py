@@ -111,12 +111,23 @@ def build_execution_timeline(peak_hour: float) -> list[dict]:
     ]
 
 
+def balanced_priority(pop_at_risk: int, total_at_risk: int, severity: float) -> float:
+    """Normalized multi-objective priority: population share × severity lift.
+
+    Population share is relative to the total population at risk across all
+    zones, so denser basins genuinely rank above sparse ones — the term is
+    not a self-normalizing no-op (pop/pop == 1).
+    """
+    return (pop_at_risk / max(1, total_at_risk)) * (1.0 + severity / 5.0)
+
+
 class DecisionOptimizer:
     """Greedy multi-objective allocator over zone risk state."""
 
     def optimize(self, zone_risks: list[ZoneRisk], inventory: ResourceInventory) -> list[StrategyOption]:
         zones = [z for z in zone_risks if z.risk_probability > 0.15] or zone_risks
         pop_at_risk = lambda z: int(z.population * z.risk_probability)
+        total_at_risk = max(1, sum(pop_at_risk(z) for z in zones))
 
         strat_a = self._build(
             id="strat_a", title="Strategy Alpha — Maximal Life Safety", focus="max_lives",
@@ -139,7 +150,7 @@ class DecisionOptimizer:
         strat_c = self._build(
             id="strat_c", title="Strategy Gamma — EarthPulse Balanced Pareto", focus="balanced",
             zones=zones, inventory=inventory,
-            priority=lambda z: (pop_at_risk(z) / max(1, pop_at_risk(z))) * (1.0 + z.severity / 5.0),
+            priority=lambda z: balanced_priority(pop_at_risk(z), total_at_risk, z.severity),
             mix={"boat": 0.75, "pump": 0.75, "shelter": 0.55},
             recommended=True,
             rationale=("Normalized multi-objective frontier: pre-stages pumps along drainage "
