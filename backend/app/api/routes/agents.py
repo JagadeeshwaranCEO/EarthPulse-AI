@@ -9,6 +9,7 @@ from app.agents.orchestrator import PIPELINE, ROSTER, run_pipeline
 from app.agents.base import AgentContext
 from app.core.db import get_db
 from app.core.models import AgentMessage, Location, Prediction
+from app.core.security import require_api_key
 
 router = APIRouter(prefix="/agents", tags=["agents"])
 
@@ -48,7 +49,7 @@ def get_pipeline(db: Session = Depends(get_db)):
     ]
 
 
-@router.post("/{name}/run")
+@router.post("/{name}/run", dependencies=[require_api_key])
 def run_agent(name: str, location_id: str, db: Session = Depends(get_db)):
     if name not in ROSTER:
         raise HTTPException(404, "unknown agent")

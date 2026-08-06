@@ -1,5 +1,6 @@
 """Dashboard, pulse, locations, sim clock."""
 
+import logging
 from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -9,9 +10,12 @@ from app.agents.orchestrator import build_agent_outputs
 from app.config import get_settings
 from app.core.db import get_db
 from app.core.models import Alert, Location, PulseScore
+from app.core.security import require_api_key
 from app.ml.pulse import compute_pulse
 from app.schemas import Dashboard, PulseView
 from app.services.ticker import get_state, set_hour
+
+log = logging.getLogger("earthpulse")
 
 router = APIRouter(tags=["dashboard"])
 
@@ -32,6 +36,7 @@ def live_risk_summaries(db: Session) -> list[dict]:
         try:
             precision = zone_precision(db, loc)
         except Exception:
+            log.warning("zone_precision failed for %s — precision_tier omitted", loc.id, exc_info=True)
             precision = {}
         rows.append({
             "location_id": loc.id,
@@ -104,7 +109,7 @@ def get_clock():
     return get_state()
 
 
-@router.post("/sim/clock")
+@router.post("/sim/clock", dependencies=[require_api_key])
 def set_clock(hour: float):
     state = get_state()
     return {"hour": set_hour(hour), "max": state["max"], "step": state["step"]}

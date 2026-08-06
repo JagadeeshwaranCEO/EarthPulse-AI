@@ -164,6 +164,45 @@ def test_decision_optimizer_strategies_differ():
     assert plans["strat_a"] != plans["strat_b"]
 
 
+def test_health_and_readiness(client, seeded):
+    assert client.get("/api/v1/health").status_code == 200
+    ready = client.get("/api/v1/ready")
+    assert ready.status_code == 200
+    assert ready.json()["zones"] > 0
+
+
+def test_mutating_endpoints_api_key_guard(client, seeded):
+    from app.config import get_settings
+
+    settings = get_settings()
+    prev = settings.api_key
+    settings.api_key = "test-key"
+    try:
+        assert client.post("/api/v1/decisions/optimize", json={}).status_code == 401
+        assert client.post("/api/v1/decisions/optimize", json={},
+                           headers={"X-API-Key": "wrong"}).status_code == 401
+        ok = client.post("/api/v1/decisions/optimize", json={},
+                         headers={"X-API-Key": "test-key"})
+        assert ok.status_code == 200
+        assert client.post("/api/v1/scope", json={"scope": "chennai"},
+                           headers={"X-API-Key": "test-key"}).status_code == 200
+    finally:
+        settings.api_key = prev
+
+
+def test_chat_throttled_not_keyed(client, seeded):
+    from app.config import get_settings
+
+    settings = get_settings()
+    prev = settings.api_key
+    settings.api_key = "test-key"
+    try:
+        resp = client.post("/api/v1/chat", json={"messages": [{"role": "user", "content": "hi"}]})
+        assert resp.status_code == 200
+    finally:
+        settings.api_key = prev
+
+
 def test_balanced_priority_responds_to_population_share():
     from app.services.decision_optimizer import balanced_priority
 

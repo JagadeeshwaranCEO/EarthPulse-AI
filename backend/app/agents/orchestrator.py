@@ -7,6 +7,7 @@ handoff protocol: on failure, mark handoff_failed and continue degraded.
 
 from __future__ import annotations
 
+import logging
 from datetime import datetime, timezone
 from uuid import uuid4
 
@@ -143,6 +144,8 @@ def _report_hour(ts) -> int:
         delta = (dt - base).total_seconds() / 3600.0
         return int(delta)
     except Exception:
+        logging.getLogger("earthpulse.agents").warning(
+            "report-hour mapping failed for %s — treating as t0", ts, exc_info=True)
         return 0
 
 

@@ -38,6 +38,11 @@ class Settings(BaseSettings):
 
     cors_origins: str = "http://localhost:3000"
 
+    # Mutating-endpoint guard: empty api_key = keyless dev mode (guard off).
+    # Set EARTHPULSE_API_KEY to enforce X-API-Key on the POST routes.
+    api_key: str = ""
+    mutation_rate_per_minute: int = 30
+
     @property
     def llm_enabled(self) -> bool:
         return self.llm_mode == "auto" and bool(self.openai_api_key)

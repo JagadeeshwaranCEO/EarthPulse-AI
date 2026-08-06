@@ -5,7 +5,11 @@ can show "synthetic reasoning" honestly.
 
 from __future__ import annotations
 
+import logging
+
 from app.config import get_settings
+
+log = logging.getLogger("earthpulse.llm")
 
 
 def llm_mode() -> str:
@@ -38,4 +42,5 @@ async def complete(system: str, user: str, temperature: float = 0.3) -> tuple[st
             data = resp.json()
             return data["choices"][0]["message"]["content"], "live"
     except Exception:
+        log.warning("LLM call failed — falling back to templates", exc_info=True)
         return "", "fallback"

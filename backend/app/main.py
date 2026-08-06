@@ -13,13 +13,15 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routes import agents, chat, dashboard, data, decision, risks, scope, simulations, validation
+from app.api.routes import agents, chat, dashboard, data, decision, health, risks, scope, simulations, validation
 from app.api.ws import broadcaster, router as ws_router
 from app.config import get_settings
 from app.core.db import SessionLocal, init_db
+from app.core.log import install_exception_handlers, install_middleware, setup_logging
 from app.services.refresh import refresh_predictions
 from app.services.seeder import seed_if_empty
 
+setup_logging()
 logger = logging.getLogger("earthpulse")
 
 
@@ -55,6 +57,9 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+    install_middleware(app)
+    install_exception_handlers(app)
+    app.include_router(health.router, prefix=settings.api_prefix)
     app.include_router(dashboard.router, prefix=settings.api_prefix)
     app.include_router(risks.router, prefix=settings.api_prefix)
     app.include_router(simulations.router, prefix=settings.api_prefix)

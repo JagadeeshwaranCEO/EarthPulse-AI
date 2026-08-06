@@ -1,5 +1,7 @@
 """Decision Intelligence routes — optimize, memory, evolution, brief, scientist XAI."""
 
+import logging
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
@@ -7,6 +9,7 @@ from app.agents.orchestrator import build_agent_outputs
 from app.api.routes.dashboard import live_risk_summaries
 from app.core.db import get_db
 from app.core.models import Location
+from app.core.security import require_api_key
 from app.services.decision_optimizer import (
     DecisionOptimizer, ResourceInventory, ZoneRisk, build_execution_timeline,
 )
@@ -15,6 +18,8 @@ from app.services.environmental_memory import memory_view
 from app.services.mission_brief import build_mission_brief
 from app.services.risk_evolution import evolution as risk_evolution
 from app.services.trust_score import compute_trust
+
+log = logging.getLogger("earthpulse")
 
 router = APIRouter(prefix="/decisions", tags=["decisions"])
 
@@ -29,6 +34,7 @@ def _peak_hour(db: Session, location_id: str | None = None) -> float:
     try:
         return float(risk_evolution(db, loc, lookback_h=6, horizon_h=24)["peak_at_hour"])
     except Exception:
+        log.warning("peak-hour evolution failed for %s — defaulting to 66.0", loc.id, exc_info=True)
         return 66.0
 
 
@@ -47,7 +53,7 @@ def _zone_risks(db: Session) -> list[ZoneRisk]:
     ]
 
 
-@router.post("/optimize")
+@router.post("/optimize", dependencies=[require_api_key])
 def optimize(inventory: dict | None = None, db: Session = Depends(get_db)):
     """Constrained multi-objective resource allocation across all live zones."""
     inv = {**DEFAULT_INVENTORY, **(inventory or {})}
@@ -97,7 +103,7 @@ def evolution(location_id: str, lookback_h: int = 48, horizon_h: int = 24, db: S
     return risk_evolution(db, loc, lookback_h=lookback_h, horizon_h=horizon_h)
 
 
-@router.post("/brief")
+@router.post("/brief", dependencies=[require_api_key])
 def mission_brief(inventory: dict | None = None, db: Session = Depends(get_db)):
     """Stakeholder mission brief from the recommended strategy."""
     inv = {**DEFAULT_INVENTORY, **(inventory or {})}
@@ -137,6 +143,7 @@ def compare(location_id: str, db: Session = Depends(get_db)):
     try:
         return comparative_analysis(db, location_id)
     except Exception as exc:
+        log.warning("comparative analysis failed for %s", location_id, exc_info=True)
         raise HTTPException(422, f"comparative analysis failed: {exc}")
 
 

@@ -45,6 +45,8 @@ def get_risk(location_id: str, db: Session = Depends(get_db)):
     try:
         crossing = project_crossing(db, loc)
     except Exception:
+        logging.getLogger("earthpulse").warning(
+            "crossing projection failed for %s", location_id, exc_info=True)
         crossing = None
 
     pred = (

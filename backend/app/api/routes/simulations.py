@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from app.agents.orchestrator import build_agent_outputs
 from app.core.db import get_db
 from app.core.models import Location, SimulationRun
+from app.core.security import require_api_key
 from app.schemas import SimulationRequest, SimulationResult
 from app.services.simulation_engine import available_interventions, run_simulation
 
@@ -17,7 +18,7 @@ def list_interventions():
     return available_interventions()
 
 
-@router.post("", response_model=SimulationResult)
+@router.post("", response_model=SimulationResult, dependencies=[require_api_key])
 def create_simulation(req: SimulationRequest, db: Session = Depends(get_db)):
     loc = db.get(Location, req.location_id)
     if loc is None:

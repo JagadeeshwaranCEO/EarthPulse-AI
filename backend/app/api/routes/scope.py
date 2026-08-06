@@ -14,6 +14,7 @@ from sqlalchemy.orm import Session
 from app.config import get_settings
 from app.core.db import get_db
 from app.core.models import Location
+from app.core.security import require_api_key
 from app.services.refresh import refresh_predictions
 from app.services.seeder import reseed
 
@@ -31,7 +32,7 @@ def get_scope(db: Session = Depends(get_db)):
     return {"scope": get_settings().scope, "zones": db.query(Location).count()}
 
 
-@router.post("")
+@router.post("", dependencies=[require_api_key])
 def set_scope(body: ScopeRequest, db: Session = Depends(get_db)):
     scope = body.scope.strip().lower()
     if scope not in _SCOPES:

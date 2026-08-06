@@ -7,6 +7,8 @@ the hazard registry. Flood stays bit-for-bit the legacy behaviour.
 
 from __future__ import annotations
 
+import logging
+
 from app.agents.base import AgentContext, AgentResult, BaseAgent
 from app.hazards.registry import get_hazard
 from app.ml.attribution import compute_attribution
@@ -88,6 +90,8 @@ class PredictionAgent(BaseAgent):
                     "upper": round(float(fc7.upper[idx]), 3),
                 })
         except Exception:
+            logging.getLogger("earthpulse.agents").warning(
+                "7-day outlook unavailable — continuing with nowcast only", exc_info=True)
             outlook = []
         return AgentResult(
             outputs={

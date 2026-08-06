@@ -38,6 +38,7 @@ def _payload() -> dict:
             "tick_seconds": dumped["tick_seconds"],
         }
     except Exception as exc:  # seed not ready / engine disposed during teardown
+        logging.getLogger("earthpulse.ws").warning("tick payload failed: %s", exc, exc_info=True)
         return {"type": "tick", "time": datetime.now(timezone.utc).isoformat(), "error": str(exc)}
     finally:
         if db is not None:
@@ -56,6 +57,8 @@ async def broadcaster() -> None:
             try:
                 await ws.send_json(data)
             except Exception:
+                logging.getLogger("earthpulse.ws").warning(
+                    "websocket send failed — dropping connection", exc_info=True)
                 dead.append(ws)
         for ws in dead:
             connections.discard(ws)

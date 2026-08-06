@@ -11,7 +11,7 @@
 **EarthPulse AI — Planetary Decision Intelligence & Emergency Command Platform.**
 
 [![Build](https://img.shields.io/badge/build-passing-brightgreen)](#tests)
-[![Tests](https://img.shields.io/badge/tests-43/43-passing-green)](#run-the-tests)
+[![Tests](https://img.shields.io/badge/tests-47/47-passing-green)](#run-the-tests)
 [![Stack](https://img.shields.io/badge/stack-Next.js_15_%7C_FastAPI-blue)](#tech-stack)
 [![AI](https://img.shields.io/badge/XAI-deterministic%2C_no_black--box-6a5acd)](#architecture)
 [![Keyless](https://img.shields.io/badge/LLM-keyless_by_default-orange)](#operations--data-integrity)
@@ -175,7 +175,7 @@ npm run dev
 
 ```bash
 cd backend
-uv run pytest        # 43/43 green
+uv run pytest        # 47/47 green
 ```
 
 ### Operational scope — Chennai ↔ Tamil Nadu ↔ All-India ↔ California ↔ Asia
@@ -250,7 +250,7 @@ Earthmark-1
 │   │   ├── api/routes/      dashboard · risks · simulations · agents · decisions · chat
 │   │   └── services/        decision_optimizer · environmental_memory · risk_evolution ·
 │   │                        trust_score · mission_brief · ...
-│   ├── tests/               4 files · 43 tests (hazards · nowcast · scale · smoke)
+│   ├── tests/               4 files · 47 tests (hazards · nowcast · scale · smoke)
 │   └── pyproject.toml / uv.lock
 ├── frontend/          Next.js 15 mission-control UI (panels · viz · copilot)
 ├── docs/              12 design contracts (vision → decision-intelligence layer)

@@ -10,6 +10,7 @@ adapter fetches real data and re-labels the source as real.
 
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
 
@@ -68,6 +69,9 @@ class DataSourceAdapter:
                 return self._fetch_live(locations, since)
             except Exception as exc:  # network/parse failure → labeled synthetic fallback
                 self._last_error = str(exc)
+                logging.getLogger("earthpulse.ingest").warning(
+                    "live fetch failed for %s — serving labeled synthetic fallback", self.id,
+                    exc_info=True)
                 return self._mark_demo(self._fetch_demo(locations, since))
         return self._fetch_demo(locations, since)
 

@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from app.agents.orchestrator import build_agent_outputs
 from app.core.db import get_db
 from app.core.models import Location, Prediction
+from app.core.security import chat_throttle
 from app.schemas import ChatRequest, ChatResponse
 from app.services import llm as llm_svc
 
@@ -31,7 +32,7 @@ def _context_blob(db: Session, location_id: str) -> str:
     )
 
 
-@router.post("", response_model=ChatResponse)
+@router.post("", response_model=ChatResponse, dependencies=[chat_throttle])
 async def chat(req: ChatRequest, db: Session = Depends(get_db)):
     last_user = next((m.content for m in reversed(req.messages) if m.role == "user"), "")
     context = _context_blob(db, req.location_id)
