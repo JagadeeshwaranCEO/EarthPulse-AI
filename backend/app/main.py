@@ -13,7 +13,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routes import agents, chat, dashboard, data, decision, health, risks, scope, simulations, validation
+from app.api.routes import agents, chat, dashboard, data, decision, health, models, risks, scope, simulations, validation
 from app.api.ws import broadcaster
 from app.api.ws import router as ws_router
 from app.config import get_settings
@@ -69,6 +69,7 @@ def create_app() -> FastAPI:
     app.include_router(scope.router, prefix=settings.api_prefix)
     app.include_router(data.router, prefix=settings.api_prefix)
     app.include_router(validation.router, prefix=settings.api_prefix)
+    app.include_router(models.router, prefix=settings.api_prefix)
     app.include_router(chat.router, prefix=settings.api_prefix)
     app.include_router(ws_router)
     return app

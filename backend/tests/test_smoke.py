@@ -211,6 +211,27 @@ def test_health_and_readiness(client, seeded):
     assert ready.json()["zones"] > 0
 
 
+def test_models_registry(client, seeded):
+    resp = client.get("/api/v1/models")
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["zones"] > 0
+    assert len(body["models"]) >= 10
+    assert body["store"]["predictions"] > 0
+    ids = {m["id"] for m in body["models"]}
+    assert {
+        "nowcast-ladder",
+        "decision-optimizer",
+        "validation",
+        "simulation",
+        "agent-debate",
+        "trust-score",
+    } <= ids
+    for m in body["models"]:
+        assert m["status"] == "live"
+        assert m["category"] in ("prediction", "explanation", "decision", "governance")
+
+
 def test_mutating_endpoints_api_key_guard(client, seeded):
     from app.config import get_settings
 

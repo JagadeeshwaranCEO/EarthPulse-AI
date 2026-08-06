@@ -16,6 +16,7 @@ import { Copilot } from "@/components/panels/Copilot";
 import { MemoryPanel } from "@/components/panels/MemoryPanel";
 import { DecisionPanel } from "@/components/panels/DecisionPanel";
 import { ValidationPanel } from "@/components/panels/ValidationPanel";
+import { ModelsPanel } from "@/components/panels/ModelsPanel";
 import { CrisisBanner } from "@/components/ui/CrisisBanner";
 
 const MapView = dynamic(() => import("@/components/map/MapView").then((m) => m.MapView), { ssr: false, loading: () => <div className="h-full w-full bg-panel" /> });
@@ -37,6 +38,7 @@ const TABS = [
   { id: "simulate", label: "Simulate" },
   { id: "agents", label: "Agents" },
   { id: "copilot", label: "Copilot" },
+  { id: "models", label: "Models" },
   { id: "validation", label: "Validation" },
 ];
 
@@ -160,6 +162,7 @@ export default function MissionControl() {
               {tab === "simulate" && (selectedId ? <SimulationSandbox riskId={selectedId} /> : <EmptyPanel label="select a zone from the map or risk rail" />)}
               {tab === "agents" && (selectedId ? <DebatePanel riskId={selectedId} /> : <EmptyPanel label="select a zone from the map or risk rail" />)}
               {tab === "copilot" && (selectedId ? <Copilot riskId={selectedId} /> : <EmptyPanel label="select a zone from the map or risk rail" />)}
+              {tab === "models" && <ModelsPanel />}
               {tab === "validation" && <ValidationPanel />}
             </div>
           {risk && risk.llm_mode && (
