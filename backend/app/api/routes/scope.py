@@ -16,7 +16,7 @@ from app.core.db import get_db
 from app.core.models import Location
 from app.core.security import require_api_key
 from app.services.refresh import refresh_predictions
-from app.services.seeder import reseed
+from app.services.seeder import load_seed, reseed
 
 router = APIRouter(prefix="/scope", tags=["scope"])
 
@@ -25,6 +25,18 @@ _SCOPES = {"chennai", "tamilnadu", "wildfire", "india", "asia"}
 
 class ScopeRequest(BaseModel):
     scope: str
+
+
+def _zones_seed_count(scope: str) -> int:
+    try:
+        return len(load_seed(scope).get("zones", []))
+    except Exception:
+        return 0
+
+
+@router.get("/catalog")
+def scope_catalog():
+    return {"catalog": {s: _zones_seed_count(s) for s in sorted(_SCOPES)}}
 
 
 @router.get("")

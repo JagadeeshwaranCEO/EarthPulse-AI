@@ -211,6 +211,14 @@ def test_health_and_readiness(client, seeded):
     assert ready.json()["zones"] > 0
 
 
+def test_scope_catalog(client, seeded):
+    resp = client.get("/api/v1/scope/catalog")
+    assert resp.status_code == 200
+    cat = resp.json()["catalog"]
+    assert set(cat) == {"chennai", "tamilnadu", "wildfire", "india", "asia"}
+    assert cat["chennai"] == 15 and cat["india"] >= 50
+
+
 def test_models_registry(client, seeded):
     resp = client.get("/api/v1/models")
     assert resp.status_code == 200

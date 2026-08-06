@@ -51,10 +51,20 @@ const THEATRES: { id: string; label: string; cmd: string }[] = [
 ];
 
 export default function MissionControl() {
-  const { dash, wsLive, clock, scrub } = useMissionControl();
+  const { dash, wsLive, clock, scrub, refresh } = useMissionControl();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [tab, setTab] = useState("detail");
   const [risk, setRisk] = useState<RiskDetail | null>(null);
+  const [switching, setSwitching] = useState<string | null>(null);
+  const [catalog, setCatalog] = useState<Record<string, number> | null>(null);
+  const [scopeError, setScopeError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch("/api/v1/scope/catalog")
+      .then((r) => r.json())
+      .then((d) => setCatalog(d.catalog))
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (!dash) return;
@@ -69,6 +79,27 @@ export default function MissionControl() {
   const selectedRisk = dash?.risks.find((r) => r.location_id === selectedId);
   const crisis = dash?.crisis ?? false;
 
+  const switchScope = async (id: string) => {
+    if (id === dash?.scope || switching) return;
+    setSwitching(id);
+    setScopeError(null);
+    try {
+      const res = await fetch("/api/v1/scope", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ scope: id }),
+      });
+      if (!res.ok) throw new Error(`${res.status}`);
+      setSelectedId(null);
+      await refresh();
+      setTab("detail");
+    } catch {
+      setScopeError("scope switch failed — try again");
+    } finally {
+      setSwitching(null);
+    }
+  };
+
   return (
     <div className={`flex h-screen flex-col ${crisis ? "shadow-crisis" : ""}`} style={crisis ? { background: "radial-gradient(ellipse at top, rgba(239,68,68,0.14), transparent 60%), #0A0E14" } : undefined}>
       <CrisisBanner crisis={crisis} alertCount={dash?.alerts.length ?? 0} />
@@ -81,27 +112,35 @@ export default function MissionControl() {
           <p className="telemetry text-[9px] uppercase tracking-widest text-mono">planetary early warning intelligence · {THEATRES.find((t) => t.id === dash?.scope)?.cmd ?? "chennai flood command"}</p>
         </div>
         <div className="ml-auto flex items-center gap-3">
-          <Badge tone={wsLive ? "green" : "slate"}>{wsLive ? "live telemetry" : "connecting…"}</Badge>
+          <Badge tone={switching ? "amber" : wsLive ? "green" : "slate"}>{switching ? `switching to ${THEATRES.find((t) => t.id === switching)?.label}…` : wsLive ? "live telemetry" : "connecting…"}</Badge>
           <Badge tone="slate">{THEATRES.find((t) => t.id === dash?.scope)?.label ?? "chennai"} · theatre</Badge>
           <div className="flex items-center gap-1 rounded border border-edge p-0.5">
-            {THEATRES.map((t) => (
-              <button
-                key={t.id}
-                onClick={async () => {
-                  if (t.id === dash?.scope) return;
-                  await fetch("/api/v1/scope", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ scope: t.id }),
-                  });
-                  window.location.reload();
-                }}
-                className={`telemetry rounded px-2 py-0.5 text-[9px] uppercase tracking-widest ${dash?.scope === t.id ? "bg-accent-blue/25 text-accent-blue" : "text-mono hover:bg-panel2"}`}
-              >
-                {t.label}
-              </button>
-            ))}
+            {THEATRES.map((t) => {
+              const active = dash?.scope === t.id;
+              const busy = switching === t.id;
+              const zones = catalog?.[t.id];
+              return (
+                <button
+                  key={t.id}
+                  disabled={switching !== null}
+                  onClick={() => switchScope(t.id)}
+                  className={`telemetry flex items-center gap-1.5 rounded px-2 py-0.5 text-[9px] uppercase tracking-widest transition-colors ${
+                    active ? "bg-accent-blue/25 text-accent-blue" : busy ? "animate-pulse text-accent-amber" : "text-mono hover:bg-panel2"
+                  } ${switching !== null && !active && !busy ? "cursor-wait opacity-50" : ""}`}
+                >
+                  {busy ? (
+                    <span className="h-2 w-2 animate-spin rounded-full border border-accent-amber border-t-transparent" />
+                  ) : (
+                    t.label
+                  )}
+                  {zones !== undefined && (
+                    <span className={`rounded px-1 text-[8px] ${active ? "bg-accent-blue/30" : "bg-panel2"}`}>{zones}</span>
+                  )}
+                </button>
+              );
+            })}
           </div>
+          {scopeError && <Badge tone="red">{scopeError}</Badge>}
           <div className="telemetry text-[10px] text-mono">{dash?.time?.slice(0, 19).replace("T", " ") ?? "—"}</div>
         </div>
       </header>
