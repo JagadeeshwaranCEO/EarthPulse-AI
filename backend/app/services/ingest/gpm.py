@@ -19,8 +19,9 @@ API_SOURCE = "gpm-nasa-live"
 class GPMAdapter(DataSourceAdapter):
     id = "gpm"
     kind = "satellite"
-    description = ("NASA GPM/IMERG 30-min precipitation + soil-moisture proxy. "
-                   "Live when GPM_ENDPOINT is set; else labeled demo.")
+    description = (
+        "NASA GPM/IMERG 30-min precipitation + soil-moisture proxy. Live when GPM_ENDPOINT is set; else labeled demo."
+    )
     endpoint_attr = "gpm_endpoint"
     token_attr = "gpm_token"
 
@@ -33,16 +34,30 @@ class GPMAdapter(DataSourceAdapter):
                 r = client.get(url, params={"lat": loc["lat"], "lon": loc["lon"]}, headers=headers)
                 r.raise_for_status()
                 for row in r.json().get("frames", []):
-                    frames.append(_frame(
-                        loc["id"], "soil_moisture_anomaly", row["soil_moisture_anomaly"],
-                        API_SOURCE, unit="sigma", at=datetime.fromisoformat(row["ts"])))
+                    frames.append(
+                        _frame(
+                            loc["id"],
+                            "soil_moisture_anomaly",
+                            row["soil_moisture_anomaly"],
+                            API_SOURCE,
+                            unit="sigma",
+                            at=datetime.fromisoformat(row["ts"]),
+                        )
+                    )
         return frames
 
     def _fetch_demo(self, locations, since=None):
         frames = []
         now = since or datetime.now(timezone.utc)
         for loc in locations:
-            frames.append(_frame(loc["id"], "soil_moisture_anomaly",
-                                 _demo_derived(loc, "soil_moisture", 3.0),
-                                 DEMO_SOURCE, unit="sigma", at=now))
+            frames.append(
+                _frame(
+                    loc["id"],
+                    "soil_moisture_anomaly",
+                    _demo_derived(loc, "soil_moisture", 3.0),
+                    DEMO_SOURCE,
+                    unit="sigma",
+                    at=now,
+                )
+            )
         return frames

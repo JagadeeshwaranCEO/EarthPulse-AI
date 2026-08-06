@@ -57,8 +57,7 @@ def mutation_guard(*, require_api_key: bool = True) -> Callable[[Request], None]
     Chat is user-facing conversational input — use `require_api_key=False` so the
     keyless copilot UX stays intact, but it still gets throttled.
     """
-    limiter = SlidingWindowRateLimiter(
-        limit=float(get_settings().mutation_rate_per_minute), window_s=60.0)
+    limiter = SlidingWindowRateLimiter(limit=float(get_settings().mutation_rate_per_minute), window_s=60.0)
 
     def dependency(request: Request) -> None:
         settings = get_settings()

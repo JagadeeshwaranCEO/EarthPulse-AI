@@ -18,26 +18,51 @@ from datetime import datetime, timedelta, timezone
 import numpy as np
 
 SOURCES = [
-    {"id": "noaa-firewx", "name": "NOAA Fire Weather Service", "kind": "weather",
-     "url": "https://www.weather.gov/fire/", "license": "US Gov / public domain",
-     "is_synthetic": True,
-     "description": "Fire weather watch inputs — humidity, sustained wind, rainfall."},
-    {"id": "viiirs-thermal", "name": "VIIRS Thermal Anomaly", "kind": "satellite",
-     "url": "https://firms.modaps.eosdis.nasa.gov/", "license": "NASA LANCE/FS",
-     "is_synthetic": True,
-     "description": "Thermal anomaly clusters and dryness proxies from the VIIRS sensor."},
-    {"id": "gpm-nasa", "name": "GPM/NASA Precipitation", "kind": "satellite",
-     "url": "https://gpm.nasa.gov/", "license": "NASA Open",
-     "is_synthetic": True,
-     "description": "Soil moisture / surface water proxies from GPM retrieval."},
-    {"id": "civic-reports", "name": "Civic Hazard Reporter", "kind": "citizen",
-     "url": "", "license": "Community-verified",
-     "is_synthetic": True,
-     "description": "Verified smoke and ignition sightings from populated foothills."},
-    {"id": "news-eom", "name": "EOM News Wire", "kind": "news",
-     "url": "", "license": "Editorial",
-     "is_synthetic": True,
-     "description": "County red-flag warnings and evacuation advisory feed."},
+    {
+        "id": "noaa-firewx",
+        "name": "NOAA Fire Weather Service",
+        "kind": "weather",
+        "url": "https://www.weather.gov/fire/",
+        "license": "US Gov / public domain",
+        "is_synthetic": True,
+        "description": "Fire weather watch inputs — humidity, sustained wind, rainfall.",
+    },
+    {
+        "id": "viiirs-thermal",
+        "name": "VIIRS Thermal Anomaly",
+        "kind": "satellite",
+        "url": "https://firms.modaps.eosdis.nasa.gov/",
+        "license": "NASA LANCE/FS",
+        "is_synthetic": True,
+        "description": "Thermal anomaly clusters and dryness proxies from the VIIRS sensor.",
+    },
+    {
+        "id": "gpm-nasa",
+        "name": "GPM/NASA Precipitation",
+        "kind": "satellite",
+        "url": "https://gpm.nasa.gov/",
+        "license": "NASA Open",
+        "is_synthetic": True,
+        "description": "Soil moisture / surface water proxies from GPM retrieval.",
+    },
+    {
+        "id": "civic-reports",
+        "name": "Civic Hazard Reporter",
+        "kind": "citizen",
+        "url": "",
+        "license": "Community-verified",
+        "is_synthetic": True,
+        "description": "Verified smoke and ignition sightings from populated foothills.",
+    },
+    {
+        "id": "news-eom",
+        "name": "EOM News Wire",
+        "kind": "news",
+        "url": "",
+        "license": "Editorial",
+        "is_synthetic": True,
+        "description": "County red-flag warnings and evacuation advisory feed.",
+    },
 ]
 
 SEED_VERSION = "california-wildfire-v1"
@@ -140,11 +165,20 @@ def _build_zone(zid, name, region, lat, lon, elev, cap, pop, exposure, arc, star
         }
     ]
     return {
-        "id": zid, "name": name, "region": region, "lat": lat, "lon": lon,
-        "elevation_m": elev, "drainage_capacity_mmh": cap, "population": pop,
+        "id": zid,
+        "name": name,
+        "region": region,
+        "lat": lat,
+        "lon": lon,
+        "elevation_m": elev,
+        "drainage_capacity_mmh": cap,
+        "population": pop,
         "hazard_type": "wildfire",
         "exposure": round(float(exposure), 3),
-        "weather": weather, "satellite": sat, "citizen": citizen, "news": news,
+        "weather": weather,
+        "satellite": sat,
+        "citizen": citizen,
+        "news": news,
     }
 
 

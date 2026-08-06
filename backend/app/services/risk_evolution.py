@@ -29,24 +29,24 @@ def _satellite_soil(frames: list[dict], hour: int) -> float:
         return min(12.0, float(frames[idx]["soil_moisture_anomaly"]))
     last = frames[-1]["soil_moisture_anomaly"]
     over = idx - len(frames) + 1
-    return min(12.0, max(0.0, last * (0.94 ** over)))
+    return min(12.0, max(0.0, last * (0.94**over)))
 
 
 def _window(weather: list[dict], hour: float) -> list[dict]:
     """Weather window at a simulated hour — matches orchestrator consumption."""
     h = int(hour)
     n = min(72, max(1, h))
-    window = weather[max(0, n - 6):n]
+    window = weather[max(0, n - 6) : n]
     if h > 72 and weather:
         last = weather[-1]
         for k in range(1, min(h - 72, 8) + 1):
-            window.append({**last, "rainfall_mm": last["rainfall_mm"] * (0.86 ** k),
-                           "wind_kmh": last.get("wind_kmh", 0)})
+            window.append({**last, "rainfall_mm": last["rainfall_mm"] * (0.86**k), "wind_kmh": last.get("wind_kmh", 0)})
     return window
 
 
-def hour_components(hazard_id: str, weather: list[dict], sat: list[dict], hour: float,
-                    exposure: float, cap_mmh: float) -> dict[str, float]:
+def hour_components(
+    hazard_id: str, weather: list[dict], sat: list[dict], hour: float, exposure: float, cap_mmh: float
+) -> dict[str, float]:
     """Hazard-templated components at a simulated hour."""
     from app.hazards.registry import get_hazard
 
@@ -71,14 +71,16 @@ def evolution(db, location: Location, lookback_h: int = 48, horizon_h: int = 24)
     cap = location.drainage_capacity_mmh
 
     weather = [
-        {"rainfall_mm": w.rainfall_mm, "humidity": w.humidity, "wind_kmh": w.wind_kmh} for w in (
-            db.query(WeatherSnapshot).filter_by(location_id=location.id)
-            .order_by(WeatherSnapshot.captured_at).all())
+        {"rainfall_mm": w.rainfall_mm, "humidity": w.humidity, "wind_kmh": w.wind_kmh}
+        for w in (
+            db.query(WeatherSnapshot).filter_by(location_id=location.id).order_by(WeatherSnapshot.captured_at).all()
+        )
     ]
     sat = [
-        {"soil_moisture_anomaly": f.soil_moisture_anomaly} for f in (
-            db.query(SatelliteFrame).filter_by(location_id=location.id)
-            .order_by(SatelliteFrame.captured_at).all())
+        {"soil_moisture_anomaly": f.soil_moisture_anomaly}
+        for f in (
+            db.query(SatelliteFrame).filter_by(location_id=location.id).order_by(SatelliteFrame.captured_at).all()
+        )
     ]
 
     start = max(0, int(hour) - lookback_h)
@@ -86,14 +88,16 @@ def evolution(db, location: Location, lookback_h: int = 48, horizon_h: int = 24)
     for h in range(start, int(hour) + horizon_h + 1):
         comps = hour_components(hazard.id, weather, sat, h, exposure, cap)
         p = hazard.probability(comps)
-        points.append({
-            "hour": h,
-            "simulated_at": datetime.now(timezone.utc),
-            "risk_probability": round(p, 3),
-            "level": hazard.level(p),
-            "components": comps,
-            "is_now": h == int(hour),
-        })
+        points.append(
+            {
+                "hour": h,
+                "simulated_at": datetime.now(timezone.utc),
+                "risk_probability": round(p, 3),
+                "level": hazard.level(p),
+                "components": comps,
+                "is_now": h == int(hour),
+            }
+        )
 
     probs = [pt["risk_probability"] for pt in points]
     peak_idx = probs.index(max(probs))

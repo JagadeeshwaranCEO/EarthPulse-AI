@@ -158,7 +158,7 @@ export default function MissionControl() {
               {tab === "memory" && (selectedId ? <MemoryPanel riskId={selectedId} /> : <EmptyPanel label="select a zone from the map or risk rail" />)}
               {tab === "decide" && <DecisionPanel riskName={selectedRisk?.location_name ?? "pilot"} />}
               {tab === "simulate" && (selectedId ? <SimulationSandbox riskId={selectedId} /> : <EmptyPanel label="select a zone from the map or risk rail" />)}
-              {tab === "agents" && (selectedId ? <DebatePanel riskId={selectedId} riskName={selectedRisk?.location_name ?? ""} /> : <EmptyPanel label="select a zone from the map or risk rail" />)}
+              {tab === "agents" && (selectedId ? <DebatePanel riskId={selectedId} /> : <EmptyPanel label="select a zone from the map or risk rail" />)}
               {tab === "copilot" && (selectedId ? <Copilot riskId={selectedId} /> : <EmptyPanel label="select a zone from the map or risk rail" />)}
               {tab === "validation" && <ValidationPanel />}
             </div>

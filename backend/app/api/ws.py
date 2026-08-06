@@ -7,6 +7,7 @@ the demo feels alive without manual refresh. REST fallback exists in the UI.
 from __future__ import annotations
 
 import asyncio
+import logging
 from datetime import datetime, timezone
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
@@ -57,8 +58,7 @@ async def broadcaster() -> None:
             try:
                 await ws.send_json(data)
             except Exception:
-                logging.getLogger("earthpulse.ws").warning(
-                    "websocket send failed — dropping connection", exc_info=True)
+                logging.getLogger("earthpulse.ws").warning("websocket send failed — dropping connection", exc_info=True)
                 dead.append(ws)
         for ws in dead:
             connections.discard(ws)

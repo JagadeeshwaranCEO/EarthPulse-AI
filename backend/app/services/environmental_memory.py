@@ -128,7 +128,8 @@ def _driver_labels(hazard: str) -> dict[str, str]:
 # Per-zone memory store (seeded, provenance-tagged in the API layer)
 _MEMORY: dict[str, ZoneMemory] = {
     "velachery": ZoneMemory(
-        "velachery", floods_10y=6,
+        "velachery",
+        floods_10y=6,
         vulnerabilities=["Velachery lake overflow", "low-lying residential basin"],
         choke_points=["South Buckingham Canal intersection", "Velachery main road culvert"],
         divergences=[
@@ -136,13 +137,32 @@ _MEMORY: dict[str, ZoneMemory] = {
             "Reservoir pre-discharge protocols have lowered base basin levels by ~1.2 m vs 2015",
         ],
         events=[
-            HistoricalEvent("Chennai Floods", "Dec 2015", 5, {"rain_intensity": 11.0, "soil_moisture": 9.5, "headroom_deficit": 10.0, "drainage_stress": 10.5}, "compound cyclonic inundation"),
-            HistoricalEvent("NE monsoon inundation", "Nov 2021", 4, {"rain_intensity": 9.5, "soil_moisture": 8.5, "headroom_deficit": 8.0, "drainage_stress": 9.0}, "back-to-back rain spells"),
-            HistoricalEvent("Urban flash flood", "Nov 2023", 3, {"rain_intensity": 9.0, "soil_moisture": 6.0, "headroom_deficit": 7.5, "drainage_stress": 8.5}, "high-intensity short-duration event"),
+            HistoricalEvent(
+                "Chennai Floods",
+                "Dec 2015",
+                5,
+                {"rain_intensity": 11.0, "soil_moisture": 9.5, "headroom_deficit": 10.0, "drainage_stress": 10.5},
+                "compound cyclonic inundation",
+            ),
+            HistoricalEvent(
+                "NE monsoon inundation",
+                "Nov 2021",
+                4,
+                {"rain_intensity": 9.5, "soil_moisture": 8.5, "headroom_deficit": 8.0, "drainage_stress": 9.0},
+                "back-to-back rain spells",
+            ),
+            HistoricalEvent(
+                "Urban flash flood",
+                "Nov 2023",
+                3,
+                {"rain_intensity": 9.0, "soil_moisture": 6.0, "headroom_deficit": 7.5, "drainage_stress": 8.5},
+                "high-intensity short-duration event",
+            ),
         ],
     ),
     "mylapore": ZoneMemory(
-        "mylapore", floods_10y=4,
+        "mylapore",
+        floods_10y=4,
         vulnerabilities=["Coastal ward storm surge coupling", "aged stormwater network"],
         choke_points=["Mylapore tank outlet", "Luz church road drain"],
         divergences=[
@@ -150,12 +170,25 @@ _MEMORY: dict[str, ZoneMemory] = {
             "Aged stormwater network now flows into the restored Mylapore tank (better buffer, slower outflow)",
         ],
         events=[
-            HistoricalEvent("Chennai Floods", "Dec 2015", 5, {"rain_intensity": 10.5, "soil_moisture": 9.0, "headroom_deficit": 9.5, "drainage_stress": 10.0}, "compound cyclonic inundation"),
-            HistoricalEvent("NE monsoon inundation", "Nov 2021", 3, {"rain_intensity": 8.5, "soil_moisture": 7.0, "headroom_deficit": 7.0, "drainage_stress": 7.5}, "tidal coupling"),
+            HistoricalEvent(
+                "Chennai Floods",
+                "Dec 2015",
+                5,
+                {"rain_intensity": 10.5, "soil_moisture": 9.0, "headroom_deficit": 9.5, "drainage_stress": 10.0},
+                "compound cyclonic inundation",
+            ),
+            HistoricalEvent(
+                "NE monsoon inundation",
+                "Nov 2021",
+                3,
+                {"rain_intensity": 8.5, "soil_moisture": 7.0, "headroom_deficit": 7.0, "drainage_stress": 7.5},
+                "tidal coupling",
+            ),
         ],
     ),
     "north_chennai": ZoneMemory(
-        "north_chennai", floods_10y=7,
+        "north_chennai",
+        floods_10y=7,
         vulnerabilities=["Extremely low elevation", "dense informal settlements", "industrial water-logging"],
         choke_points=["Otteri Nullah segment", "Buckingham Canal north reach"],
         divergences=[
@@ -163,13 +196,26 @@ _MEMORY: dict[str, ZoneMemory] = {
             "Industrial water-logging exposure raised by new logistics hubs near the canal",
         ],
         events=[
-            HistoricalEvent("Chennai Floods", "Dec 2015", 5, {"rain_intensity": 11.0, "soil_moisture": 9.8, "headroom_deficit": 10.5, "drainage_stress": 11.0}, "compound cyclonic inundation"),
-            HistoricalEvent("NE monsoon inundation", "Nov 2021", 4, {"rain_intensity": 9.0, "soil_moisture": 8.8, "headroom_deficit": 8.8, "drainage_stress": 9.5}, "drainage network overwhelmed"),
+            HistoricalEvent(
+                "Chennai Floods",
+                "Dec 2015",
+                5,
+                {"rain_intensity": 11.0, "soil_moisture": 9.8, "headroom_deficit": 10.5, "drainage_stress": 11.0},
+                "compound cyclonic inundation",
+            ),
+            HistoricalEvent(
+                "NE monsoon inundation",
+                "Nov 2021",
+                4,
+                {"rain_intensity": 9.0, "soil_moisture": 8.8, "headroom_deficit": 8.8, "drainage_stress": 9.5},
+                "drainage network overwhelmed",
+            ),
         ],
     ),
     # California wildfire theatre — real event names, synthetic signatures
     "ca_santa_rosa": ZoneMemory(
-        "ca_santa_rosa", floods_10y=4,
+        "ca_santa_rosa",
+        floods_10y=4,
         vulnerabilities=["Dense WUI blocks on ridge flanks", "utility corridors through fuel-dry canyons"],
         choke_points=["Highway 101 ridgeline pass", "Mark West Creek drainage corridor"],
         divergences=[
@@ -177,13 +223,40 @@ _MEMORY: dict[str, ZoneMemory] = {
             "Fuel-break program cut ~30% of dead-ladder fuel along the western flank",
         ],
         events=[
-            HistoricalEvent("Tubbs Fire", "Oct 2017", 5, {"fuel_dryness": 10.5, "aridity_index": 10.0, "wind_kick": 11.0, "thermal_anomaly": 9.5, "ignition_reports": 8.0}, "wind-driven WUI firestorm", hazard="wildfire"),
-            HistoricalEvent("Kincade Fire", "Oct 2019", 4, {"fuel_dryness": 9.8, "aridity_index": 9.0, "wind_kick": 9.5, "thermal_anomaly": 8.5, "ignition_reports": 6.0}, "red-flag transmission ignition", hazard="wildfire"),
+            HistoricalEvent(
+                "Tubbs Fire",
+                "Oct 2017",
+                5,
+                {
+                    "fuel_dryness": 10.5,
+                    "aridity_index": 10.0,
+                    "wind_kick": 11.0,
+                    "thermal_anomaly": 9.5,
+                    "ignition_reports": 8.0,
+                },
+                "wind-driven WUI firestorm",
+                hazard="wildfire",
+            ),
+            HistoricalEvent(
+                "Kincade Fire",
+                "Oct 2019",
+                4,
+                {
+                    "fuel_dryness": 9.8,
+                    "aridity_index": 9.0,
+                    "wind_kick": 9.5,
+                    "thermal_anomaly": 8.5,
+                    "ignition_reports": 6.0,
+                },
+                "red-flag transmission ignition",
+                hazard="wildfire",
+            ),
         ],
         hazard="wildfire",
     ),
     "ca_paradise": ZoneMemory(
-        "ca_paradise", floods_10y=5,
+        "ca_paradise",
+        floods_10y=5,
         vulnerabilities=["Ridge pine fuel beds", "single-lane evacuation network"],
         choke_points=["Skyway ridge corridor", "Midway culvert crossing"],
         divergences=[
@@ -191,13 +264,40 @@ _MEMORY: dict[str, ZoneMemory] = {
             "Evacuation capacity tripled with the new ridge connector",
         ],
         events=[
-            HistoricalEvent("Camp Fire", "Nov 2018", 5, {"fuel_dryness": 11.0, "aridity_index": 10.5, "wind_kick": 10.5, "thermal_anomaly": 10.0, "ignition_reports": 9.0}, "ember-storm WUI fire", hazard="wildfire"),
-            HistoricalEvent("North Complex", "Aug 2020", 4, {"fuel_dryness": 10.0, "aridity_index": 9.5, "wind_kick": 8.5, "thermal_anomaly": 9.0, "ignition_reports": 7.0}, "lightning-ignited complex", hazard="wildfire"),
+            HistoricalEvent(
+                "Camp Fire",
+                "Nov 2018",
+                5,
+                {
+                    "fuel_dryness": 11.0,
+                    "aridity_index": 10.5,
+                    "wind_kick": 10.5,
+                    "thermal_anomaly": 10.0,
+                    "ignition_reports": 9.0,
+                },
+                "ember-storm WUI fire",
+                hazard="wildfire",
+            ),
+            HistoricalEvent(
+                "North Complex",
+                "Aug 2020",
+                4,
+                {
+                    "fuel_dryness": 10.0,
+                    "aridity_index": 9.5,
+                    "wind_kick": 8.5,
+                    "thermal_anomaly": 9.0,
+                    "ignition_reports": 7.0,
+                },
+                "lightning-ignited complex",
+                hazard="wildfire",
+            ),
         ],
         hazard="wildfire",
     ),
     "ca_mariposa": ZoneMemory(
-        "ca_mariposa", floods_10y=6,
+        "ca_mariposa",
+        floods_10y=6,
         vulnerabilities=["Sierra foothill oak woodland", "remote trailhead access"],
         choke_points=["Highway 140 canyon reach", "Yosemite gateway corridor"],
         divergences=[
@@ -205,13 +305,40 @@ _MEMORY: dict[str, ZoneMemory] = {
             "Red-flag pre-positioning of crews on the 140 corridor since 2021",
         ],
         events=[
-            HistoricalEvent("Detwiler Fire", "Jul 2017", 4, {"fuel_dryness": 10.2, "aridity_index": 9.8, "wind_kick": 8.0, "thermal_anomaly": 9.0, "ignition_reports": 6.5}, "foothill brush fire with canyon wind", hazard="wildfire"),
-            HistoricalEvent("Ferguson Fire", "Jul 2018", 4, {"fuel_dryness": 10.0, "aridity_index": 9.5, "wind_kick": 7.5, "thermal_anomaly": 8.8, "ignition_reports": 6.0}, "Yosemite gateway closure event", hazard="wildfire"),
+            HistoricalEvent(
+                "Detwiler Fire",
+                "Jul 2017",
+                4,
+                {
+                    "fuel_dryness": 10.2,
+                    "aridity_index": 9.8,
+                    "wind_kick": 8.0,
+                    "thermal_anomaly": 9.0,
+                    "ignition_reports": 6.5,
+                },
+                "foothill brush fire with canyon wind",
+                hazard="wildfire",
+            ),
+            HistoricalEvent(
+                "Ferguson Fire",
+                "Jul 2018",
+                4,
+                {
+                    "fuel_dryness": 10.0,
+                    "aridity_index": 9.5,
+                    "wind_kick": 7.5,
+                    "thermal_anomaly": 8.8,
+                    "ignition_reports": 6.0,
+                },
+                "Yosemite gateway closure event",
+                hazard="wildfire",
+            ),
         ],
         hazard="wildfire",
     ),
     "ca_la_basin": ZoneMemory(
-        "ca_la_basin", floods_10y=3,
+        "ca_la_basin",
+        floods_10y=3,
         vulnerabilities=["Interface canyons above residential basins", "aged power distribution on ridge flanks"],
         choke_points=["Interstate 405 canyon crossing", "Mulholland corridor"],
         divergences=[
@@ -219,13 +346,40 @@ _MEMORY: dict[str, ZoneMemory] = {
             "Weather-triggered public safety power shutoffs now standard",
         ],
         events=[
-            HistoricalEvent("Woolsey Fire", "Nov 2018", 4, {"fuel_dryness": 9.5, "aridity_index": 9.0, "wind_kick": 10.5, "thermal_anomaly": 9.0, "ignition_reports": 7.5}, "Santa Ana wind-driven fire", hazard="wildfire"),
-            HistoricalEvent("Saddle Ridge Fire", "Oct 2019", 3, {"fuel_dryness": 9.0, "aridity_index": 8.5, "wind_kick": 8.5, "thermal_anomaly": 8.0, "ignition_reports": 5.0}, "foothill fire near the basin rim", hazard="wildfire"),
+            HistoricalEvent(
+                "Woolsey Fire",
+                "Nov 2018",
+                4,
+                {
+                    "fuel_dryness": 9.5,
+                    "aridity_index": 9.0,
+                    "wind_kick": 10.5,
+                    "thermal_anomaly": 9.0,
+                    "ignition_reports": 7.5,
+                },
+                "Santa Ana wind-driven fire",
+                hazard="wildfire",
+            ),
+            HistoricalEvent(
+                "Saddle Ridge Fire",
+                "Oct 2019",
+                3,
+                {
+                    "fuel_dryness": 9.0,
+                    "aridity_index": 8.5,
+                    "wind_kick": 8.5,
+                    "thermal_anomaly": 8.0,
+                    "ignition_reports": 5.0,
+                },
+                "foothill fire near the basin rim",
+                hazard="wildfire",
+            ),
         ],
         hazard="wildfire",
     ),
     "ca_sd_backcountry": ZoneMemory(
-        "ca_sd_backcountry", floods_10y=4,
+        "ca_sd_backcountry",
+        floods_10y=4,
         vulnerabilities=["Chaparral fuel corridors", "dispersed backcountry settlements"],
         choke_points=["Interstate 8 east pass", "Campo ridge road"],
         divergences=[
@@ -233,8 +387,34 @@ _MEMORY: dict[str, ZoneMemory] = {
             "Santa Ana forecast pre-deployment since 2007 improved response times",
         ],
         events=[
-            HistoricalEvent("Cedar Fire", "Oct 2003", 5, {"fuel_dryness": 11.0, "aridity_index": 10.5, "wind_kick": 10.0, "thermal_anomaly": 10.5, "ignition_reports": 8.0}, "Santa Ana firestorm", hazard="wildfire"),
-            HistoricalEvent("Witch Creek Fire", "Oct 2007", 4, {"fuel_dryness": 10.5, "aridity_index": 9.8, "wind_kick": 9.5, "thermal_anomaly": 9.5, "ignition_reports": 7.0}, "wind-driven chaparral fire", hazard="wildfire"),
+            HistoricalEvent(
+                "Cedar Fire",
+                "Oct 2003",
+                5,
+                {
+                    "fuel_dryness": 11.0,
+                    "aridity_index": 10.5,
+                    "wind_kick": 10.0,
+                    "thermal_anomaly": 10.5,
+                    "ignition_reports": 8.0,
+                },
+                "Santa Ana firestorm",
+                hazard="wildfire",
+            ),
+            HistoricalEvent(
+                "Witch Creek Fire",
+                "Oct 2007",
+                4,
+                {
+                    "fuel_dryness": 10.5,
+                    "aridity_index": 9.8,
+                    "wind_kick": 9.5,
+                    "thermal_anomaly": 9.5,
+                    "ignition_reports": 7.0,
+                },
+                "wind-driven chaparral fire",
+                hazard="wildfire",
+            ),
         ],
         hazard="wildfire",
     ),
@@ -242,13 +422,41 @@ _MEMORY: dict[str, ZoneMemory] = {
 
 # Generic profiles for zones without bespoke memory
 _GENERIC_EVENTS = [
-    HistoricalEvent("Chennai Floods", "Dec 2015", 5, {"rain_intensity": 10.8, "soil_moisture": 9.4, "headroom_deficit": 10.0, "drainage_stress": 10.5}, "compound cyclonic inundation", hazard="flood"),
-    HistoricalEvent("NE monsoon inundation", "Nov 2021", 4, {"rain_intensity": 9.2, "soil_moisture": 8.2, "headroom_deficit": 8.2, "drainage_stress": 8.8}, "monsoon onset saturation", hazard="flood"),
+    HistoricalEvent(
+        "Chennai Floods",
+        "Dec 2015",
+        5,
+        {"rain_intensity": 10.8, "soil_moisture": 9.4, "headroom_deficit": 10.0, "drainage_stress": 10.5},
+        "compound cyclonic inundation",
+        hazard="flood",
+    ),
+    HistoricalEvent(
+        "NE monsoon inundation",
+        "Nov 2021",
+        4,
+        {"rain_intensity": 9.2, "soil_moisture": 8.2, "headroom_deficit": 8.2, "drainage_stress": 8.8},
+        "monsoon onset saturation",
+        hazard="flood",
+    ),
 ]
 
 _GENERIC_WILDFIRE_EVENTS = [
-    HistoricalEvent("Heat-dome brush fire", "Sep 2020", 4, {"fuel_dryness": 10.5, "aridity_index": 9.8, "wind_kick": 9.0, "thermal_anomaly": 9.5, "ignition_reports": 6.5}, "drought-prime ridge fire", hazard="wildfire"),
-    HistoricalEvent("Red-flag wind event", "Oct 2022", 3, {"fuel_dryness": 9.0, "aridity_index": 8.8, "wind_kick": 8.5, "thermal_anomaly": 8.0, "ignition_reports": 4.5}, "offshore wind with dry fuels", hazard="wildfire"),
+    HistoricalEvent(
+        "Heat-dome brush fire",
+        "Sep 2020",
+        4,
+        {"fuel_dryness": 10.5, "aridity_index": 9.8, "wind_kick": 9.0, "thermal_anomaly": 9.5, "ignition_reports": 6.5},
+        "drought-prime ridge fire",
+        hazard="wildfire",
+    ),
+    HistoricalEvent(
+        "Red-flag wind event",
+        "Oct 2022",
+        3,
+        {"fuel_dryness": 9.0, "aridity_index": 8.8, "wind_kick": 8.5, "thermal_anomaly": 8.0, "ignition_reports": 4.5},
+        "offshore wind with dry fuels",
+        hazard="wildfire",
+    ),
 ]
 
 _GENERIC_VULN = ["stormwater network at design limit", "low-lying street flooding"]
@@ -265,8 +473,22 @@ _GENERIC_WILDFIRE_DIVERGENCES = [
 ]
 
 _GENERIC_CYCLONE_EVENTS = [
-    HistoricalEvent("Bay of Bengal cyclone", "Oct 2019", 4, {"storm_wind": 10.0, "surge_coupling": 9.0, "rain_burst": 8.5, "track_pressure": 8.0}, "landfall with surge band", hazard="cyclone"),
-    HistoricalEvent("Coastal depression track", "Nov 2021", 3, {"storm_wind": 8.5, "surge_coupling": 7.5, "rain_burst": 7.0, "track_pressure": 6.5}, "moderate coastal impact", hazard="cyclone"),
+    HistoricalEvent(
+        "Bay of Bengal cyclone",
+        "Oct 2019",
+        4,
+        {"storm_wind": 10.0, "surge_coupling": 9.0, "rain_burst": 8.5, "track_pressure": 8.0},
+        "landfall with surge band",
+        hazard="cyclone",
+    ),
+    HistoricalEvent(
+        "Coastal depression track",
+        "Nov 2021",
+        3,
+        {"storm_wind": 8.5, "surge_coupling": 7.5, "rain_burst": 7.0, "track_pressure": 6.5},
+        "moderate coastal impact",
+        hazard="cyclone",
+    ),
 ]
 _GENERIC_CYCLONE_VULN = ["surge-range coastal blocks", "dense fishing-community wards"]
 _GENERIC_CYCLONE_CHOKE = ["coastal road corridor", "harbour access line"]
@@ -278,28 +500,112 @@ _GENERIC_CYCLONE_DIVERGENCES = [
 # Seismic / geologic / climate hazards — generic event bands for non-bespoke zones
 _GENERIC_SEISMIC_EVENTS = {
     "earthquake": [
-        HistoricalEvent("Seismic episode sequence", "2016", 4, {"ground_accel": 9.5, "energy_release": 10.0, "building_vulnerability": 7.0, "shaking_reports": 7.5}, "mainshock with active aftershocks", hazard="earthquake"),
-        HistoricalEvent("Moderate ground-motion event", "2019", 3, {"ground_accel": 7.0, "energy_release": 7.5, "building_vulnerability": 6.5, "shaking_reports": 5.0}, "damaging shaking with limited sequence", hazard="earthquake"),
+        HistoricalEvent(
+            "Seismic episode sequence",
+            "2016",
+            4,
+            {"ground_accel": 9.5, "energy_release": 10.0, "building_vulnerability": 7.0, "shaking_reports": 7.5},
+            "mainshock with active aftershocks",
+            hazard="earthquake",
+        ),
+        HistoricalEvent(
+            "Moderate ground-motion event",
+            "2019",
+            3,
+            {"ground_accel": 7.0, "energy_release": 7.5, "building_vulnerability": 6.5, "shaking_reports": 5.0},
+            "damaging shaking with limited sequence",
+            hazard="earthquake",
+        ),
     ],
     "tsunami": [
-        HistoricalEvent("Offshore-source surge", "2011", 5, {"sea_disturbance": 11.0, "source_energy": 10.5, "coastal_exposure": 8.5, "sea_state_report": 8.0}, "far-field surge event", hazard="tsunami"),
-        HistoricalEvent("Local sea-floor event", "2018", 3, {"sea_disturbance": 8.0, "source_energy": 7.5, "coastal_exposure": 8.0, "sea_state_report": 5.5}, "near-field disturbance", hazard="tsunami"),
+        HistoricalEvent(
+            "Offshore-source surge",
+            "2011",
+            5,
+            {"sea_disturbance": 11.0, "source_energy": 10.5, "coastal_exposure": 8.5, "sea_state_report": 8.0},
+            "far-field surge event",
+            hazard="tsunami",
+        ),
+        HistoricalEvent(
+            "Local sea-floor event",
+            "2018",
+            3,
+            {"sea_disturbance": 8.0, "source_energy": 7.5, "coastal_exposure": 8.0, "sea_state_report": 5.5},
+            "near-field disturbance",
+            hazard="tsunami",
+        ),
     ],
     "volcanic": [
-        HistoricalEvent("Explosive eruption cycle", "2014", 4, {"tremor_amplitude": 10.0, "so2_flux": 9.5, "ash_plume": 9.0, "ashfall_report": 7.5}, "tremor and flux escalation", hazard="volcanic"),
-        HistoricalEvent("Ashfall episode", "2017", 3, {"tremor_amplitude": 7.5, "so2_flux": 7.0, "ash_plume": 7.5, "ashfall_report": 6.5}, "moderate plume with ashfall", hazard="volcanic"),
+        HistoricalEvent(
+            "Explosive eruption cycle",
+            "2014",
+            4,
+            {"tremor_amplitude": 10.0, "so2_flux": 9.5, "ash_plume": 9.0, "ashfall_report": 7.5},
+            "tremor and flux escalation",
+            hazard="volcanic",
+        ),
+        HistoricalEvent(
+            "Ashfall episode",
+            "2017",
+            3,
+            {"tremor_amplitude": 7.5, "so2_flux": 7.0, "ash_plume": 7.5, "ashfall_report": 6.5},
+            "moderate plume with ashfall",
+            hazard="volcanic",
+        ),
     ],
     "landslide": [
-        HistoricalEvent("Monsoon slope failure", "2013", 4, {"slope_saturation": 10.5, "rain_trigger": 10.0, "terrain_fragility": 8.0, "slippage_report": 7.0}, "burst-triggered runout", hazard="landslide"),
-        HistoricalEvent("Saturation creep event", "2019", 3, {"slope_saturation": 8.5, "rain_trigger": 7.5, "terrain_fragility": 7.5, "slippage_report": 5.5}, "slow mobilization on wet face", hazard="landslide"),
+        HistoricalEvent(
+            "Monsoon slope failure",
+            "2013",
+            4,
+            {"slope_saturation": 10.5, "rain_trigger": 10.0, "terrain_fragility": 8.0, "slippage_report": 7.0},
+            "burst-triggered runout",
+            hazard="landslide",
+        ),
+        HistoricalEvent(
+            "Saturation creep event",
+            "2019",
+            3,
+            {"slope_saturation": 8.5, "rain_trigger": 7.5, "terrain_fragility": 7.5, "slippage_report": 5.5},
+            "slow mobilization on wet face",
+            hazard="landslide",
+        ),
     ],
     "drought": [
-        HistoricalEvent("Multi-season drought", "2016", 4, {"precipitation_deficit": 10.5, "soil_desiccation": 10.0, "heat_stress": 8.5, "water_scarcity": 8.0}, "compounding deficit years", hazard="drought"),
-        HistoricalEvent("Monsoon-break drought", "2019", 3, {"precipitation_deficit": 8.5, "soil_desiccation": 8.0, "heat_stress": 7.0, "water_scarcity": 6.0}, "failed monsoon onset", hazard="drought"),
+        HistoricalEvent(
+            "Multi-season drought",
+            "2016",
+            4,
+            {"precipitation_deficit": 10.5, "soil_desiccation": 10.0, "heat_stress": 8.5, "water_scarcity": 8.0},
+            "compounding deficit years",
+            hazard="drought",
+        ),
+        HistoricalEvent(
+            "Monsoon-break drought",
+            "2019",
+            3,
+            {"precipitation_deficit": 8.5, "soil_desiccation": 8.0, "heat_stress": 7.0, "water_scarcity": 6.0},
+            "failed monsoon onset",
+            hazard="drought",
+        ),
     ],
     "heatwave": [
-        HistoricalEvent("Heat-dome episode", "2016", 4, {"thermal_excess": 10.5, "dry_bulb_load": 9.5, "stagnation": 9.0, "heat_illness": 7.5}, "stagnant dome with high night floor", hazard="heatwave"),
-        HistoricalEvent("Hot-corridor event", "2019", 3, {"thermal_excess": 8.5, "dry_bulb_load": 8.0, "stagnation": 7.0, "heat_illness": 5.5}, "multi-day corridor heat", hazard="heatwave"),
+        HistoricalEvent(
+            "Heat-dome episode",
+            "2016",
+            4,
+            {"thermal_excess": 10.5, "dry_bulb_load": 9.5, "stagnation": 9.0, "heat_illness": 7.5},
+            "stagnant dome with high night floor",
+            hazard="heatwave",
+        ),
+        HistoricalEvent(
+            "Hot-corridor event",
+            "2019",
+            3,
+            {"thermal_excess": 8.5, "dry_bulb_load": 8.0, "stagnation": 7.0, "heat_illness": 5.5},
+            "multi-day corridor heat",
+            hazard="heatwave",
+        ),
     ],
 }
 _GENERIC_GEOLOGIC_VULN = ["pre-2010 building stock", "critical lifelines crossing hazard corridors"]
@@ -315,20 +621,43 @@ def memory_for(zone_id: str, hazard: str = "flood") -> ZoneMemory:
     if mem and mem.hazard == hazard:
         return mem
     if hazard == "wildfire":
-        return ZoneMemory(zone_id, floods_10y=4, vulnerabilities=list(_GENERIC_WILDFIRE_VULN),
-                          choke_points=list(_GENERIC_WILDFIRE_CHOKE), events=list(_GENERIC_WILDFIRE_EVENTS),
-                          divergences=list(_GENERIC_WILDFIRE_DIVERGENCES), hazard="wildfire")
+        return ZoneMemory(
+            zone_id,
+            floods_10y=4,
+            vulnerabilities=list(_GENERIC_WILDFIRE_VULN),
+            choke_points=list(_GENERIC_WILDFIRE_CHOKE),
+            events=list(_GENERIC_WILDFIRE_EVENTS),
+            divergences=list(_GENERIC_WILDFIRE_DIVERGENCES),
+            hazard="wildfire",
+        )
     if hazard == "cyclone":
-        return ZoneMemory(zone_id, floods_10y=4, vulnerabilities=list(_GENERIC_CYCLONE_VULN),
-                          choke_points=list(_GENERIC_CYCLONE_CHOKE), events=list(_GENERIC_CYCLONE_EVENTS),
-                          divergences=list(_GENERIC_CYCLONE_DIVERGENCES), hazard="cyclone")
+        return ZoneMemory(
+            zone_id,
+            floods_10y=4,
+            vulnerabilities=list(_GENERIC_CYCLONE_VULN),
+            choke_points=list(_GENERIC_CYCLONE_CHOKE),
+            events=list(_GENERIC_CYCLONE_EVENTS),
+            divergences=list(_GENERIC_CYCLONE_DIVERGENCES),
+            hazard="cyclone",
+        )
     if hazard in _GENERIC_SEISMIC_EVENTS:
-        return ZoneMemory(zone_id, floods_10y=4, vulnerabilities=list(_GENERIC_GEOLOGIC_VULN),
-                          choke_points=list(_GENERIC_GEOLOGIC_CHOKE), events=list(_GENERIC_SEISMIC_EVENTS[hazard]),
-                          divergences=list(_GENERIC_GEOLOGIC_DIVERGENCES), hazard=hazard)
-    return ZoneMemory(zone_id, floods_10y=3, vulnerabilities=list(_GENERIC_VULN),
-                      choke_points=list(_GENERIC_CHOKE), events=list(_GENERIC_EVENTS),
-                      divergences=list(_GENERIC_DIVERGENCES))
+        return ZoneMemory(
+            zone_id,
+            floods_10y=4,
+            vulnerabilities=list(_GENERIC_GEOLOGIC_VULN),
+            choke_points=list(_GENERIC_GEOLOGIC_CHOKE),
+            events=list(_GENERIC_SEISMIC_EVENTS[hazard]),
+            divergences=list(_GENERIC_GEOLOGIC_DIVERGENCES),
+            hazard=hazard,
+        )
+    return ZoneMemory(
+        zone_id,
+        floods_10y=3,
+        vulnerabilities=list(_GENERIC_VULN),
+        choke_points=list(_GENERIC_CHOKE),
+        events=list(_GENERIC_EVENTS),
+        divergences=list(_GENERIC_DIVERGENCES),
+    )
 
 
 def _vec(comps: dict[str, float], hazard: str) -> list[float]:
@@ -346,16 +675,20 @@ def analogue_matches(zone_id: str, components: dict[str, float], hazard: str = "
     mem = memory_for(zone_id, hazard)
     vec = _vec(components, hazard)
     scored = [
-        {"event": e.name, "date": e.date, "severity": e.severity,
-         "similarity": round(_similarity(vec, _vec(e.signature, hazard)), 3),
-         "description": e.description}
-        for e in mem.events if e.hazard == hazard
+        {
+            "event": e.name,
+            "date": e.date,
+            "severity": e.severity,
+            "similarity": round(_similarity(vec, _vec(e.signature, hazard)), 3),
+            "description": e.description,
+        }
+        for e in mem.events
+        if e.hazard == hazard
     ]
     return sorted(scored, key=lambda s: -s["similarity"])
 
 
-def _matching_drivers(components: dict[str, float], signature: dict[str, float],
-                      hazard: str = "flood") -> list[dict]:
+def _matching_drivers(components: dict[str, float], signature: dict[str, float], hazard: str = "flood") -> list[dict]:
     """Which causal drivers line up with the analogue event (within 70% of its signature)."""
     labels = _driver_labels(hazard)
     out = []
@@ -363,18 +696,25 @@ def _matching_drivers(components: dict[str, float], signature: dict[str, float],
         cur = components.get(k, 0.0)
         ref = signature.get(k, 0.0)
         ratio = cur / ref if ref > 0 else 0.0
-        out.append({
-            "driver": labels.get(k, k),
-            "feature": k,
-            "current": round(cur, 2),
-            "analogue": ref,
-            "matched": ratio >= 0.7,
-        })
+        out.append(
+            {
+                "driver": labels.get(k, k),
+                "feature": k,
+                "current": round(cur, 2),
+                "analogue": ref,
+                "matched": ratio >= 0.7,
+            }
+        )
     return out
 
 
-def _reliability(components: dict[str, float], signature: dict[str, float],
-                 similarity: float, divergences: list[str], hazard: str = "flood") -> str:
+def _reliability(
+    components: dict[str, float],
+    signature: dict[str, float],
+    similarity: float,
+    divergences: list[str],
+    hazard: str = "flood",
+) -> str:
     """Analogue reliability: pattern overlap minus structural drift."""
     matched = sum(1 for d in _matching_drivers(components, signature, hazard) if d["matched"])
     base = similarity
@@ -394,7 +734,11 @@ def memory_view(zone_id: str, components: dict[str, float], hazard: str = "flood
     top = matches[0] if matches else None
     top_event = next((e for e in mem.events if top and e.name == top["event"] and e.date == top["date"]), None)
     drivers = _matching_drivers(components, top_event.signature, hazard) if top_event else []
-    reliability = _reliability(components, top_event.signature, top["similarity"], mem.divergences, hazard) if top_event else "Low"
+    reliability = (
+        _reliability(components, top_event.signature, top["similarity"], mem.divergences, hazard)
+        if top_event
+        else "Low"
+    )
     decade_label = {"wildfire": "wildfire seasons", "cyclone": "cyclone landfalls"}.get(
         hazard,
         {
@@ -416,7 +760,8 @@ def memory_view(zone_id: str, components: dict[str, float], hazard: str = "flood
         "headline": (
             f"{mem.floods_10y} major {decade_label} in the past decade; current telemetry "
             f"resembles {top['event']} ({top['date']}) at {top['similarity'] * 100:.0f}%"
-            if top else "no strong historical analogue"
+            if top
+            else "no strong historical analogue"
         ),
         "analogue_breakdown": {
             "closest_event": top["event"] if top else None,
@@ -425,5 +770,7 @@ def memory_view(zone_id: str, components: dict[str, float], hazard: str = "flood
             "matching_drivers": drivers,
             "critical_divergences": mem.divergences,
             "estimated_reliability": reliability,
-        } if top else None,
+        }
+        if top
+        else None,
     }

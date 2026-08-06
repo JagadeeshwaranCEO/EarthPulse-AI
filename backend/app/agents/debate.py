@@ -8,9 +8,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from app.agents.cognition import RiskFusionAgent
-from app.agents.observers import CitizenReportAgent
-from app.agents.sensors import WeatherAgent
 from app.services import llm as llm_svc
 
 DEBATE_THRESHOLD = 0.55
@@ -54,7 +51,8 @@ def _positions(components: dict[str, float], evidence: list[dict]) -> list[Posit
                 f"Even with moderate rain, headroom deficit ({head:.1f}/10) is the binding constraint: "
                 f"the drainage network cannot shed the current load before the next surge."
             ),
-            evidence=[l for l in lines if "headroom" in l.lower() or "level" in l.lower()][:2] or ["canal level vs capacity"],
+            evidence=[l for l in lines if "headroom" in l.lower() or "level" in l.lower()][:2]
+            or ["canal level vs capacity"],
             confidence=0.66,
         ),
         Position(
@@ -82,8 +80,12 @@ async def debate(components: dict[str, float], evidence: list[dict], topic: str,
     positions = _positions(components, evidence)
     _, mode = await llm_svc.complete(
         system="You are the debate moderator for EarthPulse. Synthesize a fair verdict from the two positions; be honest about uncertainty.",
-        user="Topic: " + topic + "\n\n" + "\n\n".join(
-            f"### {_ROLE_DEFS[p.agent][0]} ({p.confidence:.0%} conf)\n{p.position}\nEvidence: {p.evidence}" for p in positions
+        user="Topic: "
+        + topic
+        + "\n\n"
+        + "\n\n".join(
+            f"### {_ROLE_DEFS[p.agent][0]} ({p.confidence:.0%} conf)\n{p.position}\nEvidence: {p.evidence}"
+            for p in positions
         ),
     )
     if mode == "live":
@@ -103,7 +105,12 @@ async def debate(components: dict[str, float], evidence: list[dict], topic: str,
         "topic": topic,
         "risk_id": risk_id,
         "statements": [
-            {"agent": _ROLE_DEFS[p.agent][0], "position": p.position, "evidence": p.evidence, "confidence": p.confidence}
+            {
+                "agent": _ROLE_DEFS[p.agent][0],
+                "position": p.position,
+                "evidence": p.evidence,
+                "confidence": p.confidence,
+            }
             for p in positions
         ],
         "verdict": verdict_text,

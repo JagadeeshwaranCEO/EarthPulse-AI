@@ -47,11 +47,41 @@ def build_retrospective() -> tuple[list[float], list[float]]:
 
     # Negative examples: calm states (low drivers) — no flood outcome
     calm_specs = [
-        {"rain_intensity": 1.2, "soil_moisture": 1.0, "headroom_deficit": 0.8, "drainage_stress": 0.5, "citizen_pressure": 0.2},
-        {"rain_intensity": 2.0, "soil_moisture": 1.8, "headroom_deficit": 1.2, "drainage_stress": 0.8, "citizen_pressure": 0.3},
-        {"rain_intensity": 1.5, "soil_moisture": 1.4, "headroom_deficit": 1.0, "drainage_stress": 0.6, "citizen_pressure": 0.1},
-        {"rain_intensity": 0.8, "soil_moisture": 0.9, "headroom_deficit": 0.6, "drainage_stress": 0.3, "citizen_pressure": 0.0},
-        {"rain_intensity": 2.8, "soil_moisture": 2.2, "headroom_deficit": 1.6, "drainage_stress": 1.1, "citizen_pressure": 0.4},
+        {
+            "rain_intensity": 1.2,
+            "soil_moisture": 1.0,
+            "headroom_deficit": 0.8,
+            "drainage_stress": 0.5,
+            "citizen_pressure": 0.2,
+        },
+        {
+            "rain_intensity": 2.0,
+            "soil_moisture": 1.8,
+            "headroom_deficit": 1.2,
+            "drainage_stress": 0.8,
+            "citizen_pressure": 0.3,
+        },
+        {
+            "rain_intensity": 1.5,
+            "soil_moisture": 1.4,
+            "headroom_deficit": 1.0,
+            "drainage_stress": 0.6,
+            "citizen_pressure": 0.1,
+        },
+        {
+            "rain_intensity": 0.8,
+            "soil_moisture": 0.9,
+            "headroom_deficit": 0.6,
+            "drainage_stress": 0.3,
+            "citizen_pressure": 0.0,
+        },
+        {
+            "rain_intensity": 2.8,
+            "soil_moisture": 2.2,
+            "headroom_deficit": 1.6,
+            "drainage_stress": 1.1,
+            "citizen_pressure": 0.4,
+        },
     ]
     for i in range(12):
         spec = calm_specs[i % len(calm_specs)]
@@ -73,7 +103,9 @@ def main() -> None:
     print(f"reliability error: {report['reliability_error_before']}")
     print(f"recalib: bias={report['recalib_bias']} slope={report['recalib_slope']}")
     for row in report["reliability"]:
-        print(f"  bin {row['bin']:7s} n={row['n']:3d} pred={row['mean_prediction']:.3f} observed={row['observed_frequency']:.3f}")
+        print(
+            f"  bin {row['bin']:7s} n={row['n']:3d} pred={row['mean_prediction']:.3f} observed={row['observed_frequency']:.3f}"
+        )
     print(f"wrote {out}")
 
 

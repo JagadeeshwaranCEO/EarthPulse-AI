@@ -55,7 +55,6 @@ def compute_attribution(components: dict[str, float]) -> list[AttributionItem]:
 
 
 def _probability_from_features(f: dict[str, float]) -> float:
-    from app.ml.forecaster import probability_from_components
 
     return probability_from_components(f)
 

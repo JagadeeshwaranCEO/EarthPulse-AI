@@ -52,13 +52,15 @@ def _historical(payload: dict) -> list[dict[str, float]]:
     out = []
     for s in payload.get("weather_snapshots", [])[-48:]:
         soil_proxy = max(0.0, 6.0 - s["rainfall_mm"] * 1.5)
-        out.append({
-            "fuel_dryness": _clip(12.0 - soil_proxy * 2.0),
-            "aridity_index": _clip(12.0 - s["rainfall_mm"] * 2.0 - s.get("humidity", 60) / 25.0),
-            "wind_kick": _clip(s.get("wind_kmh", 10) / 6.0),
-            "thermal_anomaly": _clip(2.0 + s["rainfall_mm"] * 0.2),
-            "ignition_reports": 0.2,
-        })
+        out.append(
+            {
+                "fuel_dryness": _clip(12.0 - soil_proxy * 2.0),
+                "aridity_index": _clip(12.0 - s["rainfall_mm"] * 2.0 - s.get("humidity", 60) / 25.0),
+                "wind_kick": _clip(s.get("wind_kmh", 10) / 6.0),
+                "thermal_anomaly": _clip(2.0 + s["rainfall_mm"] * 0.2),
+                "ignition_reports": 0.2,
+            }
+        )
     return out
 
 
@@ -77,18 +79,48 @@ def _wildfire_hourly(window: list[dict], soil: float, exposure: float, cap: floa
 
 def _wildfire_causal(components: dict[str, float], pred: dict) -> dict:
     nodes = [
-        {"id": "fuel", "label": "Vegetation fuel dryness", "kind": "cause",
-         "value": f"{components.get('fuel_dryness', 0):.2f}/12", "confidence": 0.85},
-        {"id": "aridity", "label": "Aridity index", "kind": "cause",
-         "value": f"{components.get('aridity_index', 0):.2f}/12", "confidence": 0.8},
-        {"id": "wind", "label": "Sustained wind gusts", "kind": "mechanism",
-         "value": f"{components.get('wind_kick', 0) * 6:.0f} km/h", "confidence": 0.8},
-        {"id": "thermal", "label": "Thermal anomaly (VIIRS)", "kind": "mechanism",
-         "value": f"{components.get('thermal_anomaly', 0):.2f}/12", "confidence": 0.75},
-        {"id": "ignition", "label": "Verified ignition reports", "kind": "condition",
-         "value": f"{components.get('ignition_reports', 0) / 2:.1f} sightings", "confidence": 0.6},
-        {"id": "risk", "label": f"Wildfire risk ({pred.get('risk_probability', 0):.0%})", "kind": "risk",
-         "value": f"severity {pred.get('severity', 0):.1f}/5", "confidence": pred.get("confidence", 0.5)},
+        {
+            "id": "fuel",
+            "label": "Vegetation fuel dryness",
+            "kind": "cause",
+            "value": f"{components.get('fuel_dryness', 0):.2f}/12",
+            "confidence": 0.85,
+        },
+        {
+            "id": "aridity",
+            "label": "Aridity index",
+            "kind": "cause",
+            "value": f"{components.get('aridity_index', 0):.2f}/12",
+            "confidence": 0.8,
+        },
+        {
+            "id": "wind",
+            "label": "Sustained wind gusts",
+            "kind": "mechanism",
+            "value": f"{components.get('wind_kick', 0) * 6:.0f} km/h",
+            "confidence": 0.8,
+        },
+        {
+            "id": "thermal",
+            "label": "Thermal anomaly (VIIRS)",
+            "kind": "mechanism",
+            "value": f"{components.get('thermal_anomaly', 0):.2f}/12",
+            "confidence": 0.75,
+        },
+        {
+            "id": "ignition",
+            "label": "Verified ignition reports",
+            "kind": "condition",
+            "value": f"{components.get('ignition_reports', 0) / 2:.1f} sightings",
+            "confidence": 0.6,
+        },
+        {
+            "id": "risk",
+            "label": f"Wildfire risk ({pred.get('risk_probability', 0):.0%})",
+            "kind": "risk",
+            "value": f"severity {pred.get('severity', 0):.1f}/5",
+            "confidence": pred.get("confidence", 0.5),
+        },
     ]
     edges = [
         {"source": "aridity", "target": "fuel", "label": "dries fuels below moisture floor"},
@@ -103,22 +135,38 @@ def _wildfire_causal(components: dict[str, float], pred: dict) -> dict:
 
 def _wildfire_recommend(p: float, sev: float) -> list:
     return [
-        {"id": "rec_fire_1", "stakeholder": "responders", "priority": 1 if p > 0.6 else 2,
-         "action": "Hold containment lines on the windward flank; task air tankers to first ignition.",
-         "reasoning": "wind kick is a top spread driver; aviation buys containment time.",
-         "evidence_ids": []},
-        {"id": "rec_wui_1", "stakeholder": "civic", "priority": 1 if sev >= 3 else 2,
-         "action": "Open evacuation corridors in wildland-urban interface blocks before wind shift.",
-         "reasoning": "interface blocks are the highest life-exposure zones under red-flag conditions.",
-         "evidence_ids": []},
-        {"id": "rec_utility_1", "stakeholder": "utilities", "priority": 2,
-         "action": "De-energize feeders along ridgelines; dispatch line crews to downed conductors.",
-         "reasoning": "ignition sources cluster around distribution infrastructure in high wind.",
-         "evidence_ids": []},
-        {"id": "rec_public_1", "stakeholder": "public", "priority": 3,
-         "action": "Report smoke and heat signatures immediately; keep fire-escape lanes clear.",
-         "reasoning": "early ground truth sharpens thermal anomaly verification.",
-         "evidence_ids": []},
+        {
+            "id": "rec_fire_1",
+            "stakeholder": "responders",
+            "priority": 1 if p > 0.6 else 2,
+            "action": "Hold containment lines on the windward flank; task air tankers to first ignition.",
+            "reasoning": "wind kick is a top spread driver; aviation buys containment time.",
+            "evidence_ids": [],
+        },
+        {
+            "id": "rec_wui_1",
+            "stakeholder": "civic",
+            "priority": 1 if sev >= 3 else 2,
+            "action": "Open evacuation corridors in wildland-urban interface blocks before wind shift.",
+            "reasoning": "interface blocks are the highest life-exposure zones under red-flag conditions.",
+            "evidence_ids": [],
+        },
+        {
+            "id": "rec_utility_1",
+            "stakeholder": "utilities",
+            "priority": 2,
+            "action": "De-energize feeders along ridgelines; dispatch line crews to downed conductors.",
+            "reasoning": "ignition sources cluster around distribution infrastructure in high wind.",
+            "evidence_ids": [],
+        },
+        {
+            "id": "rec_public_1",
+            "stakeholder": "public",
+            "priority": 3,
+            "action": "Report smoke and heat signatures immediately; keep fire-escape lanes clear.",
+            "reasoning": "early ground truth sharpens thermal anomaly verification.",
+            "evidence_ids": [],
+        },
     ]
 
 
@@ -137,33 +185,57 @@ WILDFIRE = HazardSpec(
     },
     thresholds={"critical": 0.8, "high": 0.6, "moderate": 0.35},
     interventions=[
-        {"id": "containment_lines", "name": "Containment Lines", "kind": "engineering",
-         "description": "Cut fire breaks on the windward flank"},
-        {"id": "air_tankers_standby", "name": "Air Tankers Standby", "kind": "operational",
-         "description": "Stage water/retardant drops for first-response ignition"},
-        {"id": "fuel_break_clearing", "name": "Fuel Break Clearing", "kind": "engineering",
-         "description": "Clear dead vegetation along ridge roads"},
-        {"id": "evacuation_corridors", "name": "Evacuation Corridors", "kind": "policy",
-         "description": "Open and sign evacuation corridors ahead of wind shift"},
-        {"id": "water_tenders", "name": "Water Tenders", "kind": "operational",
-         "description": "Pre-position tenders at wildland-urban interface blocks"},
+        {
+            "id": "containment_lines",
+            "name": "Containment Lines",
+            "kind": "engineering",
+            "description": "Cut fire breaks on the windward flank",
+        },
+        {
+            "id": "air_tankers_standby",
+            "name": "Air Tankers Standby",
+            "kind": "operational",
+            "description": "Stage water/retardant drops for first-response ignition",
+        },
+        {
+            "id": "fuel_break_clearing",
+            "name": "Fuel Break Clearing",
+            "kind": "engineering",
+            "description": "Clear dead vegetation along ridge roads",
+        },
+        {
+            "id": "evacuation_corridors",
+            "name": "Evacuation Corridors",
+            "kind": "policy",
+            "description": "Open and sign evacuation corridors ahead of wind shift",
+        },
+        {
+            "id": "water_tenders",
+            "name": "Water Tenders",
+            "kind": "operational",
+            "description": "Pre-position tenders at wildland-urban interface blocks",
+        },
     ],
     evidence=[
-        EvidenceTemplate("noaa-firewx", "observation",
-                         "fuel moisture content below the seasonal floor",
-                         "fuel_dryness", 3),
-        EvidenceTemplate("viiirs-thermal", "observation",
-                         "VIIRS thermal anomaly clusters detected on adjacent ridgelines",
-                         "thermal_anomaly", 2),
-        EvidenceTemplate("noaa-firewx", "observation",
-                         "sustained wind gusts above red-flag threshold",
-                         "wind_kick", 2),
-        EvidenceTemplate("civic-reports", "report",
-                         "verified smoke/ignition sightings from populated foothills",
-                         "ignition_reports", 1),
-        EvidenceTemplate("news-eom", "citation",
-                         "red-flag warning active for the county",
-                         None, 6),
+        EvidenceTemplate(
+            "noaa-firewx", "observation", "fuel moisture content below the seasonal floor", "fuel_dryness", 3
+        ),
+        EvidenceTemplate(
+            "viiirs-thermal",
+            "observation",
+            "VIIRS thermal anomaly clusters detected on adjacent ridgelines",
+            "thermal_anomaly",
+            2,
+        ),
+        EvidenceTemplate("noaa-firewx", "observation", "sustained wind gusts above red-flag threshold", "wind_kick", 2),
+        EvidenceTemplate(
+            "civic-reports",
+            "report",
+            "verified smoke/ignition sightings from populated foothills",
+            "ignition_reports",
+            1,
+        ),
+        EvidenceTemplate("news-eom", "citation", "red-flag warning active for the county", None, 6),
     ],
     hourly=_wildfire_hourly,
     causal=_wildfire_causal,

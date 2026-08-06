@@ -35,18 +35,54 @@ ZONES = [
 ]
 
 SOURCES = [
-    {"id": "imd-rain", "name": "IMD rain gauges (synthetic demo feed)", "kind": "weather",
-     "url": "https://mausam.imd.gov.in/", "license": "public", "description": "Hourly rainfall accumulation (synthetic pilot feed)"},
-    {"id": "cwprs-level", "name": "CWPRS river level telemetry (synthetic demo feed)", "kind": "weather",
-     "url": "https://cwprs.gov.in/", "license": "public", "description": "Adyar/Cooum canal levels vs capacity (synthetic pilot feed)"},
-    {"id": "gpm-nasa", "name": "NASA GPM precipitation + soil moisture proxy", "kind": "satellite",
-     "url": "https://gpm.nasa.gov/", "license": "public", "description": "Satellite precipitation frames (synthetic pilot feed)"},
-    {"id": "copernicus-swi", "name": "Copernicus SWI soil wetness anomaly", "kind": "satellite",
-     "url": "https://land.copernicus.eu/", "license": "public", "description": "Surface soil moisture anomaly (synthetic pilot feed)"},
-    {"id": "civic-reports", "name": "Civic waterlogging hotline (synthetic demo feed)", "kind": "citizen",
-     "url": "", "license": "demo", "description": "Verified citizen reports (synthetic pilot feed)"},
-    {"id": "news-eom", "name": "NDMA + civic alert stream (synthetic demo feed)", "kind": "news",
-     "url": "https://ndma.gov.in/", "license": "public", "description": "Official warnings stream (synthetic pilot feed)"},
+    {
+        "id": "imd-rain",
+        "name": "IMD rain gauges (synthetic demo feed)",
+        "kind": "weather",
+        "url": "https://mausam.imd.gov.in/",
+        "license": "public",
+        "description": "Hourly rainfall accumulation (synthetic pilot feed)",
+    },
+    {
+        "id": "cwprs-level",
+        "name": "CWPRS river level telemetry (synthetic demo feed)",
+        "kind": "weather",
+        "url": "https://cwprs.gov.in/",
+        "license": "public",
+        "description": "Adyar/Cooum canal levels vs capacity (synthetic pilot feed)",
+    },
+    {
+        "id": "gpm-nasa",
+        "name": "NASA GPM precipitation + soil moisture proxy",
+        "kind": "satellite",
+        "url": "https://gpm.nasa.gov/",
+        "license": "public",
+        "description": "Satellite precipitation frames (synthetic pilot feed)",
+    },
+    {
+        "id": "copernicus-swi",
+        "name": "Copernicus SWI soil wetness anomaly",
+        "kind": "satellite",
+        "url": "https://land.copernicus.eu/",
+        "license": "public",
+        "description": "Surface soil moisture anomaly (synthetic pilot feed)",
+    },
+    {
+        "id": "civic-reports",
+        "name": "Civic waterlogging hotline (synthetic demo feed)",
+        "kind": "citizen",
+        "url": "",
+        "license": "demo",
+        "description": "Verified citizen reports (synthetic pilot feed)",
+    },
+    {
+        "id": "news-eom",
+        "name": "NDMA + civic alert stream (synthetic demo feed)",
+        "kind": "news",
+        "url": "https://ndma.gov.in/",
+        "license": "public",
+        "description": "Official warnings stream (synthetic pilot feed)",
+    },
 ]
 
 
@@ -84,9 +120,7 @@ def generate(now: datetime | None = None) -> dict:
         exposure = max(0.55, 1.5 - elev / 10.0)
         rain_local = rain * (0.8 + 0.35 * exposure)
 
-        rain_intensity = np.minimum(12.0, _rolling(rain_local, 6) * 6 / 16.0 * exposure)
         soil_moisture = np.minimum(12.0, _rolling(rain_local, 6) * 6 / 30.0 * exposure)
-        headroom_deficit = np.minimum(12.0, _rolling(rain_local, 6) * 6 / 26.0 * exposure)
         drainage_stress = np.minimum(12.0, np.maximum(0.0, (_rolling(rain_local, 6) * 6 / cap - 8.0) / 3.0 * exposure))
         citizen_pressure = np.minimum(8.0, np.maximum(0.0, (drainage_stress - 9.0) * 0.8))
 
@@ -133,19 +167,32 @@ def generate(now: datetime | None = None) -> dict:
             }
         ]
         water_level_m = np.minimum(1.0, 0.2 + _rolling(rain_local, 6) * 6 / 156.0 * exposure)
-        zones.append({
-            "id": zid, "name": name, "lat": lat, "lon": lon,
-            "elevation_m": elev, "drainage_capacity_mmh": cap, "population": pop,
-            "exposure": round(float(exposure), 3),
-            "weather": weather, "satellite": sat, "citizen": citizen, "news": news,
-            "water": [{
-                "captured_at": (start + timedelta(hours=h)).isoformat(),
-                "level_m": round(float(water_level_m[h]), 3),
-                "capacity_m": 1.0,
-                "inflow_m3s": round(float(np.clip(8 + _rolling(rain_local, 12)[h] * 0.9, 5, 60)), 1),
-                "source_id": "cwprs-level",
-            } for h in range(hours)],
-        })
+        zones.append(
+            {
+                "id": zid,
+                "name": name,
+                "lat": lat,
+                "lon": lon,
+                "elevation_m": elev,
+                "drainage_capacity_mmh": cap,
+                "population": pop,
+                "exposure": round(float(exposure), 3),
+                "weather": weather,
+                "satellite": sat,
+                "citizen": citizen,
+                "news": news,
+                "water": [
+                    {
+                        "captured_at": (start + timedelta(hours=h)).isoformat(),
+                        "level_m": round(float(water_level_m[h]), 3),
+                        "capacity_m": 1.0,
+                        "inflow_m3s": round(float(np.clip(8 + _rolling(rain_local, 12)[h] * 0.9, 5, 60)), 1),
+                        "source_id": "cwprs-level",
+                    }
+                    for h in range(hours)
+                ],
+            }
+        )
 
     return {
         "version": SEED_VERSION,

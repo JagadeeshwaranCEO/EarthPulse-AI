@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { api, type AttributionItem, type Evidence, type ForecastPoint, type LeadRung, type PredictionResponse, type RiskDetail } from "@/lib/api";
+import { api, type AttributionItem, type Evidence, type LeadRung, type PredictionResponse, type RiskDetail } from "@/lib/api";
 import { Badge, Meter, Panel } from "@/components/ui/Panel";
 import { ConfidenceMeter } from "@/components/viz/ConfidenceMeter";
 import { ForecastChart } from "@/components/viz/ForecastChart";

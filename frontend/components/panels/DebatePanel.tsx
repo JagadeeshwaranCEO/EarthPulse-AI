@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { api, type DebateResult } from "@/lib/api";
 import { Badge, Panel } from "@/components/ui/Panel";
 
-export function DebatePanel({ riskId, riskName }: { riskId: string; riskName: string }) {
+export function DebatePanel({ riskId }: { riskId: string }) {
   const [debate, setDebate] = useState<DebateResult | null>(null);
   const [forced, setForced] = useState(false);
 

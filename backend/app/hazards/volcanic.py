@@ -53,12 +53,14 @@ def _historical(payload: dict) -> list[dict[str, float]]:
     out = []
     for r in (payload.get("seismic") or [])[-48:]:
         metric = r.get("metric")
-        out.append({
-            "tremor_amplitude": _clip(r["value"] * 6.0) if metric == "volcanic_tremor" else 0.0,
-            "so2_flux": _clip(r["value"] * 2.4) if metric == "so2_flux" else 0.0,
-            "ash_plume": _clip(r["value"] * 1.2) if metric == "ash_plume_km" else 0.0,
-            "ashfall_report": 0.4,
-        })
+        out.append(
+            {
+                "tremor_amplitude": _clip(r["value"] * 6.0) if metric == "volcanic_tremor" else 0.0,
+                "so2_flux": _clip(r["value"] * 2.4) if metric == "so2_flux" else 0.0,
+                "ash_plume": _clip(r["value"] * 1.2) if metric == "ash_plume_km" else 0.0,
+                "ashfall_report": 0.4,
+            }
+        )
     return out
 
 
@@ -73,16 +75,41 @@ def _vol_hourly(window: list[dict], soil: float, exposure: float, cap: float) ->
 
 def _vol_causal(components: dict[str, float], pred: dict) -> dict:
     nodes = [
-        {"id": "tremor", "label": "Volcanic tremor", "kind": "cause",
-         "value": f"{components.get('tremor_amplitude', 0):.2f}/12", "confidence": 0.9},
-        {"id": "so2", "label": "SO2 flux", "kind": "mechanism",
-         "value": f"{components.get('so2_flux', 0):.1f} kt/d", "confidence": 0.85},
-        {"id": "plume", "label": "Ash plume height", "kind": "mechanism",
-         "value": f"{components.get('ash_plume', 0):.1f} km", "confidence": 0.8},
-        {"id": "ash", "label": "Verified ashfall reports", "kind": "condition",
-         "value": f"{components.get('ashfall_report', 0):.1f} reports", "confidence": 0.6},
-        {"id": "risk", "label": f"Volcanic risk ({pred.get('risk_probability', 0):.0%})", "kind": "risk",
-         "value": f"severity {pred.get('severity', 0):.1f}/5", "confidence": pred.get("confidence", 0.5)},
+        {
+            "id": "tremor",
+            "label": "Volcanic tremor",
+            "kind": "cause",
+            "value": f"{components.get('tremor_amplitude', 0):.2f}/12",
+            "confidence": 0.9,
+        },
+        {
+            "id": "so2",
+            "label": "SO2 flux",
+            "kind": "mechanism",
+            "value": f"{components.get('so2_flux', 0):.1f} kt/d",
+            "confidence": 0.85,
+        },
+        {
+            "id": "plume",
+            "label": "Ash plume height",
+            "kind": "mechanism",
+            "value": f"{components.get('ash_plume', 0):.1f} km",
+            "confidence": 0.8,
+        },
+        {
+            "id": "ash",
+            "label": "Verified ashfall reports",
+            "kind": "condition",
+            "value": f"{components.get('ashfall_report', 0):.1f} reports",
+            "confidence": 0.6,
+        },
+        {
+            "id": "risk",
+            "label": f"Volcanic risk ({pred.get('risk_probability', 0):.0%})",
+            "kind": "risk",
+            "value": f"severity {pred.get('severity', 0):.1f}/5",
+            "confidence": pred.get("confidence", 0.5),
+        },
     ]
     edges = [
         {"source": "tremor", "target": "risk", "label": "magmatic movement"},
@@ -96,22 +123,38 @@ def _vol_causal(components: dict[str, float], pred: dict) -> dict:
 
 def _vol_recommend(p: float, sev: float) -> list:
     return [
-        {"id": "rec_vol_1", "stakeholder": "responders", "priority": 1 if p > 0.6 else 2,
-         "action": "Raise the alert level on the exclusion radius; stage ash-rescue teams.",
-         "reasoning": "tremor and flux coupling is the standard pre-eruption signature.",
-         "evidence_ids": []},
-        {"id": "rec_vol_2", "stakeholder": "civic", "priority": 1 if sev >= 3 else 2,
-         "action": "Close the crater-approach corridor; protect shelter stock from ash load.",
-         "reasoning": "ash load collapses roofs within the fall zone.",
-         "evidence_ids": []},
-        {"id": "rec_vol_3", "stakeholder": "utilities", "priority": 2,
-         "action": "Protect water intakes and distribution from ash contamination.",
-         "reasoning": "ash-laden runoff poisons supply within hours.",
-         "evidence_ids": []},
-        {"id": "rec_vol_4", "stakeholder": "public", "priority": 3,
-         "action": "Report ashfall thickness and gas odour from safe distance.",
-         "reasoning": "ground truth anchors plume and flux interpretation.",
-         "evidence_ids": []},
+        {
+            "id": "rec_vol_1",
+            "stakeholder": "responders",
+            "priority": 1 if p > 0.6 else 2,
+            "action": "Raise the alert level on the exclusion radius; stage ash-rescue teams.",
+            "reasoning": "tremor and flux coupling is the standard pre-eruption signature.",
+            "evidence_ids": [],
+        },
+        {
+            "id": "rec_vol_2",
+            "stakeholder": "civic",
+            "priority": 1 if sev >= 3 else 2,
+            "action": "Close the crater-approach corridor; protect shelter stock from ash load.",
+            "reasoning": "ash load collapses roofs within the fall zone.",
+            "evidence_ids": [],
+        },
+        {
+            "id": "rec_vol_3",
+            "stakeholder": "utilities",
+            "priority": 2,
+            "action": "Protect water intakes and distribution from ash contamination.",
+            "reasoning": "ash-laden runoff poisons supply within hours.",
+            "evidence_ids": [],
+        },
+        {
+            "id": "rec_vol_4",
+            "stakeholder": "public",
+            "priority": 3,
+            "action": "Report ashfall thickness and gas odour from safe distance.",
+            "reasoning": "ground truth anchors plume and flux interpretation.",
+            "evidence_ids": [],
+        },
     ]
 
 
@@ -129,30 +172,44 @@ VOLCANIC = HazardSpec(
     },
     thresholds={"critical": 0.8, "high": 0.6, "moderate": 0.35},
     interventions=[
-        {"id": "exclusion_radius", "name": "Exclusion Radius", "kind": "policy",
-         "description": "Enforce crater-approach exclusion and corridor closure"},
-        {"id": "ash_rescue_teams", "name": "Ash Rescue Teams", "kind": "operational",
-         "description": "Stage teams for the fall zone"},
-        {"id": "ash_load_shelters", "name": "Ash-Load Shelter", "kind": "engineering",
-         "description": "Reinforce shelters against ash load"},
-        {"id": "water_protection", "name": "Water Protection", "kind": "engineering",
-         "description": "Protect intakes from ash contamination"},
-        {"id": "gas_monitoring", "name": "Gas Monitoring", "kind": "operational",
-         "description": "Continuous SO2/CO2 flux monitoring"},
+        {
+            "id": "exclusion_radius",
+            "name": "Exclusion Radius",
+            "kind": "policy",
+            "description": "Enforce crater-approach exclusion and corridor closure",
+        },
+        {
+            "id": "ash_rescue_teams",
+            "name": "Ash Rescue Teams",
+            "kind": "operational",
+            "description": "Stage teams for the fall zone",
+        },
+        {
+            "id": "ash_load_shelters",
+            "name": "Ash-Load Shelter",
+            "kind": "engineering",
+            "description": "Reinforce shelters against ash load",
+        },
+        {
+            "id": "water_protection",
+            "name": "Water Protection",
+            "kind": "engineering",
+            "description": "Protect intakes from ash contamination",
+        },
+        {
+            "id": "gas_monitoring",
+            "name": "Gas Monitoring",
+            "kind": "operational",
+            "description": "Continuous SO2/CO2 flux monitoring",
+        },
     ],
     evidence=[
-        EvidenceTemplate("usgs-seismic", "observation",
-                         "volcanic tremor amplitude above the unrest threshold",
-                         "tremor_amplitude", 2),
-        EvidenceTemplate("gpm-nasa", "observation",
-                         "SO2 flux and plume height elevation",
-                         "so2_flux", 3),
-        EvidenceTemplate("civic-reports", "report",
-                         "verified ashfall and gas odour reports",
-                         "ashfall_report", 1),
-        EvidenceTemplate("news-eom", "citation",
-                         "volcano alert level raised for the region",
-                         None, 6),
+        EvidenceTemplate(
+            "usgs-seismic", "observation", "volcanic tremor amplitude above the unrest threshold", "tremor_amplitude", 2
+        ),
+        EvidenceTemplate("gpm-nasa", "observation", "SO2 flux and plume height elevation", "so2_flux", 3),
+        EvidenceTemplate("civic-reports", "report", "verified ashfall and gas odour reports", "ashfall_report", 1),
+        EvidenceTemplate("news-eom", "citation", "volcano alert level raised for the region", None, 6),
     ],
     hourly=_vol_hourly,
     causal=_vol_causal,

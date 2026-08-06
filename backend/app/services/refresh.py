@@ -45,9 +45,13 @@ def refresh_predictions(db: Session) -> int:
             model_name=pred_out.get("model_name", "earthpulse-stream-v1"),
             series={
                 "t": [t.isoformat() for t in fc.series_t],
-                "mean": fc.mean, "lower": fc.lower, "upper": fc.upper,
+                "mean": fc.mean,
+                "lower": fc.lower,
+                "upper": fc.upper,
                 "residual_std": fc.residual_std,
-            } if fc else {},
+            }
+            if fc
+            else {},
         )
         db.add(pred)
         db.flush()
@@ -57,21 +61,33 @@ def refresh_predictions(db: Session) -> int:
             source = db.query(models.Source).get(t.source_id)
             if source is None:
                 continue  # hazard/source not provisioned in this theatre — stay honest
-            evidence.append(ev_svc.make_evidence(
-                db, pred.id, source, t.kind, now - timedelta(hours=t.hours_ago), t.description,
-                value=round(comps.get(t.feature_key, 0), 2) if t.feature_key else None))
+            evidence.append(
+                ev_svc.make_evidence(
+                    db,
+                    pred.id,
+                    source,
+                    t.kind,
+                    now - timedelta(hours=t.hours_ago),
+                    t.description,
+                    value=round(comps.get(t.feature_key, 0), 2) if t.feature_key else None,
+                )
+            )
         pred.evidence_ids = [e.id for e in evidence]
 
         level = hazard.level(pred.risk_probability)
         existing = db.query(models.Alert).filter_by(location_id=loc.id, resolved=False).count()
         if existing == 0:
-            db.add(models.Alert(
-                location_id=loc.id, event_type=loc.hazard_type, level=level,
-                title=f"{hazard.label} risk {pred.risk_probability:.0%} in {loc.name}",
-                summary=f"Forecast horizon {pred.horizon_h}h, severity {pred.severity:.1f}/5, confidence {pred.confidence:.0%}. "
-                        f"Top driver: {comps and max(comps, key=lambda k: comps[k])}.",
-                prediction_id=pred.id,
-            ))
+            db.add(
+                models.Alert(
+                    location_id=loc.id,
+                    event_type=loc.hazard_type,
+                    level=level,
+                    title=f"{hazard.label} risk {pred.risk_probability:.0%} in {loc.name}",
+                    summary=f"Forecast horizon {pred.horizon_h}h, severity {pred.severity:.1f}/5, confidence {pred.confidence:.0%}. "
+                    f"Top driver: {comps and max(comps, key=lambda k: comps[k])}.",
+                    prediction_id=pred.id,
+                )
+            )
         count += 1
     db.commit()
     return count

@@ -20,34 +20,69 @@ from datetime import datetime, timedelta, timezone
 import numpy as np
 
 SOURCES = [
-    {"id": "imd-rain", "name": "IMD Rain Gauge Network", "kind": "weather",
-     "url": "https://mausam.imd.gov.in/", "license": "IMD / Indian Govt",
-     "is_synthetic": True,
-     "description": "Rainfall and forecast series from IMD gauge network."},
-    {"id": "imd-cyclone", "name": "IMD Cyclone Warning Division", "kind": "weather",
-     "url": "https://rsmcnewdelhi.imd.gov.in/", "license": "IMD / Indian Govt",
-     "is_synthetic": True,
-     "description": "Cyclone track cones, wind field and surge advisories."},
-    {"id": "noaa-firewx", "name": "NOAA Fire Weather Service", "kind": "weather",
-     "url": "https://www.weather.gov/fire/", "license": "US Gov / public domain",
-     "is_synthetic": True,
-     "description": "Humidity, sustained wind and rainfall for dryness telemetry."},
-    {"id": "gpm-nasa", "name": "GPM/NASA Precipitation", "kind": "satellite",
-     "url": "https://gpm.nasa.gov/", "license": "NASA Open",
-     "is_synthetic": True,
-     "description": "Soil moisture / surface water proxies from GPM retrieval."},
-    {"id": "viiirs-thermal", "name": "VIIRS Thermal Anomaly", "kind": "satellite",
-     "url": "https://firms.modaps.eosdis.nasa.gov/", "license": "NASA LANCE/FS",
-     "is_synthetic": True,
-     "description": "Thermal anomaly clusters and dryness proxies from the VIIRS sensor."},
-    {"id": "civic-reports", "name": "Civic Hazard Reporter", "kind": "citizen",
-     "url": "", "license": "Community-verified",
-     "is_synthetic": True,
-     "description": "Verified sightings — inundation, smoke, sea-state rise."},
-    {"id": "news-eom", "name": "EOM News Wire", "kind": "news",
-     "url": "", "license": "Editorial",
-     "is_synthetic": True,
-     "description": "State advisories — monsoon, red-flag and cyclone warnings."},
+    {
+        "id": "imd-rain",
+        "name": "IMD Rain Gauge Network",
+        "kind": "weather",
+        "url": "https://mausam.imd.gov.in/",
+        "license": "IMD / Indian Govt",
+        "is_synthetic": True,
+        "description": "Rainfall and forecast series from IMD gauge network.",
+    },
+    {
+        "id": "imd-cyclone",
+        "name": "IMD Cyclone Warning Division",
+        "kind": "weather",
+        "url": "https://rsmcnewdelhi.imd.gov.in/",
+        "license": "IMD / Indian Govt",
+        "is_synthetic": True,
+        "description": "Cyclone track cones, wind field and surge advisories.",
+    },
+    {
+        "id": "noaa-firewx",
+        "name": "NOAA Fire Weather Service",
+        "kind": "weather",
+        "url": "https://www.weather.gov/fire/",
+        "license": "US Gov / public domain",
+        "is_synthetic": True,
+        "description": "Humidity, sustained wind and rainfall for dryness telemetry.",
+    },
+    {
+        "id": "gpm-nasa",
+        "name": "GPM/NASA Precipitation",
+        "kind": "satellite",
+        "url": "https://gpm.nasa.gov/",
+        "license": "NASA Open",
+        "is_synthetic": True,
+        "description": "Soil moisture / surface water proxies from GPM retrieval.",
+    },
+    {
+        "id": "viiirs-thermal",
+        "name": "VIIRS Thermal Anomaly",
+        "kind": "satellite",
+        "url": "https://firms.modaps.eosdis.nasa.gov/",
+        "license": "NASA LANCE/FS",
+        "is_synthetic": True,
+        "description": "Thermal anomaly clusters and dryness proxies from the VIIRS sensor.",
+    },
+    {
+        "id": "civic-reports",
+        "name": "Civic Hazard Reporter",
+        "kind": "citizen",
+        "url": "",
+        "license": "Community-verified",
+        "is_synthetic": True,
+        "description": "Verified sightings — inundation, smoke, sea-state rise.",
+    },
+    {
+        "id": "news-eom",
+        "name": "EOM News Wire",
+        "kind": "news",
+        "url": "",
+        "license": "Editorial",
+        "is_synthetic": True,
+        "description": "State advisories — monsoon, red-flag and cyclone warnings.",
+    },
 ]
 
 SEED_VERSION = "india-all-states-v1"
@@ -89,7 +124,18 @@ CAPITALS = [
 UTS = [
     ("in_an_pbl", "Port Blair (A&N)", "Andaman & Nicobar", 11.6234, 92.7265, 16.0, 6.0, 100_000, "cyclone", 1.4),
     ("in_ch_chd", "Chandigarh (UT)", "Chandigarh", 30.7333, 76.7794, 321.0, 6.5, 1_100_000, "flood", 0.8),
-    ("in_dn_dm", "Daman (D&NH+DD)", "Dadra & Nagar Haveli / Daman & Diu", 20.3974, 72.8328, 5.0, 5.5, 115_000, "cyclone", 1.3),
+    (
+        "in_dn_dm",
+        "Daman (D&NH+DD)",
+        "Dadra & Nagar Haveli / Daman & Diu",
+        20.3974,
+        72.8328,
+        5.0,
+        5.5,
+        115_000,
+        "cyclone",
+        1.3,
+    ),
     ("in_dl_nd", "New Delhi (NCT)", "Delhi", 28.6139, 77.2090, 216.0, 5.0, 16_800_000, "flood", 1.15),
     ("in_ld_kav", "Kavaratti (Lakshadweep)", "Lakshadweep", 10.5593, 72.6358, 2.0, 5.0, 11_000, "cyclone", 1.5),
     ("in_py_pdc", "Puducherry (UT)", "Puducherry", 11.9416, 79.8083, 3.0, 5.0, 950_000, "cyclone", 1.4),
@@ -166,7 +212,6 @@ def _flood_arc(hours: int, phase: float, seed: int, peak_mm: float) -> dict[str,
 
 def _cyclone_arc(hours: int, phase: float, seed: int, intensity: float = 1.0) -> dict[str, np.ndarray]:
     """Bay of Bengal landfall: wind spirals up to storm strength, rain bands close in."""
-    rng = np.random.default_rng(seed)
     t = np.linspace(0, 1, hours)
     ramp = np.clip((t - 0.42 + phase * 0.04) / 0.38, 0, 1) - 0.2 * np.clip((t - 0.96) / 0.04, 0, 1)
     wind = np.clip((14 + 46 * ramp) * intensity, 4, 95)
@@ -184,7 +229,12 @@ def _wildfire_arc(hours: int, phase: float, seed: int) -> dict[str, np.ndarray]:
     wind = 12 + 32 * np.clip((t - 0.15 + phase * 0.06) / 0.7, 0, 1) - 5 * np.clip((t - 0.85) / 0.15, 0, 1)
     rain = np.clip(0.8 + 0.6 * np.sin(2 * np.pi * t * 3 + phase * 2) + rng.normal(0, 0.3, hours), 0, 2)
     soil = np.clip(3.6 - 3.1 * np.clip((t + phase * 0.06) * 1.1, 0, 1) + rng.normal(0, 0.15, hours), 0.2, 5.0)
-    return {"rainfall_mm": rain, "humidity": np.clip(humidity, 15, 68), "wind_kmh": np.clip(wind, 4, 50), "soil_anomaly": soil}
+    return {
+        "rainfall_mm": rain,
+        "humidity": np.clip(humidity, 15, 68),
+        "wind_kmh": np.clip(wind, 4, 50),
+        "soil_anomaly": soil,
+    }
 
 
 def generate(now: datetime | None = None) -> dict:
@@ -228,7 +278,6 @@ def _build_zone(zid, name, region, lat, lon, elev, cap, pop, hazard, exposure, a
     soil = arc["soil_anomaly"]
 
     if hazard == "flood":
-        intensity = np.minimum(12.0, _rolling(rain, 6) * 6 / 16.0 * exposure)
         sat = [
             {
                 "captured_at": (start + timedelta(hours=t)).isoformat(),
@@ -238,15 +287,17 @@ def _build_zone(zid, name, region, lat, lon, elev, cap, pop, hazard, exposure, a
             }
             for t in range(0, hours, 2)
         ]
-        water = [{
-            "captured_at": (start + timedelta(hours=t)).isoformat(),
-            "level_m": round(float(np.minimum(1.0, 0.2 + _rolling(rain, 6)[t] * 6 / 156.0 * exposure)), 3),
-            "capacity_m": 1.0,
-            "inflow_m3s": round(float(np.clip(8 + _rolling(rain, 12)[t] * 0.9, 5, 60)), 1),
-            "source_id": "cwprs-level",
-        } for t in range(hours)]
+        water = [
+            {
+                "captured_at": (start + timedelta(hours=t)).isoformat(),
+                "level_m": round(float(np.minimum(1.0, 0.2 + _rolling(rain, 6)[t] * 6 / 156.0 * exposure)), 3),
+                "capacity_m": 1.0,
+                "inflow_m3s": round(float(np.clip(8 + _rolling(rain, 12)[t] * 0.9, 5, 60)), 1),
+                "source_id": "cwprs-level",
+            }
+            for t in range(hours)
+        ]
     else:
-        intensity = np.minimum(12.0, _rolling(rain, 6) * 6 / 30.0 * exposure)
         sat = [
             {
                 "captured_at": (start + timedelta(hours=t)).isoformat(),
@@ -267,28 +318,41 @@ def _build_zone(zid, name, region, lat, lon, elev, cap, pop, hazard, exposure, a
             "rain_forecast_mm": round(float(rain[min(hours - 1, t + 6)] * 0.94), 2),
             "humidity": round(float(humidity[t]), 1),
             "wind_kmh": round(float(wind[t]), 1),
-            "source_id": "imd-cyclone" if hazard == "cyclone" else ("noaa-firewx" if hazard == "wildfire" else "imd-rain"),
+            "source_id": "imd-cyclone"
+            if hazard == "cyclone"
+            else ("noaa-firewx" if hazard == "wildfire" else "imd-rain"),
         }
         for t in range(hours)
     ]
-    news = [{
-        "captured_at": (start + timedelta(hours=58)).isoformat(),
-        "tags": {
-            "flood": ["monsoon", "india", "advisory"],
-            "cyclone": ["cyclone", "india", "landfall"],
-            "wildfire": ["wildfire", "india", "red-flag"],
-        }[hazard],
-        "warning_level": 3 if hazard == "cyclone" else 2,
-        "credibility": 0.85,
-        "source_id": "news-eom",
-    }]
+    news = [
+        {
+            "captured_at": (start + timedelta(hours=58)).isoformat(),
+            "tags": {
+                "flood": ["monsoon", "india", "advisory"],
+                "cyclone": ["cyclone", "india", "landfall"],
+                "wildfire": ["wildfire", "india", "red-flag"],
+            }[hazard],
+            "warning_level": 3 if hazard == "cyclone" else 2,
+            "credibility": 0.85,
+            "source_id": "news-eom",
+        }
+    ]
 
     return {
-        "id": zid, "name": name, "region": region, "lat": lat, "lon": lon,
-        "elevation_m": elev, "drainage_capacity_mmh": cap, "population": pop,
+        "id": zid,
+        "name": name,
+        "region": region,
+        "lat": lat,
+        "lon": lon,
+        "elevation_m": elev,
+        "drainage_capacity_mmh": cap,
+        "population": pop,
         "hazard_type": hazard,
         "exposure": round(float(exposure), 3),
-        "weather": weather, "satellite": sat, "citizen": citizen, "news": news,
+        "weather": weather,
+        "satellite": sat,
+        "citizen": citizen,
+        "news": news,
         "water": water,
     }
 
@@ -300,34 +364,47 @@ def _citizen_reports(zid, name, hazard, humidity, wind, rain, start, hours, expo
             pressure = np.clip((_rolling(rain, 6)[t] * 6 / 22.0) - 6.0, 0, 8)
             if pressure <= 0.8:
                 continue
-            out.append({
-                "location_id": zid, "reported_at": (start + timedelta(hours=t)).isoformat(),
-                "category": "waterlogging", "severity_hint": int(np.clip(pressure / 2, 1, 4)),
-                "text": f"Waterlogging reported near {name} during monsoon surge",
-                "verified": bool(pressure > 1.5), "source_id": "civic-reports",
-            })
+            out.append(
+                {
+                    "location_id": zid,
+                    "reported_at": (start + timedelta(hours=t)).isoformat(),
+                    "category": "waterlogging",
+                    "severity_hint": int(np.clip(pressure / 2, 1, 4)),
+                    "text": f"Waterlogging reported near {name} during monsoon surge",
+                    "verified": bool(pressure > 1.5),
+                    "source_id": "civic-reports",
+                }
+            )
         elif hazard == "cyclone":
             pressure = np.clip((wind[t] - 30) / 8.0, 0, 8)
             if pressure <= 0.8:
                 continue
-            out.append({
-                "location_id": zid, "reported_at": (start + timedelta(hours=t)).isoformat(),
-                "category": "sea_state" if pressure > 4 else "wind_damage",
-                "severity_hint": int(np.clip(pressure / 1.6, 1, 5)),
-                "text": f"Sea-state rise and gust damage reported near {name} coast",
-                "verified": bool(pressure > 2), "source_id": "civic-reports",
-            })
+            out.append(
+                {
+                    "location_id": zid,
+                    "reported_at": (start + timedelta(hours=t)).isoformat(),
+                    "category": "sea_state" if pressure > 4 else "wind_damage",
+                    "severity_hint": int(np.clip(pressure / 1.6, 1, 5)),
+                    "text": f"Sea-state rise and gust damage reported near {name} coast",
+                    "verified": bool(pressure > 2),
+                    "source_id": "civic-reports",
+                }
+            )
         else:
             dry_pressure = np.clip((60.0 - humidity[t]) * exposure, 0, 50)
             if dry_pressure <= 22:
                 continue
-            out.append({
-                "location_id": zid, "reported_at": (start + timedelta(hours=t)).isoformat(),
-                "category": "flame_sighting" if dry_pressure > 34 else "smoke_sighting",
-                "severity_hint": int(np.clip(dry_pressure / 14.0, 1, 5)),
-                "text": f"Smoke column reported near {name} forest fringe",
-                "verified": bool(dry_pressure > 26), "source_id": "civic-reports",
-            })
+            out.append(
+                {
+                    "location_id": zid,
+                    "reported_at": (start + timedelta(hours=t)).isoformat(),
+                    "category": "flame_sighting" if dry_pressure > 34 else "smoke_sighting",
+                    "severity_hint": int(np.clip(dry_pressure / 14.0, 1, 5)),
+                    "text": f"Smoke column reported near {name} forest fringe",
+                    "verified": bool(dry_pressure > 26),
+                    "source_id": "civic-reports",
+                }
+            )
     return out
 
 

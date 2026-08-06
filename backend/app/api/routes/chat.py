@@ -1,12 +1,11 @@
 """AI Copilot chat — LLM when keyed, otherwise deterministic context-aware replies."""
 
 from fastapi import APIRouter, Depends
-from sqlalchemy import desc
 from sqlalchemy.orm import Session
 
 from app.agents.orchestrator import build_agent_outputs
 from app.core.db import get_db
-from app.core.models import Location, Prediction
+from app.core.models import Location
 from app.core.security import chat_throttle
 from app.schemas import ChatRequest, ChatResponse
 from app.services import llm as llm_svc
@@ -45,18 +44,22 @@ async def chat(req: ChatRequest, db: Session = Depends(get_db)):
     if mode == "fallback":
         lower = last_user.lower()
         if "recommend" in lower or "action" in lower or "should" in lower:
-            reply = ("Based on current telemetry (P(risk) and component mix above), the priority order is: "
-                     "1) mechanical drainage lift for low-lying wards, 2) reservoir release for headroom, "
-                     "3) evacuation-readiness staging. These are ordered by their attribution influence. "
-                     "(Template reasoning — add OPENAI_API_KEY for conversational depth.)")
+            reply = (
+                "Based on current telemetry (P(risk) and component mix above), the priority order is: "
+                "1) mechanical drainage lift for low-lying wards, 2) reservoir release for headroom, "
+                "3) evacuation-readiness staging. These are ordered by their attribution influence. "
+                "(Template reasoning — add OPENAI_API_KEY for conversational depth.)"
+            )
         elif "uncertain" in lower or "confidence" in lower or "sure" in lower:
-            reply = ("Confidence is computed from agent agreement weighted by source freshness, with "
-                     "residual-derived uncertainty bands on the forecast. The weakest signal right now is "
-                     "the citizen report stream. (Template reasoning.)")
+            reply = (
+                "Confidence is computed from agent agreement weighted by source freshness, with "
+                "residual-derived uncertainty bands on the forecast. The weakest signal right now is "
+                "the citizen report stream. (Template reasoning.)"
+            )
         else:
             reply = (
                 "I'm running in offline template mode. I can explain risk components, uncertainty, "
                 "and priority actions. Add OPENAI_API_KEY to enable open-ended reasoning. "
-                f"Current situation: P(risk) with component breakdown in the panel above."
+                "Current situation: P(risk) with component breakdown in the panel above."
             )
     return ChatResponse(reply=reply, llm_mode=mode, trace=[f"location={req.location_id or 'default'}"])

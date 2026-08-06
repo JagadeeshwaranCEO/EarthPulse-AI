@@ -61,12 +61,14 @@ def _fusion(payload: dict) -> dict[str, float]:
 def _historical(payload: dict) -> list[dict[str, float]]:
     out = []
     for r in (payload.get("seismic") or [])[-48:]:
-        out.append({
-            "ground_accel": _clip(r["value"] * 14.0) if r.get("metric") == "ground_accel" else 0.0,
-            "energy_release": _clip(r["value"] / 40.0) if r.get("metric") == "seismic_energy" else 0.0,
-            "building_vulnerability": 3.0,
-            "shaking_reports": 0.5,
-        })
+        out.append(
+            {
+                "ground_accel": _clip(r["value"] * 14.0) if r.get("metric") == "ground_accel" else 0.0,
+                "energy_release": _clip(r["value"] / 40.0) if r.get("metric") == "seismic_energy" else 0.0,
+                "building_vulnerability": 3.0,
+                "shaking_reports": 0.5,
+            }
+        )
     return out
 
 
@@ -82,16 +84,41 @@ def _eq_hourly(window: list[dict], soil: float, exposure: float, cap: float) -> 
 
 def _eq_causal(components: dict[str, float], pred: dict) -> dict:
     nodes = [
-        {"id": "energy", "label": "Energy release (seismic)", "kind": "cause",
-         "value": f"{components.get('energy_release', 0) * 40:.0f} GJ window", "confidence": 0.85},
-        {"id": "accel", "label": "Peak ground accel", "kind": "mechanism",
-         "value": f"{components.get('ground_accel', 0) / 14:.2f} g", "confidence": 0.9},
-        {"id": "vuln", "label": "Building vulnerability", "kind": "condition",
-         "value": f"{components.get('building_vulnerability', 0):.2f}/12", "confidence": 0.75},
-        {"id": "shake", "label": "Verified shaking reports", "kind": "condition",
-         "value": f"{components.get('shaking_reports', 0):.1f} reports", "confidence": 0.6},
-        {"id": "risk", "label": f"Seismic episode risk ({pred.get('risk_probability', 0):.0%})", "kind": "risk",
-         "value": f"severity {pred.get('severity', 0):.1f}/5", "confidence": pred.get("confidence", 0.5)},
+        {
+            "id": "energy",
+            "label": "Energy release (seismic)",
+            "kind": "cause",
+            "value": f"{components.get('energy_release', 0) * 40:.0f} GJ window",
+            "confidence": 0.85,
+        },
+        {
+            "id": "accel",
+            "label": "Peak ground accel",
+            "kind": "mechanism",
+            "value": f"{components.get('ground_accel', 0) / 14:.2f} g",
+            "confidence": 0.9,
+        },
+        {
+            "id": "vuln",
+            "label": "Building vulnerability",
+            "kind": "condition",
+            "value": f"{components.get('building_vulnerability', 0):.2f}/12",
+            "confidence": 0.75,
+        },
+        {
+            "id": "shake",
+            "label": "Verified shaking reports",
+            "kind": "condition",
+            "value": f"{components.get('shaking_reports', 0):.1f} reports",
+            "confidence": 0.6,
+        },
+        {
+            "id": "risk",
+            "label": f"Seismic episode risk ({pred.get('risk_probability', 0):.0%})",
+            "kind": "risk",
+            "value": f"severity {pred.get('severity', 0):.1f}/5",
+            "confidence": pred.get("confidence", 0.5),
+        },
     ]
     edges = [
         {"source": "energy", "target": "accel", "label": "energy release → ground motion"},
@@ -105,22 +132,38 @@ def _eq_causal(components: dict[str, float], pred: dict) -> dict:
 
 def _eq_recommend(p: float, sev: float) -> list:
     return [
-        {"id": "rec_eq_1", "stakeholder": "responders", "priority": 1 if p > 0.6 else 2,
-         "action": "Stand up structural assessment teams along the high-energy release arc.",
-         "reasoning": "aftershock damage accumulates fastest near peak energy release.",
-         "evidence_ids": []},
-        {"id": "rec_eq_2", "stakeholder": "civic", "priority": 1 if sev >= 3 else 2,
-         "action": "Hold safe-zone protocols; keep evacuation lanes clear of the vulnerable stock.",
-         "reasoning": "unreinforced buildings dominate life exposure in sustained sequences.",
-         "evidence_ids": []},
-        {"id": "rec_eq_3", "stakeholder": "utilities", "priority": 2,
-         "action": "Inspect lifelines (gas, power) at the shaking epicentre before re-energizing.",
-         "reasoning": "post-quake utility ignitions are the second-order kill.",
-         "evidence_ids": []},
-        {"id": "rec_eq_4", "stakeholder": "public", "priority": 3,
-         "action": "Report verified shaking so the energy-release map stays live.",
-         "reasoning": "ground truth sharpens the episode envelope faster than instrumentation.",
-         "evidence_ids": []},
+        {
+            "id": "rec_eq_1",
+            "stakeholder": "responders",
+            "priority": 1 if p > 0.6 else 2,
+            "action": "Stand up structural assessment teams along the high-energy release arc.",
+            "reasoning": "aftershock damage accumulates fastest near peak energy release.",
+            "evidence_ids": [],
+        },
+        {
+            "id": "rec_eq_2",
+            "stakeholder": "civic",
+            "priority": 1 if sev >= 3 else 2,
+            "action": "Hold safe-zone protocols; keep evacuation lanes clear of the vulnerable stock.",
+            "reasoning": "unreinforced buildings dominate life exposure in sustained sequences.",
+            "evidence_ids": [],
+        },
+        {
+            "id": "rec_eq_3",
+            "stakeholder": "utilities",
+            "priority": 2,
+            "action": "Inspect lifelines (gas, power) at the shaking epicentre before re-energizing.",
+            "reasoning": "post-quake utility ignitions are the second-order kill.",
+            "evidence_ids": [],
+        },
+        {
+            "id": "rec_eq_4",
+            "stakeholder": "public",
+            "priority": 3,
+            "action": "Report verified shaking so the energy-release map stays live.",
+            "reasoning": "ground truth sharpens the episode envelope faster than instrumentation.",
+            "evidence_ids": [],
+        },
     ]
 
 
@@ -138,30 +181,52 @@ EARTHQUAKE = HazardSpec(
     },
     thresholds={"critical": 0.8, "high": 0.6, "moderate": 0.35},
     interventions=[
-        {"id": "structural_survey", "name": "Structural Survey", "kind": "operational",
-         "description": "Post-shaking assessment of unreinforced building stock"},
-        {"id": "safe_zone_holding", "name": "Safe Zone Holding", "kind": "policy",
-         "description": "Keep public in designated open safe zones during sequences"},
-        {"id": "lifeline_inspection", "name": "Lifeline Inspection", "kind": "engineering",
-         "description": "Gas/power inspection before re-energizing"},
-        {"id": "tsunami_standby", "name": "Coastal Tsunami Standby", "kind": "operational",
-         "description": "Hold coastal low-ground alert while energy release is high"},
-        {"id": "retrofit_queue", "name": "Retrofit Queue", "kind": "engineering",
-         "description": "Prioritize vulnerable blocks for structural retrofit"},
+        {
+            "id": "structural_survey",
+            "name": "Structural Survey",
+            "kind": "operational",
+            "description": "Post-shaking assessment of unreinforced building stock",
+        },
+        {
+            "id": "safe_zone_holding",
+            "name": "Safe Zone Holding",
+            "kind": "policy",
+            "description": "Keep public in designated open safe zones during sequences",
+        },
+        {
+            "id": "lifeline_inspection",
+            "name": "Lifeline Inspection",
+            "kind": "engineering",
+            "description": "Gas/power inspection before re-energizing",
+        },
+        {
+            "id": "tsunami_standby",
+            "name": "Coastal Tsunami Standby",
+            "kind": "operational",
+            "description": "Hold coastal low-ground alert while energy release is high",
+        },
+        {
+            "id": "retrofit_queue",
+            "name": "Retrofit Queue",
+            "kind": "engineering",
+            "description": "Prioritize vulnerable blocks for structural retrofit",
+        },
     ],
     evidence=[
-        EvidenceTemplate("usgs-seismic", "observation",
-                         "peak ground acceleration above the damage threshold",
-                         "ground_accel", 2),
-        EvidenceTemplate("usgs-seismic", "observation",
-                         "sustained energy release consistent with an active sequence",
-                         "energy_release", 3),
-        EvidenceTemplate("civic-reports", "report",
-                         "verified shaking reports from the metropolitan area",
-                         "shaking_reports", 1),
-        EvidenceTemplate("news-eom", "citation",
-                         "seismic episode advisory active for the region",
-                         None, 6),
+        EvidenceTemplate(
+            "usgs-seismic", "observation", "peak ground acceleration above the damage threshold", "ground_accel", 2
+        ),
+        EvidenceTemplate(
+            "usgs-seismic",
+            "observation",
+            "sustained energy release consistent with an active sequence",
+            "energy_release",
+            3,
+        ),
+        EvidenceTemplate(
+            "civic-reports", "report", "verified shaking reports from the metropolitan area", "shaking_reports", 1
+        ),
+        EvidenceTemplate("news-eom", "citation", "seismic episode advisory active for the region", None, 6),
     ],
     hourly=_eq_hourly,
     causal=_eq_causal,

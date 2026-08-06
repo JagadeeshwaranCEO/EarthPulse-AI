@@ -65,7 +65,7 @@ def _auc(scores: list[float], events: list[int]) -> float | None:
         return None
     # Mann-Whitney U statistic
     combined = sorted([(s, 1) for s in pos] + [(s, 0) for s in neg], key=lambda t: t[0])
-    ranks, rank_sum = {}, 0.0
+    rank_sum = 0.0
     i, n = 0, len(combined)
     while i < n:
         j = i
@@ -88,8 +88,12 @@ def _calibration_gap(fc: list[float], obs: list[float]) -> dict:
     if not fc:
         return {"mean_forecast": 0.0, "mean_realized": 0.0, "gap": 0.0}
     mf, mo = float(np.mean(fc)), float(np.mean(obs))
-    return {"mean_forecast": round(mf, 4), "mean_realized": round(mo, 4), "gap": round(mf - mo, 4),
-            "sign": "under-forecast" if mf < mo else "over-forecast" if mf > mo else "calibrated"}
+    return {
+        "mean_forecast": round(mf, 4),
+        "mean_realized": round(mo, 4),
+        "gap": round(mf - mo, 4),
+        "sign": "under-forecast" if mf < mo else "over-forecast" if mf > mo else "calibrated",
+    }
 
 
 def _reliability(fc_scores: list[float], events: list[int]) -> list[dict]:
@@ -102,12 +106,14 @@ def _reliability(fc_scores: list[float], events: list[int]) -> list[dict]:
         if not idx:
             continue
         obs_frac = float(np.mean([events[i] for i in idx]))
-        out.append({
-            "band": f"{lo:.1f}–{hi:.1f}",
-            "forecasts": len(idx),
-            "mean_forecast": round(float(np.mean([fc_scores[i] for i in idx])), 3),
-            "observed_fraction": round(obs_frac, 3),
-        })
+        out.append(
+            {
+                "band": f"{lo:.1f}–{hi:.1f}",
+                "forecasts": len(idx),
+                "mean_forecast": round(float(np.mean([fc_scores[i] for i in idx])), 3),
+                "observed_fraction": round(obs_frac, 3),
+            }
+        )
     return out
 
 
@@ -117,15 +123,17 @@ def verify_zone(db, loc: Location) -> dict:
 
     hazard = get_hazard(loc.hazard_type)
     weather = [
-        {"rainfall_mm": w.rainfall_mm, "humidity": w.humidity, "wind_kmh": w.wind_kmh,
-         "rain_forecast_mm": w.rain_forecast_mm}
-        for w in db.query(WeatherSnapshot).filter_by(location_id=loc.id)
-        .order_by(WeatherSnapshot.captured_at).all()
+        {
+            "rainfall_mm": w.rainfall_mm,
+            "humidity": w.humidity,
+            "wind_kmh": w.wind_kmh,
+            "rain_forecast_mm": w.rain_forecast_mm,
+        }
+        for w in db.query(WeatherSnapshot).filter_by(location_id=loc.id).order_by(WeatherSnapshot.captured_at).all()
     ]
     sat = [
         {"soil_moisture_anomaly": f.soil_moisture_anomaly}
-        for f in db.query(SatelliteFrame).filter_by(location_id=loc.id)
-        .order_by(SatelliteFrame.captured_at).all()
+        for f in db.query(SatelliteFrame).filter_by(location_id=loc.id).order_by(SatelliteFrame.captured_at).all()
     ]
     exposure, cap = _exposure(loc), loc.drainage_capacity_mmh
 
@@ -145,8 +153,13 @@ def verify_zone(db, loc: Location) -> dict:
             fc_scores.append(p_fc)
             realized.append(p_obs)
             history = [hour_components(hazard.id, weather, sat, h, exposure, cap) for h in range(12, t0 + 1)]
-            widths.append(_band_width(DEFAULT_FORECASTER.fit_forecast(
-                [hazard.probability(c) for c in history], datetime.now(timezone.utc), hz)))
+            widths.append(
+                _band_width(
+                    DEFAULT_FORECASTER.fit_forecast(
+                        [hazard.probability(c) for c in history], datetime.now(timezone.utc), hz
+                    )
+                )
+            )
     if not fc_scores:
         return {"location_id": loc.id, "hazard": hazard.id, "samples": 0, "tier": "C"}
 
@@ -192,9 +205,16 @@ def verify_scope(db, scope: str | None = None) -> dict:
 
     by_hazard: dict[str, dict] = {}
     for z in per_zone:
-        agg = by_hazard.setdefault(z["hazard"], {
-            "samples": 0, "brier_n": 0.0, "bss_n": 0.0, "zones": 0, "tiers": {"A": 0, "B": 0, "C": 0},
-        })
+        agg = by_hazard.setdefault(
+            z["hazard"],
+            {
+                "samples": 0,
+                "brier_n": 0.0,
+                "bss_n": 0.0,
+                "zones": 0,
+                "tiers": {"A": 0, "B": 0, "C": 0},
+            },
+        )
         agg["zones"] += 1
         agg["tiers"][z["tier"]] += 1
         if z["samples"]:
@@ -221,7 +241,9 @@ def verify_scope(db, scope: str | None = None) -> dict:
             "zones": len(zones),
             "reliability": _reliability(pooled["fc"], pooled["events"]),
             "calibration": _calibration_gap(pooled["fc"], pooled["obs"]),
-            "sharpness": round(float(np.mean([z["band_tightness"] for z in per_zone if z["band_tightness"]]) or 0.0), 4),
+            "sharpness": round(
+                float(np.mean([z["band_tightness"] for z in per_zone if z["band_tightness"]]) or 0.0), 4
+            ),
         },
         "hazards": {
             hid: {
@@ -246,15 +268,17 @@ def _pooled_pairs(db, zones: list[Location]) -> dict:
 
         hazard = get_hazard(loc.hazard_type)
         weather = [
-            {"rainfall_mm": w.rainfall_mm, "humidity": w.humidity, "wind_kmh": w.wind_kmh,
-             "rain_forecast_mm": w.rain_forecast_mm}
-            for w in db.query(WeatherSnapshot).filter_by(location_id=loc.id)
-            .order_by(WeatherSnapshot.captured_at).all()
+            {
+                "rainfall_mm": w.rainfall_mm,
+                "humidity": w.humidity,
+                "wind_kmh": w.wind_kmh,
+                "rain_forecast_mm": w.rain_forecast_mm,
+            }
+            for w in db.query(WeatherSnapshot).filter_by(location_id=loc.id).order_by(WeatherSnapshot.captured_at).all()
         ]
         sat = [
             {"soil_moisture_anomaly": f.soil_moisture_anomaly}
-            for f in db.query(SatelliteFrame).filter_by(location_id=loc.id)
-            .order_by(SatelliteFrame.captured_at).all()
+            for f in db.query(SatelliteFrame).filter_by(location_id=loc.id).order_by(SatelliteFrame.captured_at).all()
         ]
         exposure, cap = _exposure(loc), loc.drainage_capacity_mmh
         for t0 in STARTS:

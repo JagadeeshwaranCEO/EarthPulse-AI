@@ -6,7 +6,7 @@
     "dev": "next dev -p 3000",
     "build": "next build",
     "start": "next start -p 3000",
-    "lint": "next lint"
+    "lint": "eslint ."
   },
   "dependencies": {
     "leaflet": "1.9.4",
@@ -17,11 +17,14 @@
     "recharts": "2.15.3"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.6",
     "@types/leaflet": "1.9.16",
     "@types/node": "22",
     "@types/react": "19",
     "@types/react-dom": "19",
     "autoprefixer": "10.4.20",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^15.3.4",
     "postcss": "8.4.49",
     "tailwindcss": "3.4.17",
     "typescript": "5.7.2"

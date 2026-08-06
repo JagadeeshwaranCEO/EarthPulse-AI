@@ -12,6 +12,7 @@
 
 [![Build](https://img.shields.io/badge/build-passing-brightgreen)](#tests)
 [![Tests](https://img.shields.io/badge/tests-47/47-passing-green)](#run-the-tests)
+[![CI](https://github.com/JagadeeshwaranCEO/EarthPulse-AI/actions/workflows/ci.yml/badge.svg)](.github/workflows/ci.yml)
 [![Stack](https://img.shields.io/badge/stack-Next.js_15_%7C_FastAPI-blue)](#tech-stack)
 [![AI](https://img.shields.io/badge/XAI-deterministic%2C_no_black--box-6a5acd)](#architecture)
 [![Keyless](https://img.shields.io/badge/LLM-keyless_by_default-orange)](#operations--data-integrity)
@@ -175,8 +176,16 @@ npm run dev
 
 ```bash
 cd backend
-uv run pytest        # 47/47 green
+uv sync --group dev                        # install incl. pytest + ruff
+uv run ruff check app tests scripts          # lint
+uv run ruff format --check app tests scripts # formatting
+uv run pytest                                # 47/47 green
 ```
+
+CI (`.github/workflows/ci.yml`) runs lint + format + tests on Python 3.12/3.13,
+and the frontend lint/typecheck/build — plus a live-API smoke job that boots the
+server, probes `/health` `/ready` `/risks`, exercises the mutating endpoints, and
+asserts the structured JSON request logs are emitted.
 
 ### Operational scope — Chennai ↔ Tamil Nadu ↔ All-India ↔ California ↔ Asia
 

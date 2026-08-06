@@ -53,8 +53,7 @@ def setup_logging(level: str = LOG_LEVEL) -> None:
     """Install the JSON console handler once; quiet noisy third-party loggers."""
     root = logging.getLogger()
     root.setLevel(level.upper())
-    if not any(isinstance(h, logging.StreamHandler) and getattr(h, "_em_json", False)
-               for h in root.handlers):
+    if not any(isinstance(h, logging.StreamHandler) and getattr(h, "_em_json", False) for h in root.handlers):
         handler = logging.StreamHandler(sys.stdout)
         handler.setFormatter(JsonFormatter())
         handler._em_json = True
@@ -77,19 +76,32 @@ def install_middleware(app: FastAPI) -> None:
             status = response.status_code
             return response
         except Exception:
-            logger.error("request failed", exc_info=True, extra={
-                "request_id": rid, "method": request.method, "path": request.url.path,
-                "client": request.client.host if request.client else "-",
-            })
+            logger.error(
+                "request failed",
+                exc_info=True,
+                extra={
+                    "request_id": rid,
+                    "method": request.method,
+                    "path": request.url.path,
+                    "client": request.client.host if request.client else "-",
+                },
+            )
             raise
         finally:
             _request_id.reset(token)
             elapsed_ms = (time.perf_counter() - start) * 1000.0
             level = logging.INFO if status < 500 else logging.WARNING
-            logger.log(level, "request completed", extra={
-                "request_id": rid, "method": request.method, "path": request.url.path,
-                "status": status, "duration_ms": round(elapsed_ms, 1),
-            })
+            logger.log(
+                level,
+                "request completed",
+                extra={
+                    "request_id": rid,
+                    "method": request.method,
+                    "path": request.url.path,
+                    "status": status,
+                    "duration_ms": round(elapsed_ms, 1),
+                },
+            )
 
 
 def install_exception_handlers(app: FastAPI) -> None:
@@ -97,7 +109,13 @@ def install_exception_handlers(app: FastAPI) -> None:
 
     @app.exception_handler(Exception)
     async def _unhandled(request: Request, exc: Exception) -> JSONResponse:
-        logger.error("unhandled error", exc_info=exc, extra={
-            "request_id": request_id(), "method": request.method, "path": request.url.path,
-        })
+        logger.error(
+            "unhandled error",
+            exc_info=exc,
+            extra={
+                "request_id": request_id(),
+                "method": request.method,
+                "path": request.url.path,
+            },
+        )
         return JSONResponse(status_code=500, content={"detail": "internal server error"})

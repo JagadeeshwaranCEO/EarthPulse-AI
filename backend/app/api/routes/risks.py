@@ -1,5 +1,6 @@
 """Risks: summaries, detail, prediction, causal chain, attribution, evidence, recommendations."""
 
+import logging
 from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -45,8 +46,7 @@ def get_risk(location_id: str, db: Session = Depends(get_db)):
     try:
         crossing = project_crossing(db, loc)
     except Exception:
-        logging.getLogger("earthpulse").warning(
-            "crossing projection failed for %s", location_id, exc_info=True)
+        logging.getLogger("earthpulse").warning("crossing projection failed for %s", location_id, exc_info=True)
         crossing = None
 
     pred = (
@@ -60,12 +60,18 @@ def get_risk(location_id: str, db: Session = Depends(get_db)):
     evidence = [to_schema(e, sources[e.source_id]) for e in evidence_objs if e.source_id in sources]
 
     return RiskDetail(
-        location_id=loc.id, location_name=loc.name, lat=loc.lat, lon=loc.lon,
-        event_type=loc.hazard_type, level=summary["level"],
-        risk_probability=summary["risk_probability"], severity=summary["severity"],
+        location_id=loc.id,
+        location_name=loc.name,
+        lat=loc.lat,
+        lon=loc.lon,
+        event_type=loc.hazard_type,
+        level=summary["level"],
+        risk_probability=summary["risk_probability"],
+        severity=summary["severity"],
         confidence=summary["confidence"],
         trend=summary["trend"],
-        horizon_h=summary["horizon_h"], updated_at=summary["updated_at"],
+        horizon_h=summary["horizon_h"],
+        updated_at=summary["updated_at"],
         precision_tier=precision.get("tier"),
         precision={
             "tier": precision.get("tier"),
@@ -134,7 +140,10 @@ def get_attribution(location_id: str, db: Session = Depends(get_db)):
     outputs, _ = build_agent_outputs(db, location_id)
     components = outputs.get("risk_fusion", {}).get("components", {})
     items = compute_attribution(components)
-    return [{"feature": i.feature, "influence": i.influence, "direction": i.direction, "description": i.description} for i in items]
+    return [
+        {"feature": i.feature, "influence": i.influence, "direction": i.direction, "description": i.description}
+        for i in items
+    ]
 
 
 @router.get("/{location_id}/evidence", response_model=list[Evidence])
@@ -151,7 +160,11 @@ def get_evidence(location_id: str, db: Session = Depends(get_db)):
     if pred is None:
         return []
     sources = {s.id: s for s in db.query(Source).all()}
-    return [to_schema(e, sources[e.source_id]) for e in db.query(EvidenceObject).filter_by(prediction_id=pred.id).all() if e.source_id in sources]
+    return [
+        to_schema(e, sources[e.source_id])
+        for e in db.query(EvidenceObject).filter_by(prediction_id=pred.id).all()
+        if e.source_id in sources
+    ]
 
 
 @router.get("/{location_id}/recommendations")

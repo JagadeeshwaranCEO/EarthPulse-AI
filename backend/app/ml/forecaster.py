@@ -8,7 +8,7 @@ satellite-ml / Prophet behind the same interface.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime, timedelta
 
 import numpy as np
@@ -47,8 +47,9 @@ class Forecaster:
             smoothed[i] = level + trend
         return smoothed
 
-    def fit_forecast(self, values: list[float], t0: datetime, horizon_h: int = 24,
-                     trend_decay: float = 0.0, bounded: bool = True) -> ForecastResult:
+    def fit_forecast(
+        self, values: list[float], t0: datetime, horizon_h: int = 24, trend_decay: float = 0.0, bounded: bool = True
+    ) -> ForecastResult:
         """Brown smoothing forecast.
 
         `trend_decay` damps the trend per hour (exp decay) — long-horizon

@@ -39,16 +39,20 @@ def seeded(client):
 
 def _flood_comps():
     return {
-        "rain_intensity": 2.0, "soil_moisture": 3.0, "headroom_deficit": 3.0,
-        "drainage_stress": 2.0, "citizen_pressure": 1.0,
+        "rain_intensity": 2.0,
+        "soil_moisture": 3.0,
+        "headroom_deficit": 3.0,
+        "drainage_stress": 2.0,
+        "citizen_pressure": 1.0,
     }
 
 
 def test_ladder_shape_and_monotonic_risk():
     from app.services.nowcast import LEADS, lead_ladder
 
-    ladder = lead_ladder(_flood_comps(), "flood",
-                         {"rain_forecast_mm": 200, "rain6_mm": 10, "inflow_m3s": 15}, exposure=1.0)
+    ladder = lead_ladder(
+        _flood_comps(), "flood", {"rain_forecast_mm": 200, "rain6_mm": 10, "inflow_m3s": 15}, exposure=1.0
+    )
     assert [r["lead_h"] for r in ladder] == list(LEADS)
     for rung in ladder:
         assert 0.0 <= rung["probability"] <= 1.0

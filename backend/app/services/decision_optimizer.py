@@ -85,16 +85,31 @@ _VARIANCE_SWEEP = [0.85, 0.95, 1.0, 1.05, 1.10, 1.15, 1.25, 1.40, 1.60]
 
 # Humanitarian logistics baseline timings (relative to forecast peak)
 TIMELINE_PHASES = [
-    {"phase": "Monitor", "t_minus_h": 48,
-     "action": "Lock optimization plan. Issue localized SMS alerts to Adyar and Velachery."},
-    {"phase": "Pre-stage", "t_minus_h": 36,
-     "action": "Deploy high-capacity pumps to low-lying wards and the OMR drainage corridor."},
-    {"phase": "Mobilize", "t_minus_h": 24,
-     "action": "Position NDRF boat units at designated high-ground staging areas."},
-    {"phase": "Lockdown", "t_minus_h": 12,
-     "action": "Close coastal arterial roads. Open relief shelters in expected-impact zones."},
-    {"phase": "Impact", "t_minus_h": 0,
-     "action": "Engage continuous telemetry monitoring. Dispatch drones to river-adjacent blind spots."},
+    {
+        "phase": "Monitor",
+        "t_minus_h": 48,
+        "action": "Lock optimization plan. Issue localized SMS alerts to Adyar and Velachery.",
+    },
+    {
+        "phase": "Pre-stage",
+        "t_minus_h": 36,
+        "action": "Deploy high-capacity pumps to low-lying wards and the OMR drainage corridor.",
+    },
+    {
+        "phase": "Mobilize",
+        "t_minus_h": 24,
+        "action": "Position NDRF boat units at designated high-ground staging areas.",
+    },
+    {
+        "phase": "Lockdown",
+        "t_minus_h": 12,
+        "action": "Close coastal arterial roads. Open relief shelters in expected-impact zones.",
+    },
+    {
+        "phase": "Impact",
+        "t_minus_h": 0,
+        "action": "Engage continuous telemetry monitoring. Dispatch drones to river-adjacent blind spots.",
+    },
 ]
 
 
@@ -105,8 +120,12 @@ def build_execution_timeline(peak_hour: float) -> list[dict]:
     fiction. Times render as H{peak−k} so the stepper moves with the clock.
     """
     return [
-        {"time": f"H{peak_hour - p['t_minus_h']:.0f}", "phase": p["phase"], "action": p["action"],
-         "label": f"T-{p['t_minus_h']}h"}
+        {
+            "time": f"H{peak_hour - p['t_minus_h']:.0f}",
+            "phase": p["phase"],
+            "action": p["action"],
+            "label": f"T-{p['t_minus_h']}h",
+        }
         for p in TIMELINE_PHASES
     ]
 
@@ -130,31 +149,46 @@ class DecisionOptimizer:
         total_at_risk = max(1, sum(pop_at_risk(z) for z in zones))
 
         strat_a = self._build(
-            id="strat_a", title="Strategy Alpha — Maximal Life Safety", focus="max_lives",
-            zones=zones, inventory=inventory,
+            id="strat_a",
+            title="Strategy Alpha — Maximal Life Safety",
+            focus="max_lives",
+            zones=zones,
+            inventory=inventory,
             priority=lambda z: pop_at_risk(z) * (1.0 + 0.6 * z.severity / 5.0),
             mix={"boat": 1.0, "pump": 0.35, "shelter": 0.6},
             recommended=False,
-            rationale=("Boats and shelters go to the densest, highest-probability basins first — "
-                       "maximizes evacuation reach where population exposure is greatest."),
+            rationale=(
+                "Boats and shelters go to the densest, highest-probability basins first — "
+                "maximizes evacuation reach where population exposure is greatest."
+            ),
         )
         strat_b = self._build(
-            id="strat_b", title="Strategy Beta — Infrastructure Shield", focus="min_econ",
-            zones=zones, inventory=inventory,
+            id="strat_b",
+            title="Strategy Beta — Infrastructure Shield",
+            focus="min_econ",
+            zones=zones,
+            inventory=inventory,
             priority=lambda z: z.risk_probability * z.severity * z.population,
             mix={"boat": 0.3, "pump": 1.0, "shelter": 0.5},
             recommended=False,
-            rationale=("High-capacity pumps and shelters shield the highest-expected-damage "
-                       "corridors (IT belt, substations, commercial wards) first."),
+            rationale=(
+                "High-capacity pumps and shelters shield the highest-expected-damage "
+                "corridors (IT belt, substations, commercial wards) first."
+            ),
         )
         strat_c = self._build(
-            id="strat_c", title="Strategy Gamma — EarthPulse Balanced Pareto", focus="balanced",
-            zones=zones, inventory=inventory,
+            id="strat_c",
+            title="Strategy Gamma — EarthPulse Balanced Pareto",
+            focus="balanced",
+            zones=zones,
+            inventory=inventory,
             priority=lambda z: balanced_priority(pop_at_risk(z), total_at_risk, z.severity),
             mix={"boat": 0.75, "pump": 0.75, "shelter": 0.55},
             recommended=True,
-            rationale=("Normalized multi-objective frontier: pre-stages pumps along drainage "
-                       "channels while boats cover inundation hotspots — best combined impact."),
+            rationale=(
+                "Normalized multi-objective frontier: pre-stages pumps along drainage "
+                "channels while boats cover inundation hotspots — best combined impact."
+            ),
         )
         return [strat_a, strat_b, strat_c]
 
@@ -169,8 +203,9 @@ class DecisionOptimizer:
         loss_frac = strategy.economic_loss_inr_cr / total_loss
         return lives_frac - 0.6 * loss_frac
 
-    def robustness_analysis(self, zone_risks: list[ZoneRisk], inventory: ResourceInventory,
-                            strategies: list[StrategyOption]) -> dict:
+    def robustness_analysis(
+        self, zone_risks: list[ZoneRisk], inventory: ResourceInventory, strategies: list[StrategyOption]
+    ) -> dict:
         """Decision-level sensitivity: does the recommended plan survive forecast error?
 
         Re-runs the optimizer under precipitation variance multipliers and reports
@@ -183,8 +218,9 @@ class DecisionOptimizer:
         winners: dict[float, str] = {}
         for mult in _VARIANCE_SWEEP:
             perturbed = [
-                ZoneRisk(z.location_id, z.name, min(0.99, z.risk_probability * mult),
-                         z.severity, z.population, z.lat, z.lon)
+                ZoneRisk(
+                    z.location_id, z.name, min(0.99, z.risk_probability * mult), z.severity, z.population, z.lat, z.lon
+                )
                 for z in zone_risks
             ]
             plans = self.optimize(perturbed, inventory)
@@ -198,8 +234,14 @@ class DecisionOptimizer:
         fallback_id = winners[max(_VARIANCE_SWEEP)]
         if fallback_id == recommended.id:
             fallback_id = base.id if base.id != recommended.id else ""
-        fallback_trigger = (f"precipitation exceeds forecast by >{round((win_until - 1.0) * 100)}% "
-                            f"— re-run optimizer or switch to {fallback_id}") if fallback_id else "none"
+        fallback_trigger = (
+            (
+                f"precipitation exceeds forecast by >{round((win_until - 1.0) * 100)}% "
+                f"— re-run optimizer or switch to {fallback_id}"
+            )
+            if fallback_id
+            else "none"
+        )
 
         decision_confidence = round(
             min(0.97, max(0.55, base.confidence_score + (0.08 if robust_at_plus15 else -0.05))), 2
@@ -217,9 +259,19 @@ class DecisionOptimizer:
             "method": "monte-carlo-lite: re-optimized under {0.85–1.60}× precipitation variance sweep",
         }
 
-    def _build(self, *, id: str, title: str, focus: str, zones: list[ZoneRisk],
-               inventory: ResourceInventory, priority, mix: dict[str, float],
-               recommended: bool, rationale: str) -> StrategyOption:
+    def _build(
+        self,
+        *,
+        id: str,
+        title: str,
+        focus: str,
+        zones: list[ZoneRisk],
+        inventory: ResourceInventory,
+        priority,
+        mix: dict[str, float],
+        recommended: bool,
+        rationale: str,
+    ) -> StrategyOption:
         allocations = self._allocate(zones, inventory, priority, mix, focus)
         lives, loss, carbon = self._evaluate(zones, allocations, mix, inventory)
 
@@ -231,16 +283,24 @@ class DecisionOptimizer:
 
         actions = self._actions(allocations, focus)
         return StrategyOption(
-            id=id, title=title, focus=focus, allocations=allocations,
+            id=id,
+            title=title,
+            focus=focus,
+            allocations=allocations,
             lives_protected=int(lives),
             economic_loss_inr_cr=round(loss, 1),
-            co2_reduction_pct=round((1 - ROUTE_OPTIMIZED_FACTOR) * 100 * (0.7 + 0.3 * coverage / max(1, len(zones))), 1),
-            confidence_score=conf, is_recommended=recommended,
-            rationale=rationale, actions=actions,
+            co2_reduction_pct=round(
+                (1 - ROUTE_OPTIMIZED_FACTOR) * 100 * (0.7 + 0.3 * coverage / max(1, len(zones))), 1
+            ),
+            confidence_score=conf,
+            is_recommended=recommended,
+            rationale=rationale,
+            actions=actions,
         )
 
-    def _allocate(self, zones: list[ZoneRisk], inv: ResourceInventory, priority, mix: dict[str, float],
-                  focus: str) -> dict[str, dict[str, int]]:
+    def _allocate(
+        self, zones: list[ZoneRisk], inv: ResourceInventory, priority, mix: dict[str, float], focus: str
+    ) -> dict[str, dict[str, int]]:
         """Iterative greedy knapsack with per-zone staging caps.
 
         Each zone can usefully absorb a limit of each unit kind, and a unit's
@@ -249,11 +309,23 @@ class DecisionOptimizer:
         three Pareto strategies produce genuinely different plans.
         """
         if focus == "max_lives":
-            cap_fn = lambda z: {"boat": 3 + int(z.severity), "pump": 1 + int(z.severity / 3), "shelter": 1 + int(z.severity / 3)}
+            cap_fn = lambda z: {
+                "boat": 3 + int(z.severity),
+                "pump": 1 + int(z.severity / 3),
+                "shelter": 1 + int(z.severity / 3),
+            }
         elif focus == "min_econ":
-            cap_fn = lambda z: {"boat": 1 + int(z.severity / 3), "pump": 3 + int(z.severity), "shelter": 2 + int(z.severity / 2)}
+            cap_fn = lambda z: {
+                "boat": 1 + int(z.severity / 3),
+                "pump": 3 + int(z.severity),
+                "shelter": 2 + int(z.severity / 2),
+            }
         else:
-            cap_fn = lambda z: {"boat": 2 + int(z.severity / 2), "pump": 2 + int(z.severity / 2), "shelter": 2 + int(z.severity / 3)}
+            cap_fn = lambda z: {
+                "boat": 2 + int(z.severity / 2),
+                "pump": 2 + int(z.severity / 2),
+                "shelter": 2 + int(z.severity / 3),
+            }
 
         remaining = {"boat": inv.boats, "pump": inv.pumps, "shelter": inv.shelters}
         budget = inv.budget_inr_crores
@@ -299,8 +371,9 @@ class DecisionOptimizer:
         return (0.5 + 0.5 * z.risk_probability) * min(0.35 * CAP_BOAT, uncovered) / (0.35 * CAP_BOAT)
 
     @staticmethod
-    def _evaluate(zones: list[ZoneRisk], allocations: dict[str, dict[str, int]],
-                  mix: dict[str, float], inv: ResourceInventory) -> tuple[float, float, float]:
+    def _evaluate(
+        zones: list[ZoneRisk], allocations: dict[str, dict[str, int]], mix: dict[str, float], inv: ResourceInventory
+    ) -> tuple[float, float, float]:
         lives = 0.0
         loss = 0.0
         carbon = 0.0

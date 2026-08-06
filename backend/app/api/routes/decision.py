@@ -10,10 +10,13 @@ from app.api.routes.dashboard import live_risk_summaries
 from app.core.db import get_db
 from app.core.models import Location
 from app.core.security import require_api_key
-from app.services.decision_optimizer import (
-    DecisionOptimizer, ResourceInventory, ZoneRisk, build_execution_timeline,
-)
 from app.services.comparative_analysis import comparative_analysis
+from app.services.decision_optimizer import (
+    DecisionOptimizer,
+    ResourceInventory,
+    ZoneRisk,
+    build_execution_timeline,
+)
 from app.services.environmental_memory import memory_view
 from app.services.mission_brief import build_mission_brief
 from app.services.risk_evolution import evolution as risk_evolution
@@ -44,10 +47,13 @@ def _zone_risks(db: Session) -> list[ZoneRisk]:
     pops = {loc.id: loc.population for loc in db.query(Location).all()}
     return [
         ZoneRisk(
-            location_id=r["location_id"], name=r["location_name"],
-            risk_probability=r["risk_probability"], severity=r["severity"],
+            location_id=r["location_id"],
+            name=r["location_name"],
+            risk_probability=r["risk_probability"],
+            severity=r["severity"],
             population=pops.get(r["location_id"], 100_000),
-            lat=r["lat"], lon=r["lon"],
+            lat=r["lat"],
+            lon=r["lon"],
         )
         for r in rows
     ]
@@ -70,9 +76,7 @@ def optimize(inventory: dict | None = None, db: Session = Depends(get_db)):
         "inventory": inv,
         "analysis": analysis,
         "peak_hour": peak,
-        "strategies": [
-            {**s.__dict__, "allocations": s.allocations} for s in strategies
-        ],
+        "strategies": [{**s.__dict__, "allocations": s.allocations} for s in strategies],
     }
 
 
@@ -144,7 +148,7 @@ def compare(location_id: str, db: Session = Depends(get_db)):
         return comparative_analysis(db, location_id)
     except Exception as exc:
         log.warning("comparative analysis failed for %s", location_id, exc_info=True)
-        raise HTTPException(422, f"comparative analysis failed: {exc}")
+        raise HTTPException(422, f"comparative analysis failed: {exc}") from None
 
 
 @router.get("/trust/{location_id}")
@@ -168,31 +172,36 @@ def scientist(location_id: str, db: Session = Depends(get_db)):
     attribution = outputs.get("explanation", {}).get("attribution", [])
 
     signal = (
-        1.0 * comps.get("rain_intensity", 0) + 0.8 * comps.get("soil_moisture", 0)
-        + 1.2 * comps.get("headroom_deficit", 0) + 0.7 * comps.get("drainage_stress", 0)
+        1.0 * comps.get("rain_intensity", 0)
+        + 0.8 * comps.get("soil_moisture", 0)
+        + 1.2 * comps.get("headroom_deficit", 0)
+        + 0.7 * comps.get("drainage_stress", 0)
         + 0.3 * comps.get("citizen_pressure", 0)
     )
     weights = {
-        "rain_intensity": 1.0, "soil_moisture": 0.8,
-        "headroom_deficit": 1.2, "drainage_stress": 0.7, "citizen_pressure": 0.3,
+        "rain_intensity": 1.0,
+        "soil_moisture": 0.8,
+        "headroom_deficit": 1.2,
+        "drainage_stress": 0.7,
+        "citizen_pressure": 0.3,
     }
     steps = [
         {
             "equation": f"signal = 1.0·rain({comps.get('rain_intensity', 0):.2f}) + 0.8·soil({comps.get('soil_moisture', 0):.2f}) "
-                       f"+ 1.2·headroom({comps.get('headroom_deficit', 0):.2f}) + 0.7·stress({comps.get('drainage_stress', 0):.2f}) "
-                       f"+ 0.3·citizen({comps.get('citizen_pressure', 0):.2f}) = {signal:.2f}",
+            f"+ 1.2·headroom({comps.get('headroom_deficit', 0):.2f}) + 0.7·stress({comps.get('drainage_stress', 0):.2f}) "
+            f"+ 0.3·citizen({comps.get('citizen_pressure', 0):.2f}) = {signal:.2f}",
             "explanation": "Weighted causal sum of the fused components; headroom binds hardest (1.2).",
         },
         {
             "equation": f"P = 1/(1+e^−(({signal:.2f}−26)/8.67)) = {pred.get('risk_probability', 0):.3f}",
             "explanation": "Logistic squash with scale 52 (calibrated on the Chennai storm profile). "
-                           "P≥0.75 → critical, 0.55–0.75 high, 0.3–0.55 moderate.",
+            "P≥0.75 → critical, 0.55–0.75 high, 0.3–0.55 moderate.",
         },
         {
             "equation": f"severity = P·5 = {pred.get('severity', 0):.1f}/5; "
-                        f"confidence = 0.85·freshness − 2·residual_std = {pred.get('confidence', 0):.2f}",
+            f"confidence = 0.85·freshness − 2·residual_std = {pred.get('confidence', 0):.2f}",
             "explanation": "Severity scales linearly with probability; confidence penalizes "
-                           "forecast residual dispersion and stale data.",
+            "forecast residual dispersion and stale data.",
         },
     ]
     top = sorted(attribution, key=lambda a: -a["influence"])[:3]
@@ -202,8 +211,12 @@ def scientist(location_id: str, db: Session = Depends(get_db)):
         "model_name": pred.get("model_name", "earthpulse-stream-v1"),
         "formula_steps": steps,
         "dominant_factors": [
-            {"feature": a["feature"], "influence": round(a["influence"], 3),
-             "weight": weights.get(a["feature"], 0.0), "description": a["description"]}
+            {
+                "feature": a["feature"],
+                "influence": round(a["influence"], 3),
+                "weight": weights.get(a["feature"], 0.0),
+                "description": a["description"],
+            }
             for a in top
         ],
         "causal_chain": {"nodes": chain.get("nodes", []), "edges": chain.get("edges", [])},

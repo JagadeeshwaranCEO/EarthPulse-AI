@@ -37,8 +37,15 @@ def test_registry_has_all_hazards_and_flood_fallback():
     from app.hazards.registry import DEFAULT_HAZARD, HAZARDS, get_hazard
 
     assert set(HAZARDS) == {
-        "flood", "wildfire", "cyclone",
-        "earthquake", "tsunami", "volcanic", "landslide", "drought", "heatwave",
+        "flood",
+        "wildfire",
+        "cyclone",
+        "earthquake",
+        "tsunami",
+        "volcanic",
+        "landslide",
+        "drought",
+        "heatwave",
     }
     assert DEFAULT_HAZARD == "flood"
     assert get_hazard("unknown-id").id == "flood"
@@ -61,9 +68,15 @@ def test_wildfire_probability_monotonic_with_fuel_and_wind():
     from app.hazards.registry import get_hazard
 
     wf = get_hazard("wildfire")
-    calm = wf.probability({"fuel_dryness": 1, "aridity_index": 1, "wind_kick": 1, "thermal_anomaly": 1, "ignition_reports": 0})
-    moderate = wf.probability({"fuel_dryness": 6, "aridity_index": 6, "wind_kick": 5, "thermal_anomaly": 5, "ignition_reports": 2})
-    extreme = wf.probability({"fuel_dryness": 11, "aridity_index": 10, "wind_kick": 11, "thermal_anomaly": 10, "ignition_reports": 8})
+    calm = wf.probability(
+        {"fuel_dryness": 1, "aridity_index": 1, "wind_kick": 1, "thermal_anomaly": 1, "ignition_reports": 0}
+    )
+    moderate = wf.probability(
+        {"fuel_dryness": 6, "aridity_index": 6, "wind_kick": 5, "thermal_anomaly": 5, "ignition_reports": 2}
+    )
+    extreme = wf.probability(
+        {"fuel_dryness": 11, "aridity_index": 10, "wind_kick": 11, "thermal_anomaly": 10, "ignition_reports": 8}
+    )
     assert calm < moderate < extreme
     assert 0.0 <= calm <= 1.0 and extreme > 0.8
 
@@ -263,7 +276,7 @@ NEW_HAZARDS = ["earthquake", "tsunami", "volcanic", "landslide", "drought", "hea
 
 
 def test_new_hazard_templates_complete():
-    from app.hazards.registry import HAZARDS, get_hazard
+    from app.hazards.registry import get_hazard
 
     for hid in NEW_HAZARDS:
         h = get_hazard(hid)
@@ -301,12 +314,24 @@ def test_earthquake_pipeline_with_seismic_telemetry(client, db):
 
     base = datetime.fromisoformat("2026-01-01T00:00:00")
     for i, (metric, value) in enumerate(
-        [("ground_accel", 0.8), ("seismic_energy", 140.0), ("ground_accel", 0.7),
-         ("seismic_energy", 110.0), ("ground_accel", 0.5)]
+        [
+            ("ground_accel", 0.8),
+            ("seismic_energy", 140.0),
+            ("ground_accel", 0.7),
+            ("seismic_energy", 110.0),
+            ("ground_accel", 0.5),
+        ]
     ):
-        db.add(models.IngestedDatum(
-            location_id=zone.id, captured_at=base + timedelta(hours=i),
-            source_id="usgs-seismic", metric=metric, value=value, unit="g" if "accel" in metric else "GJ"))
+        db.add(
+            models.IngestedDatum(
+                location_id=zone.id,
+                captured_at=base + timedelta(hours=i),
+                source_id="usgs-seismic",
+                metric=metric,
+                value=value,
+                unit="g" if "accel" in metric else "GJ",
+            )
+        )
     db.commit()
 
     outputs, _ = build_agent_outputs(db, zone.id)
@@ -332,8 +357,15 @@ def test_scope_switch_to_asia_theatre(client, db):
 
     zones = db.query(Location).all()
     assert {z.hazard_type for z in zones} == {
-        "flood", "cyclone", "wildfire", "earthquake", "tsunami",
-        "volcanic", "landslide", "drought", "heatwave",
+        "flood",
+        "cyclone",
+        "wildfire",
+        "earthquake",
+        "tsunami",
+        "volcanic",
+        "landslide",
+        "drought",
+        "heatwave",
     }
     assert {z.region for z in zones} >= {"Japan", "Indonesia", "Iraq", "Mongolia"}
 
@@ -354,6 +386,7 @@ def test_asia_seismic_zones_carry_ingested_telemetry(client, db):
     assert max(r.value for r in rows if r.metric == "seismic_energy") > 50
 
     volcano = db.query(models.Location).filter_by(id="as_id_jog").first()
+    assert volcano is not None
     volc_metrics = {r.metric for r in db.query(models.IngestedDatum).filter_by(location_id="as_id_jog").all()}
     assert {"volcanic_tremor", "so2_flux", "ash_plume_km"} <= volc_metrics
 
@@ -384,4 +417,3 @@ def test_asia_live_pipeline_per_hazard(client, db):
         assert outputs["prediction"]["severity"] > 0, zid
 
     client.post("/api/v1/scope", json={"scope": "chennai"})
-

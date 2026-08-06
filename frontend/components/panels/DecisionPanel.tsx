@@ -30,7 +30,7 @@ export function DecisionPanel({ riskName }: { riskName: string }) {
     }
   };
 
-  const generateBrief = async (strategyId?: string) => {
+  const generateBrief = async () => {
     setBriefing(true);
     setError(null);
     try {

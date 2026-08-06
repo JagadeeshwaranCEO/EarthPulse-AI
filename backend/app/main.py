@@ -14,7 +14,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.routes import agents, chat, dashboard, data, decision, health, risks, scope, simulations, validation
-from app.api.ws import broadcaster, router as ws_router
+from app.api.ws import broadcaster
+from app.api.ws import router as ws_router
 from app.config import get_settings
 from app.core.db import SessionLocal, init_db
 from app.core.log import install_exception_handlers, install_middleware, setup_logging

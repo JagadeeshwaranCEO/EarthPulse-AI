@@ -12,8 +12,6 @@ measure:
 
 from __future__ import annotations
 
-import math
-
 import numpy as np
 
 
@@ -35,12 +33,14 @@ def reliability(y_true: list[float], y_pred: list[float], bins: int = 10) -> lis
             idx = np.where(b >= lo)[0]
         if len(idx) == 0:
             continue
-        rows.append({
-            "bin": f"{lo:.1f}-{hi:.1f}",
-            "n": int(len(idx)),
-            "mean_prediction": round(float(b[idx].mean()), 3),
-            "observed_frequency": round(float(a[idx].mean()), 3),
-        })
+        rows.append(
+            {
+                "bin": f"{lo:.1f}-{hi:.1f}",
+                "n": int(len(idx)),
+                "mean_prediction": round(float(b[idx].mean()), 3),
+                "observed_frequency": round(float(a[idx].mean()), 3),
+            }
+        )
     return rows
 
 
@@ -57,8 +57,7 @@ def _logit(p: np.ndarray) -> np.ndarray:
     return np.log(p / (1 - p))
 
 
-def beta_calibration(y_true: list[float], y_pred: list[float],
-                     lr: float = 0.5, iters: int = 300) -> dict:
+def beta_calibration(y_true: list[float], y_pred: list[float], lr: float = 0.5, iters: int = 300) -> dict:
     """Platt-like logistic recalibration: logit(p') = a + b·logit(p).
 
     Returns a + b coefficients and the Brier score before/after on the same set
@@ -69,7 +68,6 @@ def beta_calibration(y_true: list[float], y_pred: list[float],
     bias = 0.0
     slope = 1.0
     v_bias = v_slope = 0.0
-    n = len(a)
     for _ in range(iters):
         logitp = bias + slope * x
         p = 1.0 / (1.0 + np.exp(-np.clip(logitp, -30, 30)))

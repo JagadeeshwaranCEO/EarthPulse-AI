@@ -72,18 +72,19 @@ def _seed_zones(db: Session, data: dict, scope: str) -> None:
 
     from app.hazards.registry import HAZARDS
 
-    interventions = {
-        i["id"]: i for h in HAZARDS.values() for i in h.interventions
-    }
+    interventions = {i["id"]: i for h in HAZARDS.values() for i in h.interventions}
     for iid, inv in interventions.items():
-        db.add(models.Intervention(
-            id=iid, name=inv["name"], kind=inv["kind"], description=inv["description"]))
+        db.add(models.Intervention(id=iid, name=inv["name"], kind=inv["kind"], description=inv["description"]))
 
     for z in data["zones"]:
         loc = models.Location(
-            id=z["id"], name=z["name"], region=z.get("region", "Chennai"),
-            lat=z["lat"], lon=z["lon"],
-            elevation_m=z["elevation_m"], drainage_capacity_mmh=z["drainage_capacity_mmh"],
+            id=z["id"],
+            name=z["name"],
+            region=z.get("region", "Chennai"),
+            lat=z["lat"],
+            lon=z["lon"],
+            elevation_m=z["elevation_m"],
+            drainage_capacity_mmh=z["drainage_capacity_mmh"],
             population=z["population"],
             hazard_type=z.get("hazard_type", "flood"),
             attributes={"exposure": z.get("exposure", 1.0), "scope": scope},
@@ -91,22 +92,40 @@ def _seed_zones(db: Session, data: dict, scope: str) -> None:
         db.add(loc)
         db.flush()
         for w in z["weather"]:
-            db.add(models.WeatherSnapshot(
-                location_id=z["id"], captured_at=datetime.fromisoformat(w["captured_at"]),
-                **{k: v for k, v in w.items() if k != "captured_at"}))
+            db.add(
+                models.WeatherSnapshot(
+                    location_id=z["id"],
+                    captured_at=datetime.fromisoformat(w["captured_at"]),
+                    **{k: v for k, v in w.items() if k != "captured_at"},
+                )
+            )
         for f in z["satellite"]:
-            db.add(models.SatelliteFrame(
-                location_id=z["id"], captured_at=datetime.fromisoformat(f["captured_at"]),
-                **{k: v for k, v in f.items() if k != "captured_at"}))
+            db.add(
+                models.SatelliteFrame(
+                    location_id=z["id"],
+                    captured_at=datetime.fromisoformat(f["captured_at"]),
+                    **{k: v for k, v in f.items() if k != "captured_at"},
+                )
+            )
         for c in z["citizen"]:
-            db.add(models.CitizenReport(
-                reported_at=datetime.fromisoformat(c["reported_at"]),
-                **{k: v for k, v in c.items() if k != "reported_at"}))
+            db.add(
+                models.CitizenReport(
+                    reported_at=datetime.fromisoformat(c["reported_at"]),
+                    **{k: v for k, v in c.items() if k != "reported_at"},
+                )
+            )
         for d in z.get("seismic", []):
-            db.add(models.IngestedDatum(
-                location_id=z["id"], captured_at=datetime.fromisoformat(d["captured_at"]),
-                source_id=d["source_id"], metric=d["metric"], value=d["value"],
-                unit=d.get("unit", ""), is_synthetic=d.get("is_synthetic", True)))
+            db.add(
+                models.IngestedDatum(
+                    location_id=z["id"],
+                    captured_at=datetime.fromisoformat(d["captured_at"]),
+                    source_id=d["source_id"],
+                    metric=d["metric"],
+                    value=d["value"],
+                    unit=d.get("unit", ""),
+                    is_synthetic=d.get("is_synthetic", True),
+                )
+            )
     db.commit()
     logger.info("seeded %d zones for scope=%s (%s)", len(data["zones"]), scope, data.get("version"))
 

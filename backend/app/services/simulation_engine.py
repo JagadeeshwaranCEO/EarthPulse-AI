@@ -8,12 +8,10 @@ physical-ish transfer. Deterministic, instant, explainable. No LLM in the loop.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from uuid import uuid4
 
 import numpy as np
-
-from app.ml.forecaster import DEFAULT_FORECASTER
 
 # intervention_id -> (targets, description)
 _INTERVENTIONS: dict[str, tuple[dict[str, float], str]] = {
@@ -119,7 +117,9 @@ def run_simulation(
 
     damage_avoided = before.expected_damage_usd - after.expected_damage_usd
     probability_reduction = before.probability - after.probability
-    carbon_spent = sum(_INTERVENTION_META[i].get("carbon_kg", 0) * int for i, int in interventions.items() if i in _INTERVENTION_META)
+    carbon_spent = sum(
+        _INTERVENTION_META[i].get("carbon_kg", 0) * int for i, int in interventions.items() if i in _INTERVENTION_META
+    )
     co2e_avoided_kg = damage_avoided * 0.52  # ~520 t CO2e per $1M damage avoided
 
     return {
@@ -140,7 +140,9 @@ def run_simulation(
             "probability_reduction": round(probability_reduction, 3),
             "severity_reduction": round(before.severity - after.severity, 2),
             "damage_avoided_usd": round(damage_avoided, 1),
-            "damage_reduction_pct": round((damage_avoided / before.expected_damage_usd * 100) if before.expected_damage_usd > 0 else 0.0, 1),
+            "damage_reduction_pct": round(
+                (damage_avoided / before.expected_damage_usd * 100) if before.expected_damage_usd > 0 else 0.0, 1
+            ),
         },
         "effects": effects,
         "carbon_ledger": {

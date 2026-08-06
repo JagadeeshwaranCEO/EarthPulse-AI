@@ -15,8 +15,8 @@ from datetime import datetime, timedelta, timezone
 
 import numpy as np
 
-from app.data.seeds.generate_chennai import ZONES as CHENNAI_ZONES
 from app.data.seeds.generate_chennai import SOURCES, _rain_curve, _rolling
+from app.data.seeds.generate_chennai import ZONES as CHENNAI_ZONES
 
 SEED_VERSION = "tamilnadu-v1"
 
@@ -96,9 +96,7 @@ def generate(now: datetime | None = None) -> dict:
         exposure = min(1.2, exposure)
         phase = (lon - 76.6) / (80.3 - 76.6) * 0.7
         rain = _rain_curve_state(hours, phase, seed=i * 7 + 3)
-        zone = _build_zone(
-            zid, f"{dist} HQ — {hq}", dist, lat, lon, elev, cap, pop, exposure, rain, start, hours
-        )
+        zone = _build_zone(zid, f"{dist} HQ — {hq}", dist, lat, lon, elev, cap, pop, exposure, rain, start, hours)
         zones.append(zone)
 
     return {
@@ -114,9 +112,7 @@ def generate(now: datetime | None = None) -> dict:
 def _build_zone(zid, name, region, lat, lon, elev, cap, pop, exposure, rain, start, hours) -> dict:
     rain_local = rain * (0.8 + 0.35 * exposure)
 
-    rain_intensity = np.minimum(12.0, _rolling(rain_local, 6) * 6 / 16.0 * exposure)
     soil_moisture = np.minimum(12.0, _rolling(rain_local, 6) * 6 / 30.0 * exposure)
-    headroom_deficit = np.minimum(12.0, _rolling(rain_local, 6) * 6 / 26.0 * exposure)
     drainage_stress = np.minimum(12.0, np.maximum(0.0, (_rolling(rain_local, 6) * 6 / cap - 8.0) / 3.0 * exposure))
     citizen_pressure = np.minimum(8.0, np.maximum(0.0, (drainage_stress - 9.0) * 0.8))
 
@@ -164,17 +160,29 @@ def _build_zone(zid, name, region, lat, lon, elev, cap, pop, exposure, rain, sta
     ]
     water_level_m = np.minimum(1.0, 0.2 + _rolling(rain_local, 6) * 6 / 156.0 * exposure)
     return {
-        "id": zid, "name": name, "region": region, "lat": lat, "lon": lon,
-        "elevation_m": elev, "drainage_capacity_mmh": cap, "population": pop,
+        "id": zid,
+        "name": name,
+        "region": region,
+        "lat": lat,
+        "lon": lon,
+        "elevation_m": elev,
+        "drainage_capacity_mmh": cap,
+        "population": pop,
         "exposure": round(float(exposure), 3),
-        "weather": weather, "satellite": sat, "citizen": citizen, "news": news,
-        "water": [{
-            "captured_at": (start + timedelta(hours=h)).isoformat(),
-            "level_m": round(float(water_level_m[h]), 3),
-            "capacity_m": 1.0,
-            "inflow_m3s": round(float(np.clip(8 + _rolling(rain_local, 12)[h] * 0.9, 5, 60)), 1),
-            "source_id": "cwprs-level",
-        } for h in range(hours)],
+        "weather": weather,
+        "satellite": sat,
+        "citizen": citizen,
+        "news": news,
+        "water": [
+            {
+                "captured_at": (start + timedelta(hours=h)).isoformat(),
+                "level_m": round(float(water_level_m[h]), 3),
+                "capacity_m": 1.0,
+                "inflow_m3s": round(float(np.clip(8 + _rolling(rain_local, 12)[h] * 0.9, 5, 60)), 1),
+                "source_id": "cwprs-level",
+            }
+            for h in range(hours)
+        ],
     }
 
 
@@ -182,5 +190,7 @@ if __name__ == "__main__":
     data = generate()
     with open("app/data/seeds/tamilnadu_seed.json", "w") as f:
         json.dump(data, f, indent=1)
-    print(f"wrote {len(data['zones'])} zones ({len(CHENNAI_ZONES)} chennai + {len(DISTRICTS)} district HQs) "
-          f"to tamilnadu_seed.json")
+    print(
+        f"wrote {len(data['zones'])} zones ({len(CHENNAI_ZONES)} chennai + {len(DISTRICTS)} district HQs) "
+        f"to tamilnadu_seed.json"
+    )

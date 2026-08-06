@@ -1,0 +1,97 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    name: Backend (Python ${{ matrix.python }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.12", "3.13"]
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: ${{ matrix.python }}
+          enable-cache: true
+      - name: Install dependencies
+        run: uv sync --group dev
+      - name: Lint (ruff check)
+        run: uv run ruff check app tests scripts
+      - name: Format (ruff format --check)
+        run: uv run ruff format --check app tests scripts
+      - name: Test suite
+        run: uv run pytest -q
+
+  frontend:
+    name: Frontend (Next.js)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install dependencies
+        run: npm ci
+      - name: Lint (eslint)
+        run: npm run lint
+      - name: Typecheck (tsc)
+        run: npx tsc --noEmit
+      - name: Build (next build)
+        run: npm run build
+
+  smoke:
+    name: Integration smoke (live API)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: backend
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.12"
+          enable-cache: true
+      - name: Install dependencies
+        run: uv sync --group dev
+      - name: Boot the API and probe it
+        run: |
+          uv run uvicorn app.main:app --port 8000 --log-level info > /tmp/ep.log 2>&1 &
+          for i in $(seq 1 30); do
+            if curl -sf http://127.0.0.1:8000/api/v1/health > /dev/null 2>&1; then break; fi
+            sleep 2
+          done
+          curl -fsS http://127.0.0.1:8000/api/v1/health | grep -q '"ok"'
+          curl -fsS http://127.0.0.1:8000/api/v1/ready | grep -q '"ready"'
+          curl -fsS http://127.0.0.1:8000/api/v1/risks | grep -q '"location_id"'
+          curl -fsS -X POST http://127.0.0.1:8000/api/v1/decisions/optimize -H 'content-type: application/json' -d '{}' | grep -q '"strat_a"'
+          curl -fsS -X POST http://127.0.0.1:8000/api/v1/scope -H 'content-type: application/json' -d '{"scope":"chennai"}' | grep -q '"zones"'
+          curl -fsS http://127.0.0.1:8000/api/v1/ready | grep -q '"ready"'
+      - name: Verify structured JSON logs
+        run: |
+          grep -q '"request_id"' /tmp/ep.log && grep -q '"msg": "request completed"' /tmp/ep.log

@@ -43,8 +43,16 @@ ALL_AGENTS: list = [
 ROSTER = {a.name: a for a in ALL_AGENTS}
 
 PIPELINE = [
-    "satellite", "weather", "air_quality", "water", "citizen_report", "news",
-    "risk_fusion", "prediction", "explanation", "recommendation",
+    "satellite",
+    "weather",
+    "air_quality",
+    "water",
+    "citizen_report",
+    "news",
+    "risk_fusion",
+    "prediction",
+    "explanation",
+    "recommendation",
 ]
 
 
@@ -69,31 +77,46 @@ def _load_payload(db: Session, location: models.Location) -> dict:
     # Truncate to the sim clock; beyond the seed window, extrapolate a decaying
     # storm tail (marked extrapolated so provenance stays honest).
     weather = [
-        {"rainfall_mm": w.rainfall_mm, "rain_forecast_mm": w.rain_forecast_mm, "humidity": w.humidity,
-         "wind_kmh": w.wind_kmh, "source_id": w.source_id}
+        {
+            "rainfall_mm": w.rainfall_mm,
+            "rain_forecast_mm": w.rain_forecast_mm,
+            "humidity": w.humidity,
+            "wind_kmh": w.wind_kmh,
+            "source_id": w.source_id,
+        }
         for w in weather_rows[:n_weather]
     ]
     if hour > 72 and weather:
         last = weather[-1]
         for k in range(1, min(int(hour) - 72, 8) + 1):
-            decay = 0.86 ** k
-            weather.append({
-                "rainfall_mm": last["rainfall_mm"] * decay,
-                "rain_forecast_mm": last["rain_forecast_mm"] * decay,
-                "humidity": max(55.0, last["humidity"] * (1.0 - 0.02 * k)),
-                "wind_kmh": last.get("wind_kmh", 0),
-                "source_id": f"imd-rain:extrapolated:h{72 + k}",
-            })
+            decay = 0.86**k
+            weather.append(
+                {
+                    "rainfall_mm": last["rainfall_mm"] * decay,
+                    "rain_forecast_mm": last["rain_forecast_mm"] * decay,
+                    "humidity": max(55.0, last["humidity"] * (1.0 - 0.02 * k)),
+                    "wind_kmh": last.get("wind_kmh", 0),
+                    "source_id": f"imd-rain:extrapolated:h{72 + k}",
+                }
+            )
     sat = [
-        {"soil_moisture_anomaly": f.soil_moisture_anomaly, "surface_water_index": f.surface_water_index, "source_id": f.source_id}
+        {
+            "soil_moisture_anomaly": f.soil_moisture_anomaly,
+            "surface_water_index": f.surface_water_index,
+            "source_id": f.source_id,
+        }
         for f in sat_rows[:n_sat]
     ]
     if hour > 72 and sat:
         last = sat[-1]
         for k in range(1, min(int(hour) // 2 - 36, 4) + 1):
-            sat.append({"soil_moisture_anomaly": max(0.0, last["soil_moisture_anomaly"] * 0.94 ** k),
-                        "surface_water_index": max(0.0, last["surface_water_index"] * 0.93 ** k),
-                        "source_id": "gpm-nasa:extrapolated"})
+            sat.append(
+                {
+                    "soil_moisture_anomaly": max(0.0, last["soil_moisture_anomaly"] * 0.94**k),
+                    "surface_water_index": max(0.0, last["surface_water_index"] * 0.93**k),
+                    "source_id": "gpm-nasa:extrapolated",
+                }
+            )
 
     n_reports = max(0, int(hour))
     reports = [
@@ -103,8 +126,14 @@ def _load_payload(db: Session, location: models.Location) -> dict:
     ]
 
     seismic = [
-        {"metric": d.metric, "value": d.value, "unit": d.unit, "source_id": d.source_id,
-         "captured_at": d.captured_at.isoformat(), "is_synthetic": d.is_synthetic}
+        {
+            "metric": d.metric,
+            "value": d.value,
+            "unit": d.unit,
+            "source_id": d.source_id,
+            "captured_at": d.captured_at.isoformat(),
+            "is_synthetic": d.is_synthetic,
+        }
         for d in db.query(models.IngestedDatum)
         .filter_by(location_id=location.id)
         .order_by(models.IngestedDatum.captured_at)
@@ -145,7 +174,8 @@ def _report_hour(ts) -> int:
         return int(delta)
     except Exception:
         logging.getLogger("earthpulse.agents").warning(
-            "report-hour mapping failed for %s — treating as t0", ts, exc_info=True)
+            "report-hour mapping failed for %s — treating as t0", ts, exc_info=True
+        )
         return 0
 
 
@@ -211,11 +241,16 @@ def run_pipeline(db: Session, location_id: str, persist: bool = True) -> dict:
     run_id = f"run_{uuid4().hex[:10]}"
     if persist:
         for name, record in outputs.items():
-            db.add(models.AgentMessage(
-                run_id=run_id, agent=name, content=record.get("_msg") or f"agent produced {len(record)} fields",
-                confidence=record.get("_conf", 0.0),
-                used_sources=[], failure=record.get("_failure"),
-            ))
+            db.add(
+                models.AgentMessage(
+                    run_id=run_id,
+                    agent=name,
+                    content=record.get("_msg") or f"agent produced {len(record)} fields",
+                    confidence=record.get("_conf", 0.0),
+                    used_sources=[],
+                    failure=record.get("_failure"),
+                )
+            )
         db.commit()
     return {"run_id": run_id, "outputs": outputs}
 

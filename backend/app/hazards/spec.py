@@ -45,9 +45,11 @@ class HazardSpec:
 
     def level(self, p: float) -> str:
         """Map probability → level using this hazard's thresholds."""
-        for name, cutoff in [("critical", self.thresholds.get("critical", 0.75)),
-                             ("high", self.thresholds.get("high", 0.55)),
-                             ("moderate", self.thresholds.get("moderate", 0.3))]:
+        for name, cutoff in [
+            ("critical", self.thresholds.get("critical", 0.75)),
+            ("high", self.thresholds.get("high", 0.55)),
+            ("moderate", self.thresholds.get("moderate", 0.3)),
+        ]:
             if p >= cutoff:
                 return name
         return "low"

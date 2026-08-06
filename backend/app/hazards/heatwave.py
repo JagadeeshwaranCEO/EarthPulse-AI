@@ -50,12 +50,14 @@ def _historical(payload: dict) -> list[dict[str, float]]:
     for s in payload.get("weather_snapshots", [])[-48:]:
         rain = s["rainfall_mm"]
         hum = s.get("humidity", 60)
-        out.append({
-            "thermal_excess": _clip(12.0 - hum / 6.0 - rain * 0.5),
-            "dry_bulb_load": _clip(9.0 - rain * 1.2),
-            "stagnation": _clip(8.0 - s.get("wind_kmh", 12) / 4.0),
-            "heat_illness": 0.4,
-        })
+        out.append(
+            {
+                "thermal_excess": _clip(12.0 - hum / 6.0 - rain * 0.5),
+                "dry_bulb_load": _clip(9.0 - rain * 1.2),
+                "stagnation": _clip(8.0 - s.get("wind_kmh", 12) / 4.0),
+                "heat_illness": 0.4,
+            }
+        )
     return out
 
 
@@ -73,16 +75,41 @@ def _hw_hourly(window: list[dict], soil: float, exposure: float, cap: float) -> 
 
 def _hw_causal(components: dict[str, float], pred: dict) -> dict:
     nodes = [
-        {"id": "thermal", "label": "Thermal excess", "kind": "cause",
-         "value": f"{components.get('thermal_excess', 0):.2f}/12", "confidence": 0.85},
-        {"id": "bulb", "label": "Dry-bulb load", "kind": "mechanism",
-         "value": f"{components.get('dry_bulb_load', 0):.2f}/12", "confidence": 0.8},
-        {"id": "stag", "label": "Wind stagnation", "kind": "mechanism",
-         "value": f"{components.get('stagnation', 0):.2f}/12", "confidence": 0.75},
-        {"id": "illness", "label": "Heat-illness reports", "kind": "condition",
-         "value": f"{components.get('heat_illness', 0):.1f} reports", "confidence": 0.6},
-        {"id": "risk", "label": f"Heatwave risk ({pred.get('risk_probability', 0):.0%})", "kind": "risk",
-         "value": f"severity {pred.get('severity', 0):.1f}/5", "confidence": pred.get("confidence", 0.5)},
+        {
+            "id": "thermal",
+            "label": "Thermal excess",
+            "kind": "cause",
+            "value": f"{components.get('thermal_excess', 0):.2f}/12",
+            "confidence": 0.85,
+        },
+        {
+            "id": "bulb",
+            "label": "Dry-bulb load",
+            "kind": "mechanism",
+            "value": f"{components.get('dry_bulb_load', 0):.2f}/12",
+            "confidence": 0.8,
+        },
+        {
+            "id": "stag",
+            "label": "Wind stagnation",
+            "kind": "mechanism",
+            "value": f"{components.get('stagnation', 0):.2f}/12",
+            "confidence": 0.75,
+        },
+        {
+            "id": "illness",
+            "label": "Heat-illness reports",
+            "kind": "condition",
+            "value": f"{components.get('heat_illness', 0):.1f} reports",
+            "confidence": 0.6,
+        },
+        {
+            "id": "risk",
+            "label": f"Heatwave risk ({pred.get('risk_probability', 0):.0%})",
+            "kind": "risk",
+            "value": f"severity {pred.get('severity', 0):.1f}/5",
+            "confidence": pred.get("confidence", 0.5),
+        },
     ]
     edges = [
         {"source": "thermal", "target": "risk", "label": "heat load exceeds comfort floor"},
@@ -96,22 +123,38 @@ def _hw_causal(components: dict[str, float], pred: dict) -> dict:
 
 def _hw_recommend(p: float, sev: float) -> list:
     return [
-        {"id": "rec_hw_1", "stakeholder": "responders", "priority": 1 if p > 0.6 else 2,
-         "action": "Open cooling centres in the stagnation envelope and staff them for night hours.",
-         "reasoning": "night-floor heat is where mortality concentrates.",
-         "evidence_ids": []},
-        {"id": "rec_hw_2", "stakeholder": "civic", "priority": 1 if sev >= 3 else 2,
-         "action": "Reschedule outdoor labour windows to pre-dawn; suspend midday events.",
-         "reasoning": "occupational exposure drives the illness curve.",
-         "evidence_ids": []},
-        {"id": "rec_hw_3", "stakeholder": "utilities", "priority": 2,
-         "action": "Protect grid capacity for the cooling-load peak; prep rolling-load protocol.",
-         "reasoning": "cooling demand spikes exactly when the grid is weakest.",
-         "evidence_ids": []},
-        {"id": "rec_hw_4", "stakeholder": "public", "priority": 3,
-         "action": "Report heat illness and power outages in the hot corridor.",
-         "reasoning": "ground truth maps the exposure envelope faster than forecast.",
-         "evidence_ids": []},
+        {
+            "id": "rec_hw_1",
+            "stakeholder": "responders",
+            "priority": 1 if p > 0.6 else 2,
+            "action": "Open cooling centres in the stagnation envelope and staff them for night hours.",
+            "reasoning": "night-floor heat is where mortality concentrates.",
+            "evidence_ids": [],
+        },
+        {
+            "id": "rec_hw_2",
+            "stakeholder": "civic",
+            "priority": 1 if sev >= 3 else 2,
+            "action": "Reschedule outdoor labour windows to pre-dawn; suspend midday events.",
+            "reasoning": "occupational exposure drives the illness curve.",
+            "evidence_ids": [],
+        },
+        {
+            "id": "rec_hw_3",
+            "stakeholder": "utilities",
+            "priority": 2,
+            "action": "Protect grid capacity for the cooling-load peak; prep rolling-load protocol.",
+            "reasoning": "cooling demand spikes exactly when the grid is weakest.",
+            "evidence_ids": [],
+        },
+        {
+            "id": "rec_hw_4",
+            "stakeholder": "public",
+            "priority": 3,
+            "action": "Report heat illness and power outages in the hot corridor.",
+            "reasoning": "ground truth maps the exposure envelope faster than forecast.",
+            "evidence_ids": [],
+        },
     ]
 
 
@@ -129,30 +172,50 @@ HEATWAVE = HazardSpec(
     },
     thresholds={"critical": 0.8, "high": 0.6, "moderate": 0.35},
     interventions=[
-        {"id": "cooling_centres", "name": "Cooling Centres", "kind": "operational",
-         "description": "Open and staff cooling centres for night hours"},
-        {"id": "labour_rescheduling", "name": "Labour Rescheduling", "kind": "policy",
-         "description": "Pre-dawn outdoor work windows; suspend midday events"},
-        {"id": "grid_cooling_protection", "name": "Grid Cooling Protection", "kind": "engineering",
-         "description": "Protect capacity for the cooling-load peak"},
-        {"id": "water_stations", "name": "Water Stations", "kind": "operational",
-         "description": "Street water and shade stations in the hot corridor"},
-        {"id": "school_heat_protocol", "name": "School Heat Protocol", "kind": "policy",
-         "description": "Half-day or closure protocol during heat-dome peaks"},
+        {
+            "id": "cooling_centres",
+            "name": "Cooling Centres",
+            "kind": "operational",
+            "description": "Open and staff cooling centres for night hours",
+        },
+        {
+            "id": "labour_rescheduling",
+            "name": "Labour Rescheduling",
+            "kind": "policy",
+            "description": "Pre-dawn outdoor work windows; suspend midday events",
+        },
+        {
+            "id": "grid_cooling_protection",
+            "name": "Grid Cooling Protection",
+            "kind": "engineering",
+            "description": "Protect capacity for the cooling-load peak",
+        },
+        {
+            "id": "water_stations",
+            "name": "Water Stations",
+            "kind": "operational",
+            "description": "Street water and shade stations in the hot corridor",
+        },
+        {
+            "id": "school_heat_protocol",
+            "name": "School Heat Protocol",
+            "kind": "policy",
+            "description": "Half-day or closure protocol during heat-dome peaks",
+        },
     ],
     evidence=[
-        EvidenceTemplate("noaa-firewx", "observation",
-                         "humidity and rain deficit consistent with heat-dome load",
-                         "thermal_excess", 3),
-        EvidenceTemplate("gpm-nasa", "observation",
-                         "dry ground with no recharge ahead of the hot spell",
-                         "dry_bulb_load", 3),
-        EvidenceTemplate("civic-reports", "report",
-                         "reported heat illness and power outages",
-                         "heat_illness", 2),
-        EvidenceTemplate("news-eom", "citation",
-                         "heat advisory active for the region",
-                         None, 6),
+        EvidenceTemplate(
+            "noaa-firewx",
+            "observation",
+            "humidity and rain deficit consistent with heat-dome load",
+            "thermal_excess",
+            3,
+        ),
+        EvidenceTemplate(
+            "gpm-nasa", "observation", "dry ground with no recharge ahead of the hot spell", "dry_bulb_load", 3
+        ),
+        EvidenceTemplate("civic-reports", "report", "reported heat illness and power outages", "heat_illness", 2),
+        EvidenceTemplate("news-eom", "citation", "heat advisory active for the region", None, 6),
     ],
     hourly=_hw_hourly,
     causal=_hw_causal,

@@ -25,30 +25,60 @@ import numpy as np
 from app.data.seeds.generate_india import _cyclone_arc, _flood_arc, _wildfire_arc
 
 SOURCES = [
-    {"id": "wmo-gts", "name": "WMO GTS Meteorological Network", "kind": "weather",
-     "url": "https://www.wmo.int/", "license": "WMO / public",
-     "is_synthetic": True,
-     "description": "Rainfall, humidity and wind series from national meteorological services."},
-    {"id": "usgs-seismic", "name": "USGS Seismic Networks", "kind": "weather",
-     "url": "https://earthquake.usgs.gov/", "license": "US Gov / public domain",
-     "is_synthetic": True,
-     "description": "Ground motion, energy release and tremor telemetry from seismic stations."},
-    {"id": "gpm-nasa", "name": "GPM/NASA Precipitation", "kind": "satellite",
-     "url": "https://gpm.nasa.gov/", "license": "NASA Open",
-     "is_synthetic": True,
-     "description": "Soil moisture / surface water proxies from GPM retrieval."},
-    {"id": "viiirs-thermal", "name": "VIIRS Thermal Anomaly", "kind": "satellite",
-     "url": "https://firms.modaps.eosdis.nasa.gov/", "license": "NASA LANCE/FS",
-     "is_synthetic": True,
-     "description": "Thermal anomaly clusters and dryness proxies from the VIIRS sensor."},
-    {"id": "civic-reports", "name": "Civic Hazard Reporter", "kind": "citizen",
-     "url": "", "license": "Community-verified",
-     "is_synthetic": True,
-     "description": "Verified sightings — shaking, ashfall, sea recession, slope movement."},
-    {"id": "news-eom", "name": "EOM News Wire", "kind": "news",
-     "url": "", "license": "Editorial",
-     "is_synthetic": True,
-     "description": "Regional advisories — seismic, volcanic, typhoon and heat warnings."},
+    {
+        "id": "wmo-gts",
+        "name": "WMO GTS Meteorological Network",
+        "kind": "weather",
+        "url": "https://www.wmo.int/",
+        "license": "WMO / public",
+        "is_synthetic": True,
+        "description": "Rainfall, humidity and wind series from national meteorological services.",
+    },
+    {
+        "id": "usgs-seismic",
+        "name": "USGS Seismic Networks",
+        "kind": "weather",
+        "url": "https://earthquake.usgs.gov/",
+        "license": "US Gov / public domain",
+        "is_synthetic": True,
+        "description": "Ground motion, energy release and tremor telemetry from seismic stations.",
+    },
+    {
+        "id": "gpm-nasa",
+        "name": "GPM/NASA Precipitation",
+        "kind": "satellite",
+        "url": "https://gpm.nasa.gov/",
+        "license": "NASA Open",
+        "is_synthetic": True,
+        "description": "Soil moisture / surface water proxies from GPM retrieval.",
+    },
+    {
+        "id": "viiirs-thermal",
+        "name": "VIIRS Thermal Anomaly",
+        "kind": "satellite",
+        "url": "https://firms.modaps.eosdis.nasa.gov/",
+        "license": "NASA LANCE/FS",
+        "is_synthetic": True,
+        "description": "Thermal anomaly clusters and dryness proxies from the VIIRS sensor.",
+    },
+    {
+        "id": "civic-reports",
+        "name": "Civic Hazard Reporter",
+        "kind": "citizen",
+        "url": "",
+        "license": "Community-verified",
+        "is_synthetic": True,
+        "description": "Verified sightings — shaking, ashfall, sea recession, slope movement.",
+    },
+    {
+        "id": "news-eom",
+        "name": "EOM News Wire",
+        "kind": "news",
+        "url": "",
+        "license": "Editorial",
+        "is_synthetic": True,
+        "description": "Regional advisories — seismic, volcanic, typhoon and heat warnings.",
+    },
 ]
 
 SEED_VERSION = "asia-continental-v1"
@@ -220,8 +250,8 @@ def _volcanic_arc(hours: int, phase: float, seed: int, intensity: float = 1.0) -
     rng = np.random.default_rng(seed)
     t = np.linspace(0, 1, hours)
     ramp = np.clip((t - 0.45 + phase * 0.04) / 0.5, 0, 1)
-    tremor = (0.25 + 1.6 * ramp ** 2) * intensity
-    so2 = (0.6 + 4.0 * ramp ** 2) * intensity
+    tremor = (0.25 + 1.6 * ramp**2) * intensity
+    so2 = (0.6 + 4.0 * ramp**2) * intensity
     plume = 1.2 + 8.0 * np.clip(ramp - 0.45, 0, 0.55) * intensity
     tremor += rng.normal(0, 0.05, hours)
     return {
@@ -316,53 +346,71 @@ def _build_zone(zid, name, region, lat, lon, elev, cap, pop, hazard, exposure, a
         seismic = []
         for t in range(hours):
             for metric, mult in (
-                ("ground_accel", 1.0), ("seismic_energy", 1.0),
-                ("volcanic_tremor", 1.0), ("so2_flux", 1.0), ("ash_plume_km", 1.0),
+                ("ground_accel", 1.0),
+                ("seismic_energy", 1.0),
+                ("volcanic_tremor", 1.0),
+                ("so2_flux", 1.0),
+                ("ash_plume_km", 1.0),
             ):
                 if metric not in arc:
                     continue
-                seismic.append({
-                    "captured_at": (start + timedelta(hours=t)).isoformat(),
-                    "source_id": "usgs-seismic",
-                    "metric": metric,
-                    "value": round(float(arc[metric][t] * mult), 4),
-                    "unit": "g" if metric == "ground_accel" else ("GJ" if metric == "seismic_energy" else ("km" if metric == "ash_plume_km" else "kt/d" if metric == "so2_flux" else "um/s")),
-                    "is_synthetic": True,
-                })
+                seismic.append(
+                    {
+                        "captured_at": (start + timedelta(hours=t)).isoformat(),
+                        "source_id": "usgs-seismic",
+                        "metric": metric,
+                        "value": round(float(arc[metric][t] * mult), 4),
+                        "unit": "g"
+                        if metric == "ground_accel"
+                        else (
+                            "GJ"
+                            if metric == "seismic_energy"
+                            else ("km" if metric == "ash_plume_km" else "kt/d" if metric == "so2_flux" else "um/s")
+                        ),
+                        "is_synthetic": True,
+                    }
+                )
 
     if hazard in ("flood", "landslide"):
         rain = arc["rainfall_mm"]
-        intensity = np.minimum(12.0, _rolling(rain, 6) * 6 / 16.0 * exposure)
         sat = [
-            {"captured_at": (start + timedelta(hours=t)).isoformat(),
-             "soil_moisture_anomaly": round(float(arc["soil_anomaly"][t]), 3),
-             "surface_water_index": round(float(np.clip(arc["soil_anomaly"][t] / 9.0, 0, 1)), 3),
-             "source_id": "gpm-nasa" if t % 2 == 0 else "viiirs-thermal"}
+            {
+                "captured_at": (start + timedelta(hours=t)).isoformat(),
+                "soil_moisture_anomaly": round(float(arc["soil_anomaly"][t]), 3),
+                "surface_water_index": round(float(np.clip(arc["soil_anomaly"][t] / 9.0, 0, 1)), 3),
+                "source_id": "gpm-nasa" if t % 2 == 0 else "viiirs-thermal",
+            }
             for t in range(0, hours, 2)
         ]
-        water = [{
-            "captured_at": (start + timedelta(hours=t)).isoformat(),
-            "level_m": round(float(np.minimum(1.0, 0.2 + _rolling(rain, 6)[t] * 6 / 156.0 * exposure)), 3),
-            "capacity_m": 1.0,
-            "inflow_m3s": round(float(np.clip(8 + _rolling(rain, 12)[t] * 0.9, 5, 60)), 1),
-            "source_id": "wmo-gts",
-        } for t in range(hours)]
+        water = [
+            {
+                "captured_at": (start + timedelta(hours=t)).isoformat(),
+                "level_m": round(float(np.minimum(1.0, 0.2 + _rolling(rain, 6)[t] * 6 / 156.0 * exposure)), 3),
+                "capacity_m": 1.0,
+                "inflow_m3s": round(float(np.clip(8 + _rolling(rain, 12)[t] * 0.9, 5, 60)), 1),
+                "source_id": "wmo-gts",
+            }
+            for t in range(hours)
+        ]
     elif hazard in ("wildfire", "drought", "heatwave"):
-        intensity = np.minimum(12.0, (12.0 - arc["humidity"]) * 0.5)
         sat = [
-            {"captured_at": (start + timedelta(hours=t)).isoformat(),
-             "soil_moisture_anomaly": round(float(arc["soil_anomaly"][t]), 3),
-             "surface_water_index": round(float(np.clip(arc["soil_anomaly"][t] / 9.0, 0.02, 0.6)), 3),
-             "source_id": "viiirs-thermal" if t % 3 == 0 else "gpm-nasa"}
+            {
+                "captured_at": (start + timedelta(hours=t)).isoformat(),
+                "soil_moisture_anomaly": round(float(arc["soil_anomaly"][t]), 3),
+                "surface_water_index": round(float(np.clip(arc["soil_anomaly"][t] / 9.0, 0.02, 0.6)), 3),
+                "source_id": "viiirs-thermal" if t % 3 == 0 else "gpm-nasa",
+            }
             for t in range(0, hours, 2)
         ]
         water = []
     else:  # seismic hazards — quiet weather backdrop, thermal proxy on VIIRS
         sat = [
-            {"captured_at": (start + timedelta(hours=t)).isoformat(),
-             "soil_moisture_anomaly": round(float(np.clip(6.0 - 2.0 * np.sin(t / 7), 2.0, 8.0)), 3),
-             "surface_water_index": round(float(np.clip(0.45 + 0.1 * np.sin(t / 9), 0.2, 0.6)), 3),
-             "source_id": "viiirs-thermal" if t % 3 == 0 else "gpm-nasa"}
+            {
+                "captured_at": (start + timedelta(hours=t)).isoformat(),
+                "soil_moisture_anomaly": round(float(np.clip(6.0 - 2.0 * np.sin(t / 7), 2.0, 8.0)), 3),
+                "surface_water_index": round(float(np.clip(0.45 + 0.1 * np.sin(t / 9), 0.2, 0.6)), 3),
+                "source_id": "viiirs-thermal" if t % 3 == 0 else "gpm-nasa",
+            }
             for t in range(0, hours, 2)
         ]
         water = []
@@ -377,38 +425,51 @@ def _build_zone(zid, name, region, lat, lon, elev, cap, pop, hazard, exposure, a
         rain_v, hum_v, wind_v = arc["rainfall_mm"], arc["humidity"], arc["wind_kmh"]
 
     weather = [
-        {"captured_at": (start + timedelta(hours=t)).isoformat(),
-         "rainfall_mm": round(float(rain_v[t]), 2),
-         "rain_forecast_mm": round(float(rain_v[min(hours - 1, t + 6)] * 0.94), 2),
-         "humidity": round(float(hum_v[t]), 1),
-         "wind_kmh": round(float(wind_v[t]), 1),
-         "source_id": "usgs-seismic" if hazard in ("earthquake", "tsunami", "volcanic") else "wmo-gts"}
+        {
+            "captured_at": (start + timedelta(hours=t)).isoformat(),
+            "rainfall_mm": round(float(rain_v[t]), 2),
+            "rain_forecast_mm": round(float(rain_v[min(hours - 1, t + 6)] * 0.94), 2),
+            "humidity": round(float(hum_v[t]), 1),
+            "wind_kmh": round(float(wind_v[t]), 1),
+            "source_id": "usgs-seismic" if hazard in ("earthquake", "tsunami", "volcanic") else "wmo-gts",
+        }
         for t in range(hours)
     ]
-    news = [{
-        "captured_at": (start + timedelta(hours=58)).isoformat(),
-        "tags": {
-            "flood": ["monsoon", "asia", "advisory"],
-            "cyclone": ["typhoon", "asia", "landfall"],
-            "wildfire": ["wildfire", "asia", "haze"],
-            "earthquake": ["seismic", "asia", "episode"],
-            "tsunami": ["tsunami", "asia", "sea-state"],
-            "volcanic": ["volcanic", "asia", "eruption"],
-            "landslide": ["landslide", "asia", "slope"],
-            "drought": ["drought", "asia", "water"],
-            "heatwave": ["heatwave", "asia", "heat-dome"],
-        }[hazard],
-        "warning_level": 3 if hazard in ("cyclone", "tsunami", "earthquake") else 2,
-        "credibility": 0.85,
-        "source_id": "news-eom",
-    }]
+    news = [
+        {
+            "captured_at": (start + timedelta(hours=58)).isoformat(),
+            "tags": {
+                "flood": ["monsoon", "asia", "advisory"],
+                "cyclone": ["typhoon", "asia", "landfall"],
+                "wildfire": ["wildfire", "asia", "haze"],
+                "earthquake": ["seismic", "asia", "episode"],
+                "tsunami": ["tsunami", "asia", "sea-state"],
+                "volcanic": ["volcanic", "asia", "eruption"],
+                "landslide": ["landslide", "asia", "slope"],
+                "drought": ["drought", "asia", "water"],
+                "heatwave": ["heatwave", "asia", "heat-dome"],
+            }[hazard],
+            "warning_level": 3 if hazard in ("cyclone", "tsunami", "earthquake") else 2,
+            "credibility": 0.85,
+            "source_id": "news-eom",
+        }
+    ]
 
     zone = {
-        "id": zid, "name": name, "region": region, "lat": lat, "lon": lon,
-        "elevation_m": elev, "drainage_capacity_mmh": cap, "population": pop,
+        "id": zid,
+        "name": name,
+        "region": region,
+        "lat": lat,
+        "lon": lon,
+        "elevation_m": elev,
+        "drainage_capacity_mmh": cap,
+        "population": pop,
         "hazard_type": hazard,
         "exposure": round(float(exposure), 3),
-        "weather": weather, "satellite": sat, "citizen": citizen, "news": news,
+        "weather": weather,
+        "satellite": sat,
+        "citizen": citizen,
+        "news": news,
         "water": water,
     }
     if seismic:
@@ -426,90 +487,122 @@ def _citizen_reports(zid, name, hazard, arc, start, hours, exposure=1.0) -> list
             pressure = np.clip((_rolling(rain, 6)[t] * 6 / 22.0) - 6.0, 0, 8)
             if pressure <= 0.8:
                 continue
-            out.append({
-                "location_id": zid, "reported_at": (start + timedelta(hours=t)).isoformat(),
-                "category": "slope_movement" if hazard == "landslide" else "waterlogging",
-                "severity_hint": int(np.clip(pressure / 2, 1, 4)),
-                "text": f"{'Slope movement' if hazard == 'landslide' else 'Waterlogging'} reported near {name}",
-                "verified": bool(pressure > 1.5), "source_id": "civic-reports",
-            })
+            out.append(
+                {
+                    "location_id": zid,
+                    "reported_at": (start + timedelta(hours=t)).isoformat(),
+                    "category": "slope_movement" if hazard == "landslide" else "waterlogging",
+                    "severity_hint": int(np.clip(pressure / 2, 1, 4)),
+                    "text": f"{'Slope movement' if hazard == 'landslide' else 'Waterlogging'} reported near {name}",
+                    "verified": bool(pressure > 1.5),
+                    "source_id": "civic-reports",
+                }
+            )
         elif hazard == "cyclone":
             pressure = np.clip((wind[t] - 30) / 8.0, 0, 8)
             if pressure <= 0.8:
                 continue
-            out.append({
-                "location_id": zid, "reported_at": (start + timedelta(hours=t)).isoformat(),
-                "category": "sea_state" if pressure > 4 else "wind_damage",
-                "severity_hint": int(np.clip(pressure / 1.6, 1, 5)),
-                "text": f"Sea-state rise and gust damage reported near {name} coast",
-                "verified": bool(pressure > 2), "source_id": "civic-reports",
-            })
+            out.append(
+                {
+                    "location_id": zid,
+                    "reported_at": (start + timedelta(hours=t)).isoformat(),
+                    "category": "sea_state" if pressure > 4 else "wind_damage",
+                    "severity_hint": int(np.clip(pressure / 1.6, 1, 5)),
+                    "text": f"Sea-state rise and gust damage reported near {name} coast",
+                    "verified": bool(pressure > 2),
+                    "source_id": "civic-reports",
+                }
+            )
         elif hazard == "wildfire":
             dry_pressure = np.clip((60.0 - humidity[t]) * exposure, 0, 50)
             if dry_pressure <= 22:
                 continue
-            out.append({
-                "location_id": zid, "reported_at": (start + timedelta(hours=t)).isoformat(),
-                "category": "flame_sighting" if dry_pressure > 34 else "smoke_sighting",
-                "severity_hint": int(np.clip(dry_pressure / 14.0, 1, 5)),
-                "text": f"Smoke column reported near {name} forest fringe",
-                "verified": bool(dry_pressure > 26), "source_id": "civic-reports",
-            })
+            out.append(
+                {
+                    "location_id": zid,
+                    "reported_at": (start + timedelta(hours=t)).isoformat(),
+                    "category": "flame_sighting" if dry_pressure > 34 else "smoke_sighting",
+                    "severity_hint": int(np.clip(dry_pressure / 14.0, 1, 5)),
+                    "text": f"Smoke column reported near {name} forest fringe",
+                    "verified": bool(dry_pressure > 26),
+                    "source_id": "civic-reports",
+                }
+            )
         elif hazard == "earthquake":
             accel = arc["ground_accel"][t]
             if accel < 0.18:
                 continue
-            out.append({
-                "location_id": zid, "reported_at": (start + timedelta(hours=t)).isoformat(),
-                "category": "shaking",
-                "severity_hint": int(np.clip(accel * 6, 1, 5)),
-                "text": f"Verified shaking reported in {name} metro",
-                "verified": bool(accel > 0.25), "source_id": "civic-reports",
-            })
+            out.append(
+                {
+                    "location_id": zid,
+                    "reported_at": (start + timedelta(hours=t)).isoformat(),
+                    "category": "shaking",
+                    "severity_hint": int(np.clip(accel * 6, 1, 5)),
+                    "text": f"Verified shaking reported in {name} metro",
+                    "verified": bool(accel > 0.25),
+                    "source_id": "civic-reports",
+                }
+            )
         elif hazard == "tsunami":
             energy = arc["seismic_energy"][t]
             if energy < 40:
                 continue
-            out.append({
-                "location_id": zid, "reported_at": (start + timedelta(hours=t)).isoformat(),
-                "category": "sea_state",
-                "severity_hint": int(np.clip(energy / 90, 1, 5)),
-                "text": f"Sea recession reported on {name} shoreline",
-                "verified": bool(energy > 90), "source_id": "civic-reports",
-            })
+            out.append(
+                {
+                    "location_id": zid,
+                    "reported_at": (start + timedelta(hours=t)).isoformat(),
+                    "category": "sea_state",
+                    "severity_hint": int(np.clip(energy / 90, 1, 5)),
+                    "text": f"Sea recession reported on {name} shoreline",
+                    "verified": bool(energy > 90),
+                    "source_id": "civic-reports",
+                }
+            )
         elif hazard == "volcanic":
             plume = arc["ash_plume_km"][t]
             if plume < 2.5:
                 continue
-            out.append({
-                "location_id": zid, "reported_at": (start + timedelta(hours=t)).isoformat(),
-                "category": "ashfall",
-                "severity_hint": int(np.clip(plume / 2.2, 1, 5)),
-                "text": f"Ashfall reported in {name} sector",
-                "verified": bool(plume > 4.0), "source_id": "civic-reports",
-            })
+            out.append(
+                {
+                    "location_id": zid,
+                    "reported_at": (start + timedelta(hours=t)).isoformat(),
+                    "category": "ashfall",
+                    "severity_hint": int(np.clip(plume / 2.2, 1, 5)),
+                    "text": f"Ashfall reported in {name} sector",
+                    "verified": bool(plume > 4.0),
+                    "source_id": "civic-reports",
+                }
+            )
         elif hazard == "drought":
             dry_pressure = np.clip((60.0 - humidity[t]) * exposure, 0, 50)
             if dry_pressure <= 24:
                 continue
-            out.append({
-                "location_id": zid, "reported_at": (start + timedelta(hours=t)).isoformat(),
-                "category": "water_scarcity",
-                "severity_hint": int(np.clip(dry_pressure / 12.0, 1, 5)),
-                "text": f"Water scarcity reported in {name} dry belt",
-                "verified": bool(dry_pressure > 30), "source_id": "civic-reports",
-            })
+            out.append(
+                {
+                    "location_id": zid,
+                    "reported_at": (start + timedelta(hours=t)).isoformat(),
+                    "category": "water_scarcity",
+                    "severity_hint": int(np.clip(dry_pressure / 12.0, 1, 5)),
+                    "text": f"Water scarcity reported in {name} dry belt",
+                    "verified": bool(dry_pressure > 30),
+                    "source_id": "civic-reports",
+                }
+            )
         else:  # heatwave
             hot_pressure = np.clip((60.0 - humidity[t]) * exposure, 0, 50)
             if hot_pressure <= 26:
                 continue
-            out.append({
-                "location_id": zid, "reported_at": (start + timedelta(hours=t)).isoformat(),
-                "category": "heat_illness",
-                "severity_hint": int(np.clip(hot_pressure / 12.0, 1, 5)),
-                "text": f"Heat illness reported in {name} hot corridor",
-                "verified": bool(hot_pressure > 32), "source_id": "civic-reports",
-            })
+            out.append(
+                {
+                    "location_id": zid,
+                    "reported_at": (start + timedelta(hours=t)).isoformat(),
+                    "category": "heat_illness",
+                    "severity_hint": int(np.clip(hot_pressure / 12.0, 1, 5)),
+                    "text": f"Heat illness reported in {name} hot corridor",
+                    "verified": bool(hot_pressure > 32),
+                    "source_id": "civic-reports",
+                }
+            )
     return out
 
 

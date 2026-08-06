@@ -27,10 +27,15 @@ def create_simulation(req: SimulationRequest, db: Session = Depends(get_db)):
     components = outputs.get("risk_fusion", {}).get("components", {})
     result = run_simulation(components, loc.population, req.interventions)
     result["location_id"] = req.location_id
-    db.add(SimulationRun(
-        id=result["id"], location_id=req.location_id, event_type=req.event_type,
-        params={"interventions": req.interventions}, result=result,
-    ))
+    db.add(
+        SimulationRun(
+            id=result["id"],
+            location_id=req.location_id,
+            event_type=req.event_type,
+            params={"interventions": req.interventions},
+            result=result,
+        )
+    )
     db.commit()
     return result
 

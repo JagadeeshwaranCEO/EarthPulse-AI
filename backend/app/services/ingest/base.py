@@ -11,10 +11,8 @@ adapter fetches real data and re-labels the source as real.
 from __future__ import annotations
 
 import logging
-from dataclasses import dataclass, field
-from datetime import datetime, timedelta, timezone
-
-import httpx
+from dataclasses import dataclass
+from datetime import datetime, timezone
 
 
 @dataclass
@@ -58,7 +56,9 @@ class DataSourceAdapter:
 
     def status(self) -> AdapterStatus:
         return AdapterStatus(
-            id=self.id, kind=self.kind, mode="live" if self.is_live else "demo",
+            id=self.id,
+            kind=self.kind,
+            mode="live" if self.is_live else "demo",
             description=self.description,
         )
 
@@ -70,8 +70,8 @@ class DataSourceAdapter:
             except Exception as exc:  # network/parse failure → labeled synthetic fallback
                 self._last_error = str(exc)
                 logging.getLogger("earthpulse.ingest").warning(
-                    "live fetch failed for %s — serving labeled synthetic fallback", self.id,
-                    exc_info=True)
+                    "live fetch failed for %s — serving labeled synthetic fallback", self.id, exc_info=True
+                )
                 return self._mark_demo(self._fetch_demo(locations, since))
         return self._fetch_demo(locations, since)
 
@@ -88,11 +88,15 @@ class DataSourceAdapter:
         raise NotImplementedError
 
 
-def _frame(location_id: str, metric: str, value: float, source_id: str,
-           unit: str = "", at: datetime | None = None) -> IngestedFrame:
+def _frame(
+    location_id: str, metric: str, value: float, source_id: str, unit: str = "", at: datetime | None = None
+) -> IngestedFrame:
     return IngestedFrame(
-        location_id=location_id, metric=metric, value=round(float(value), 3),
-        source_id=source_id, unit=unit,
+        location_id=location_id,
+        metric=metric,
+        value=round(float(value), 3),
+        source_id=source_id,
+        unit=unit,
         captured_at=at or datetime.now(timezone.utc),
         is_synthetic=True,
     )

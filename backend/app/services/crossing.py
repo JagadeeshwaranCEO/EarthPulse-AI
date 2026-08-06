@@ -83,13 +83,15 @@ def project_crossing(db, loc: Location) -> dict:
         if len(series) < 3:
             continue
         crossing_h = _extrapolate_crossing(series, STRESS_FRACTION * 12.0)
-        drivers.append({
-            "driver": feature,
-            "label": label,
-            "current": round(now_comps.get(feature, 0.0), 2),
-            "stress_line": round(STRESS_FRACTION * 12.0, 1),
-            "crosses_stress_in_h": crossing_h,  # 0 = already stressed; None = not in 72h
-        })
+        drivers.append(
+            {
+                "driver": feature,
+                "label": label,
+                "current": round(now_comps.get(feature, 0.0), 2),
+                "stress_line": round(STRESS_FRACTION * 12.0, 1),
+                "crosses_stress_in_h": crossing_h,  # 0 = already stressed; None = not in 72h
+            }
+        )
     drivers.sort(key=lambda d: 1e9 if d["crosses_stress_in_h"] is None else d["crosses_stress_in_h"])
 
     return {

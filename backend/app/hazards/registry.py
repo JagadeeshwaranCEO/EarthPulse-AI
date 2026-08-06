@@ -13,9 +13,20 @@ from app.hazards.tsunami import TSUNAMI
 from app.hazards.volcanic import VOLCANIC
 from app.hazards.wildfire import WILDFIRE
 
-HAZARDS: dict[str, HazardSpec] = {h.id: h for h in (
-    FLOOD, WILDFIRE, CYCLONE, EARTHQUAKE, TSUNAMI, VOLCANIC, LANDSLIDE, DROUGHT, HEATWAVE,
-)}
+HAZARDS: dict[str, HazardSpec] = {
+    h.id: h
+    for h in (
+        FLOOD,
+        WILDFIRE,
+        CYCLONE,
+        EARTHQUAKE,
+        TSUNAMI,
+        VOLCANIC,
+        LANDSLIDE,
+        DROUGHT,
+        HEATWAVE,
+    )
+}
 DEFAULT_HAZARD = "flood"
 
 

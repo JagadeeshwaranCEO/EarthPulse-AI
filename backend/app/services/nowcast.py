@@ -31,8 +31,9 @@ CYCLONE_FORWARD_DRIVERS = ("rain_burst",)
 LANDSLIDE_FORWARD_DRIVERS = ("rain_trigger", "slope_saturation")
 
 
-def _nudge(comps: dict, driver: str, fc_intensity: float, lead_h: int, exposure: float,
-           rate: float) -> tuple[float, str]:
+def _nudge(
+    comps: dict, driver: str, fc_intensity: float, lead_h: int, exposure: float, rate: float
+) -> tuple[float, str]:
     """Forward ramps a driver toward the forecast intensity, weighted by lead.
 
     The forecast feed (rain_forecast_mm) is valid ~+6h ahead: influence ramps
@@ -52,8 +53,7 @@ def _nudge(comps: dict, driver: str, fc_intensity: float, lead_h: int, exposure:
     return nxt, f"rain forecast {fc_intensity * 16:.0f}mm/6h lifts {driver} +{nxt - cur:.1f}/12 by +{lead_h}h{tail}"
 
 
-def components_ahead(comps: dict, hazard_id: str, signal: dict, exposure: float,
-                     lead_h: int) -> tuple[dict, list[str]]:
+def components_ahead(comps: dict, hazard_id: str, signal: dict, exposure: float, lead_h: int) -> tuple[dict, list[str]]:
     """Stage A → B; returns (lead-aware components at +lead_h, reason trail)."""
     out = dict(comps)
     fc_intensity = min(12.0, float(signal.get("rain_forecast_mm", 0.0)) / 16.0 * exposure)
@@ -102,13 +102,15 @@ def lead_ladder(comps: dict, hazard_id: str, signal: dict, exposure: float) -> l
     for L in LEADS:
         c, reasons = components_ahead(comps, hazard_id, signal, exposure, L)
         p = min(1.0, max(0.0, h.probability(c)))
-        ladder.append({
-            "lead_h": L,
-            "probability": round(p, 3),
-            "level": h.level(p),
-            "components": {k: round(v, 2) for k, v in c.items()},
-            "reasons": reasons,
-        })
+        ladder.append(
+            {
+                "lead_h": L,
+                "probability": round(p, 3),
+                "level": h.level(p),
+                "components": {k: round(v, 2) for k, v in c.items()},
+                "reasons": reasons,
+            }
+        )
     return ladder
 
 
@@ -130,8 +132,9 @@ def signal_from_payload(payload: dict) -> dict:
 
 def signal_from_weather(weather_rows: list[dict]) -> dict:
     """Forward feed derived from raw weather rows — verification path."""
-    rain_fc = next((w.get("rain_forecast_mm", 0.0) for w in reversed(weather_rows)
-                    if w.get("rain_forecast_mm") is not None), 0.0)
+    rain_fc = next(
+        (w.get("rain_forecast_mm", 0.0) for w in reversed(weather_rows) if w.get("rain_forecast_mm") is not None), 0.0
+    )
     rain6 = sum(w.get("rainfall_mm", 0.0) for w in weather_rows[-6:])
     return {
         "rain_forecast_mm": float(rain_fc),

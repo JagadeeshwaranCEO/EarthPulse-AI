@@ -31,29 +31,34 @@ def live_risk_summaries(db: Session) -> list[dict]:
         pred = outputs.get("prediction") or {}
         if not pred:
             continue
-        comps = outputs.get("risk_fusion", {}).get("components", {})
-        trend = "rising" if pred.get("forecast_series") and pred["forecast_series"].mean[-1] > pred.get("risk_probability", 0) * 1.05 else "steady"
+        trend = (
+            "rising"
+            if pred.get("forecast_series") and pred["forecast_series"].mean[-1] > pred.get("risk_probability", 0) * 1.05
+            else "steady"
+        )
         try:
             precision = zone_precision(db, loc)
         except Exception:
             log.warning("zone_precision failed for %s — precision_tier omitted", loc.id, exc_info=True)
             precision = {}
-        rows.append({
-            "location_id": loc.id,
-            "location_name": loc.name,
-            "region": loc.region,
-            "lat": loc.lat,
-            "lon": loc.lon,
-            "event_type": loc.hazard_type,
-            "level": level_for(loc.hazard_type, pred.get("risk_probability", 0)),
-            "risk_probability": pred.get("risk_probability", 0),
-            "severity": pred.get("severity", 0),
-            "confidence": pred.get("confidence", 0),
-            "trend": trend,
-            "horizon_h": pred.get("horizon_h", 24),
-            "precision_tier": precision.get("tier"),
-            "updated_at": datetime.now(timezone.utc),
-        })
+        rows.append(
+            {
+                "location_id": loc.id,
+                "location_name": loc.name,
+                "region": loc.region,
+                "lat": loc.lat,
+                "lon": loc.lon,
+                "event_type": loc.hazard_type,
+                "level": level_for(loc.hazard_type, pred.get("risk_probability", 0)),
+                "risk_probability": pred.get("risk_probability", 0),
+                "severity": pred.get("severity", 0),
+                "confidence": pred.get("confidence", 0),
+                "trend": trend,
+                "horizon_h": pred.get("horizon_h", 24),
+                "precision_tier": precision.get("tier"),
+                "updated_at": datetime.now(timezone.utc),
+            }
+        )
     return sorted(rows, key=lambda r: -r["risk_probability"])
 
 
@@ -75,13 +80,23 @@ def get_dashboard(db: Session = Depends(get_db)):
     top_risks = live_risk_summaries(db)
     return Dashboard(
         pulse=PulseView(
-            location_id=loc.id, score=pulse.score, factors=pulse.factors,
-            recorded_at=datetime.now(timezone.utc), band=pulse.band,
+            location_id=loc.id,
+            score=pulse.score,
+            factors=pulse.factors,
+            recorded_at=datetime.now(timezone.utc),
+            band=pulse.band,
         ),
-        alerts=[{
-            "id": a.id, "location_id": a.location_id, "level": a.level,
-            "title": a.title, "summary": a.summary, "raised_at": a.raised_at,
-        } for a in alerts],
+        alerts=[
+            {
+                "id": a.id,
+                "location_id": a.location_id,
+                "level": a.level,
+                "title": a.title,
+                "summary": a.summary,
+                "raised_at": a.raised_at,
+            }
+            for a in alerts
+        ],
         risks=top_risks,
         crisis=any(r["level"] == "critical" for r in top_risks),
         time=datetime.now(timezone.utc),
@@ -100,8 +115,13 @@ def get_pulse(location_id: str | None = None, db: Session = Depends(get_db)):
     anomaly = outputs.get("risk_fusion", {}).get("anomaly_score", 0.0)
     alerts = db.query(Alert).filter_by(location_id=loc.id, resolved=False).count()
     pulse = compute_pulse(components, anomaly, alerts)
-    return PulseView(location_id=loc.id, score=pulse.score, factors=pulse.factors,
-                     recorded_at=datetime.now(timezone.utc), band=pulse.band)
+    return PulseView(
+        location_id=loc.id,
+        score=pulse.score,
+        factors=pulse.factors,
+        recorded_at=datetime.now(timezone.utc),
+        band=pulse.band,
+    )
 
 
 @router.get("/sim/clock")

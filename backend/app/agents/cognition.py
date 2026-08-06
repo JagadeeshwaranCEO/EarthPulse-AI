@@ -82,16 +82,19 @@ class PredictionAgent(BaseAgent):
             fc7 = DEFAULT_FORECASTER.fit_forecast(signal, t0, 168, trend_decay=0.02)
             for d in range(1, 8):
                 idx = d * 24 - 1
-                outlook.append({
-                    "day": d,
-                    "horizon_h": d * 24,
-                    "mean": round(float(fc7.mean[idx]), 3),
-                    "lower": round(float(fc7.lower[idx]), 3),
-                    "upper": round(float(fc7.upper[idx]), 3),
-                })
+                outlook.append(
+                    {
+                        "day": d,
+                        "horizon_h": d * 24,
+                        "mean": round(float(fc7.mean[idx]), 3),
+                        "lower": round(float(fc7.lower[idx]), 3),
+                        "upper": round(float(fc7.upper[idx]), 3),
+                    }
+                )
         except Exception:
             logging.getLogger("earthpulse.agents").warning(
-                "7-day outlook unavailable — continuing with nowcast only", exc_info=True)
+                "7-day outlook unavailable — continuing with nowcast only", exc_info=True
+            )
             outlook = []
         return AgentResult(
             outputs={
@@ -131,24 +134,31 @@ class ExplanationAgent(BaseAgent):
             "Ground-truth reports bias toward populated areas",
         ]
         return AgentResult(
-            outputs={"causal_chain": graph, "attribution": [a.__dict__ for a in attribution],
-                     "limitations": limitations},
+            outputs={
+                "causal_chain": graph,
+                "attribution": [a.__dict__ for a in attribution],
+                "limitations": limitations,
+            },
             confidence=0.8,
             messages=[f"explained {len(graph['nodes'])} causal nodes, {len(attribution)} attributions"],
         )
 
 
 def _default_causal(hazard, components: dict, pred: dict) -> dict:
-    label = hazard.label.lower()
     top = sorted(components.items(), key=lambda kv: kv[1], reverse=True)[:3]
     nodes = [
-        {"id": f"{k}", "label": hazard.features.get(k, k), "kind": "cause",
-         "value": f"{v:.2f}", "confidence": 0.75}
+        {"id": f"{k}", "label": hazard.features.get(k, k), "kind": "cause", "value": f"{v:.2f}", "confidence": 0.75}
         for k, v in top
     ]
-    nodes.append({"id": "risk", "label": f"{hazard.label} risk ({pred.get('risk_probability', 0):.0%})",
-                  "kind": "risk", "value": f"severity {pred.get('severity', 0):.1f}/5",
-                  "confidence": pred.get("confidence", 0.5)})
+    nodes.append(
+        {
+            "id": "risk",
+            "label": f"{hazard.label} risk ({pred.get('risk_probability', 0):.0%})",
+            "kind": "risk",
+            "value": f"severity {pred.get('severity', 0):.1f}/5",
+            "confidence": pred.get("confidence", 0.5),
+        }
+    )
     edges = [{"source": n["id"], "target": "risk", "label": "drives"} for n in nodes[:-1]]
     return {"nodes": nodes, "edges": edges}
 
@@ -167,24 +177,39 @@ class RecommendationAgent(BaseAgent):
         recs = hazard.recommend(p, sev) if hazard.recommend else _default_recommend(p, sev)
         if p < 0.3:
             recs = [r for r in recs if r["priority"] <= 2]
-        return AgentResult(outputs={"recommendations": recs}, confidence=0.75,
-                           messages=[f"{len(recs)} stakeholder actions prioritized"])
+        return AgentResult(
+            outputs={"recommendations": recs},
+            confidence=0.75,
+            messages=[f"{len(recs)} stakeholder actions prioritized"],
+        )
 
 
 def _default_recommend(p: float, sev: float) -> list:
     return [
-        {"id": "rec_civic_1", "stakeholder": "civic", "priority": 1 if p > 0.55 else 2,
-         "action": "Deploy pre-positioned pumps to lowest-lying wards and clear stormwater inlets.",
-         "reasoning": "drainage stress is a top attribution feature; mechanical lift buys time.",
-         "evidence_ids": []},
-        {"id": "rec_responders_1", "stakeholder": "responders", "priority": 1 if sev >= 3 else 2,
-         "action": "Stand by rescue teams near river-adjacent blocks; stage boats and generators.",
-         "reasoning": "headroom deficit is approaching breach thresholds within the forecast horizon.",
-         "evidence_ids": []},
-        {"id": "rec_public_1", "stakeholder": "public", "priority": 3,
-         "action": "Avoid low-lying routes during peak hours; share verified waterlogging reports.",
-         "reasoning": "ground reports improve nowcast precision for everyone.",
-         "evidence_ids": []},
+        {
+            "id": "rec_civic_1",
+            "stakeholder": "civic",
+            "priority": 1 if p > 0.55 else 2,
+            "action": "Deploy pre-positioned pumps to lowest-lying wards and clear stormwater inlets.",
+            "reasoning": "drainage stress is a top attribution feature; mechanical lift buys time.",
+            "evidence_ids": [],
+        },
+        {
+            "id": "rec_responders_1",
+            "stakeholder": "responders",
+            "priority": 1 if sev >= 3 else 2,
+            "action": "Stand by rescue teams near river-adjacent blocks; stage boats and generators.",
+            "reasoning": "headroom deficit is approaching breach thresholds within the forecast horizon.",
+            "evidence_ids": [],
+        },
+        {
+            "id": "rec_public_1",
+            "stakeholder": "public",
+            "priority": 3,
+            "action": "Avoid low-lying routes during peak hours; share verified waterlogging reports.",
+            "reasoning": "ground reports improve nowcast precision for everyone.",
+            "evidence_ids": [],
+        },
     ]
 
 
@@ -205,5 +230,7 @@ class SimulationAgent(BaseAgent):
             outputs=result,
             confidence=0.7,
             used_sources=[],
-            messages=[f"simulated {len(known)} interventions → damage reduction {result['deltas']['damage_reduction_pct']}%"],
+            messages=[
+                f"simulated {len(known)} interventions → damage reduction {result['deltas']['damage_reduction_pct']}%"
+            ],
         )

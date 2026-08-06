@@ -19,7 +19,11 @@ class SatelliteAgent(BaseAgent):
     def run(self, ctx: AgentContext) -> AgentResult:
         frames = ctx.payload.get("satellite_frames") or []
         if not frames:
-            return AgentResult(confidence=0.2, failure="no satellite frames available", outputs={"soil_moisture_anomaly": 0, "surface_water_index": 0})
+            return AgentResult(
+                confidence=0.2,
+                failure="no satellite frames available",
+                outputs={"soil_moisture_anomaly": 0, "surface_water_index": 0},
+            )
         latest = frames[-1]
         anomaly = latest.get("soil_moisture_anomaly", 0.0)
         swi = latest.get("surface_water_index", 0.0)
@@ -41,7 +45,11 @@ class WeatherAgent(BaseAgent):
     def run(self, ctx: AgentContext) -> AgentResult:
         snaps = ctx.payload.get("weather_snapshots") or []
         if not snaps:
-            return AgentResult(confidence=0.15, failure="no weather snapshots", outputs={"rain_intensity": 0, "rain_forecast_mm": 0, "humidity": 0, "wind_kmh": 0, "rain6_mm": 0})
+            return AgentResult(
+                confidence=0.15,
+                failure="no weather snapshots",
+                outputs={"rain_intensity": 0, "rain_forecast_mm": 0, "humidity": 0, "wind_kmh": 0, "rain6_mm": 0},
+            )
         recent = snaps[-6:]
         accumulation = sum(s.get("rainfall_mm", 0) for s in recent)
         exposure = ctx.payload.get("exposure", 1.0)
@@ -50,8 +58,13 @@ class WeatherAgent(BaseAgent):
         humidity = snaps[-1].get("humidity", 0.0)
         wind = snaps[-1].get("wind_kmh", 0.0)
         return AgentResult(
-            outputs={"rain_intensity": round(intensity, 2), "rain_forecast_mm": forecast, "humidity": humidity,
-                     "wind_kmh": wind, "rain6_mm": round(accumulation, 2)},
+            outputs={
+                "rain_intensity": round(intensity, 2),
+                "rain_forecast_mm": forecast,
+                "humidity": humidity,
+                "wind_kmh": wind,
+                "rain6_mm": round(accumulation, 2),
+            },
             confidence=min(0.9, 0.5 + 0.3 * min(1.0, len(snaps) / 48.0)),
             messages=[f"6-window rain {accumulation:.1f} mm, wind {wind:.0f} km/h, humid {humidity:.0f}%"],
             used_sources=[snaps[-1]["source_id"]],
@@ -70,7 +83,12 @@ class AirQualityAgent(BaseAgent):
         if not aq:
             return AgentResult(confidence=0.3, outputs={"aq_anomaly": 0.0}, messages=["no AQ stream; neutral context"])
         latest = aq[-1].get("aqi_anomaly", 0.0)
-        return AgentResult(confidence=0.7, outputs={"aq_anomaly": latest}, used_sources=[aq[-1].get("source_id", "")], messages=[f"AQ anomaly {latest:.2f}"])
+        return AgentResult(
+            confidence=0.7,
+            outputs={"aq_anomaly": latest},
+            used_sources=[aq[-1].get("source_id", "")],
+            messages=[f"AQ anomaly {latest:.2f}"],
+        )
 
 
 class WaterAgent(BaseAgent):
@@ -84,7 +102,11 @@ class WaterAgent(BaseAgent):
         levels = ctx.payload.get("water_level_series") or []
         capacity = ctx.payload.get("drainage_capacity_mmh", 8.0)
         if not levels:
-            return AgentResult(confidence=0.2, failure="gauge offline", outputs={"headroom_deficit": 0, "drainage_stress": 0, "breach_risk": 0})
+            return AgentResult(
+                confidence=0.2,
+                failure="gauge offline",
+                outputs={"headroom_deficit": 0, "drainage_stress": 0, "breach_risk": 0},
+            )
         latest = levels[-1]
         headroom_deficit = float(latest.get("headroom_deficit", 0.0))
         stress = float(latest.get("drainage_stress", 0.0))

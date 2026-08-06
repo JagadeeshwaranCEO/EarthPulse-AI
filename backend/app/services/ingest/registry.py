@@ -21,9 +21,7 @@ from app.services.ingest.gpm import GPMAdapter
 from app.services.ingest.imd import IMDAdapter
 from app.services.ingest.reservoir import ReservoirAdapter
 
-ADAPTERS: dict[str, object] = {
-    ad.id: ad for ad in (IMDAdapter(), GPMAdapter(), ReservoirAdapter())
-}
+ADAPTERS: dict[str, object] = {ad.id: ad for ad in (IMDAdapter(), GPMAdapter(), ReservoirAdapter())}
 
 
 def configure_all() -> None:
@@ -36,8 +34,13 @@ def configure_all() -> None:
 
 def _locations(db) -> list[dict]:
     return [
-        {"id": l.id, "lat": l.lat, "lon": l.lon, "region": l.region,
-         "exposure": (l.attributes or {}).get("exposure", 1.0)}
+        {
+            "id": l.id,
+            "lat": l.lat,
+            "lon": l.lon,
+            "region": l.region,
+            "exposure": (l.attributes or {}).get("exposure", 1.0),
+        }
         for l in db.query(models.Location).all()
     ]
 
@@ -48,15 +51,29 @@ def _write_frames(db: Session, frames: Iterable[IngestedFrame]) -> int:
     for f in frames:
         ts = f.captured_at or now
         if f.metric in {"rainfall_mm", "rain_forecast_mm", "humidity", "wind_kmh"}:
-            db.add(models.WeatherSnapshot(location_id=f.location_id, captured_at=ts,
-                                          source_id=f.source_id, **{f.metric: f.value}))
+            db.add(
+                models.WeatherSnapshot(
+                    location_id=f.location_id, captured_at=ts, source_id=f.source_id, **{f.metric: f.value}
+                )
+            )
         elif f.metric in {"soil_moisture_anomaly", "surface_water_index"}:
-            db.add(models.SatelliteFrame(location_id=f.location_id, captured_at=ts,
-                                         source_id=f.source_id, **{f.metric: f.value}))
+            db.add(
+                models.SatelliteFrame(
+                    location_id=f.location_id, captured_at=ts, source_id=f.source_id, **{f.metric: f.value}
+                )
+            )
         else:
-            db.add(models.IngestedDatum(location_id=f.location_id, captured_at=ts,
-                                        source_id=f.source_id, metric=f.metric,
-                                        value=f.value, unit=f.unit, is_synthetic=f.is_synthetic))
+            db.add(
+                models.IngestedDatum(
+                    location_id=f.location_id,
+                    captured_at=ts,
+                    source_id=f.source_id,
+                    metric=f.metric,
+                    value=f.value,
+                    unit=f.unit,
+                    is_synthetic=f.is_synthetic,
+                )
+            )
         n += 1
     db.commit()
     return n
@@ -74,8 +91,7 @@ def ingest_once(db: Session, adapters: list[str] | None = None, since: datetime 
             continue
         frames = ad.fetch(locations, since)
         written = _write_frames(db, frames)
-        result[name] = {"mode": "live" if ad.is_live else "demo",
-                        "rows": written, "at": now.isoformat()}
+        result[name] = {"mode": "live" if ad.is_live else "demo", "rows": written, "at": now.isoformat()}
     return result
 
 
