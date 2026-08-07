@@ -86,6 +86,24 @@ class Settings(BaseSettings):
     def cors_origin_list(self) -> list[str]:
         return [o.strip() for o in self.cors_origins.split(",") if o.strip()]
 
+    # ---- NextGen: field intel + scenario simulator + ghost mode + push ----
+    field_auto_confirm_agreement: float = 0.80  # report auto-confirmed when agreement >= this
+    field_geo_radius_km: float = 25.0  # max distance a report binds to a zone
+
+    scenario_max_steps: int = 72  # hard ceiling on duration_h/step_h frames
+    scenario_impact_population_pct: float = 0.12  # shelter ledger share of exposed pop
+
+    ghost_enabled: bool = False  # autonomous escalation agent (watchdog thread)
+    ghost_check_seconds: float = 20.0
+    ghost_broadcast_min_level: str = "warning"  # advisory|watch|warning|critical
+    ghost_broadcast_max_per_cycle: int = 25
+
+    push_enabled: bool = True
+    push_contact: str = "ops@earthpulse.ai"
+    push_ttl_seconds: int = 3600
+    vapid_private_pem: str = ""  # optional; generated + persisted in DB if empty
+    vapid_public_pem: str = ""
+
 
 @lru_cache
 def get_settings() -> Settings:

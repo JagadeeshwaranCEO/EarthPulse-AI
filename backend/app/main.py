@@ -19,9 +19,13 @@ from app.api.routes import (
     dashboard,
     data,
     decision,
+    field,
     health,
     models,
+    ops,
+    push,
     risks,
+    scenarios,
     scope,
     simulations,
     sms,
@@ -33,6 +37,7 @@ from app.config import get_settings
 from app.core.db import SessionLocal, init_db
 from app.core.log import install_exception_handlers, install_middleware, setup_logging
 from app.notification.listener import scan_new_alerts
+from app.services.ghost import GhostAgent
 from app.services.refresh import refresh_predictions
 from app.services.seeder import seed_if_empty
 
@@ -51,12 +56,22 @@ async def lifespan(app: FastAPI):
             scan_new_alerts(db)
     finally:
         db.close()
+
+    ghost_agent: GhostAgent | None = None
+    if get_settings().ghost_enabled:
+        ghost_agent = GhostAgent()
+        ghost_agent.start()
+
     if get_settings().ws_enabled:
         task = asyncio.create_task(broadcaster())
         yield
         task.cancel()
+        if ghost_agent is not None:
+            ghost_agent.stop()
     else:
         yield
+        if ghost_agent is not None:
+            ghost_agent.stop()
 
 
 def create_app() -> FastAPI:
@@ -87,6 +102,10 @@ def create_app() -> FastAPI:
     app.include_router(validation.router, prefix=settings.api_prefix)
     app.include_router(models.router, prefix=settings.api_prefix)
     app.include_router(sms.router, prefix=settings.api_prefix)
+    app.include_router(field.router, prefix=settings.api_prefix)
+    app.include_router(scenarios.router, prefix=settings.api_prefix)
+    app.include_router(ops.router, prefix=settings.api_prefix)
+    app.include_router(push.router, prefix=settings.api_prefix)
     app.include_router(chat.router, prefix=settings.api_prefix)
     app.include_router(ws_router)
     return app

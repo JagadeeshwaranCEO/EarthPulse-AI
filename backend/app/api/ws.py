@@ -47,12 +47,18 @@ def _payload() -> dict:
 
 
 async def broadcaster() -> None:
+    from app.core.ops import drain
+
     while True:
         await asyncio.sleep(get_settings().tick_seconds)
         if not connections:
             continue
         advance()  # sim clock: +1h per tick → live escalation through storm peak
         data = _payload()
+        if events := drain():
+            # surface ops events first, then the tick, so the feed reads before the map
+            for ev in events:
+                data.setdefault("events", []).append({"type": "event", **ev})
         dead = []
         for ws in list(connections):
             try:

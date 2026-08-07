@@ -17,6 +17,10 @@ import { MemoryPanel } from "@/components/panels/MemoryPanel";
 import { DecisionPanel } from "@/components/panels/DecisionPanel";
 import { ValidationPanel } from "@/components/panels/ValidationPanel";
 import { ModelsPanel } from "@/components/panels/ModelsPanel";
+import { OpsCenter } from "@/components/panels/OpsCenter";
+import { ScenarioSim } from "@/components/panels/ScenarioSim";
+import { FieldIntel } from "@/components/panels/FieldIntel";
+import { PushPanel } from "@/components/panels/PushPanel";
 import { CrisisBanner } from "@/components/ui/CrisisBanner";
 
 const MapView = dynamic(() => import("@/components/map/MapView").then((m) => m.MapView), { ssr: false, loading: () => <div className="h-full w-full bg-panel" /> });
@@ -40,6 +44,10 @@ const TABS = [
   { id: "copilot", label: "Copilot" },
   { id: "models", label: "Models" },
   { id: "validation", label: "Validation" },
+  { id: "ops", label: "Ops" },
+  { id: "scenario", label: "Scenario" },
+  { id: "field", label: "Field" },
+  { id: "push", label: "Push" },
 ];
 
 const THEATRES: { id: string; label: string; cmd: string }[] = [
@@ -203,6 +211,10 @@ export default function MissionControl() {
               {tab === "copilot" && (selectedId ? <Copilot riskId={selectedId} /> : <EmptyPanel label="select a zone from the map or risk rail" />)}
               {tab === "models" && <ModelsPanel />}
               {tab === "validation" && <ValidationPanel />}
+              {tab === "ops" && <OpsCenter />}
+              {tab === "scenario" && <ScenarioSim />}
+              {tab === "field" && <FieldIntel />}
+              {tab === "push" && <PushPanel />}
             </div>
           {risk && risk.llm_mode && (
             <div className="border-t border-edge px-3 py-1.5 telemetry text-[9px] uppercase tracking-widest text-mono">

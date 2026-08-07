@@ -210,3 +210,112 @@ class PulseScore(Base):
     recorded_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True)
     score: Mapped[float] = mapped_column(Float, default=1000)
     factors: Mapped[dict] = mapped_column(JSON, default=dict)
+
+
+# ---- NextGen: field intel (ground-truth loop) ------------------------------
+
+class FieldReport(Base):
+    """Crowd-sourced ground-truth signal — the verification loop SMS lacks.
+
+    A report carries observed severity + geo; the system auto-scores agreement
+    against the latest model prediction for the nearest zone (corroboration),
+    so operators can confirm/dismiss from a ranked feed.
+    """
+
+    __tablename__ = "field_reports"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    location_id: Mapped[str | None] = mapped_column(ForeignKey("locations.id"), nullable=True)
+    hazard_type: Mapped[str] = mapped_column(String, default="flood")
+    observed_severity: Mapped[int] = mapped_column(Integer, default=1)  # 0-5 observed impact
+    description: Mapped[str] = mapped_column(Text)
+    lat: Mapped[float] = mapped_column(Float, default=0)
+    lon: Mapped[float] = mapped_column(Float, default=0)
+    distance_km: Mapped[float] = mapped_column(Float, default=0)  # to nearest zone centroid
+    agreement: Mapped[float] = mapped_column(Float, default=0)  # 0..1 with model prediction
+    model_risk: Mapped[float] = mapped_column(Float, default=0)  # nearest-zone risk at report time
+    status: Mapped[str] = mapped_column(String, default="pending")  # pending | confirmed | dismissed
+    medium: Mapped[str] = mapped_column(String, default="web")  # web | sms | copilot | phone
+    image_url: Mapped[str | None] = mapped_column(Text, nullable=True)
+    reporter: Mapped[str | None] = mapped_column(String, nullable=True)
+    votes: Mapped[int] = mapped_column(Integer, default=0)
+    flagged: Mapped[bool] = mapped_column(default=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True)
+
+
+# ---- NextGen: scenario simulator (digital twin) -----------------------------
+
+class ScenarioRun(Base):
+    """A hypothetical hazard marched across the theatre hour by hour.
+
+    `summary` holds the what-if report (peak zones, affected population, shelter
+    ledger); `steps` are per-hour frames stored in ScenarioStep so the UI can
+    animate the wake without re-deriving the physics.
+    """
+
+    __tablename__ = "scenario_runs"
+
+    id: Mapped[str] = mapped_column(String, primary_key=True)
+    name: Mapped[str] = mapped_column(String)
+    hazard_type: Mapped[str] = mapped_column(String, default="cyclone")
+    start_lat: Mapped[float] = mapped_column(Float)
+    start_lon: Mapped[float] = mapped_column(Float)
+    end_lat: Mapped[float] = mapped_column(Float)
+    end_lon: Mapped[float] = mapped_column(Float)
+    intensity: Mapped[float] = mapped_column(Float, default=1.0)  # 0-1
+    radius_km: Mapped[float] = mapped_column(Float, default=120)
+    duration_h: Mapped[int] = mapped_column(Integer, default=12)
+    step_h: Mapped[int] = mapped_column(Integer, default=1)
+    zoom_h: Mapped[int] = mapped_column(Integer, default=3)  # sprint interval (0 = no zoom)
+    status: Mapped[str] = mapped_column(String, default="done")  # queued | running | done
+    params: Mapped[dict] = mapped_column(JSON, default=dict)
+    summary: Mapped[dict] = mapped_column(JSON, default=dict)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True)
+
+
+class ScenarioStep(Base):
+    """One frame of a scenario run — the zone snapshot at hour t."""
+
+    __tablename__ = "scenario_steps"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    run_id: Mapped[str] = mapped_column(ForeignKey("scenario_runs.id"), index=True)
+    t_index: Mapped[int] = mapped_column(Integer, index=True)
+    frame: Mapped[dict] = mapped_column(JSON, default=dict)  # {t, zones:[{id,name,lat,lon,p,level}], peak, crisis}
+
+
+class GhostAction(Base):
+    """Audit record for the autonomous escalation agent (Ghost Mode)."""
+
+    __tablename__ = "ghost_actions"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    alert_id: Mapped[int | None] = mapped_column(ForeignKey("alerts.id"), nullable=True, index=True)
+    action: Mapped[str] = mapped_column(String, default="sms_broadcast")  # sms_broadcast | scenario_broadcast | escalation
+    detail: Mapped[str] = mapped_column(Text)
+    recipients: Mapped[int] = mapped_column(Integer, default=0)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True)
+
+
+class PushSubscription(Base):
+    """Browser push subscription (Web Push / RFC 8291) for offline alerts."""
+
+    __tablename__ = "push_subscriptions"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    endpoint: Mapped[str] = mapped_column(Text, unique=True)
+    p256dh: Mapped[str] = mapped_column(Text)  # base64url client public key
+    auth: Mapped[str] = mapped_column(Text)  # base64url auth secret
+    ua: Mapped[str] = mapped_column(String, default="")
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    last_seen_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+
+class PushKey(Base):
+    """Persisted VAPID keypair so subscriptions survive app restarts."""
+
+    __tablename__ = "push_keys"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    private_pem: Mapped[str] = mapped_column(Text)
+    public_pem: Mapped[str] = mapped_column(Text)
