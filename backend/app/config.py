@@ -43,6 +43,41 @@ class Settings(BaseSettings):
     api_key: str = ""
     mutation_rate_per_minute: int = 30
 
+    # ---- Offline SMS alerting (see app/notification/) ----
+    sms_enabled: bool = False
+    # Comma-separated failover chain, first usable wins: log,twilio,aws_sns,...
+    sms_providers: str = "log"
+    sms_sender_id: str = "EARTHPLS"
+    sms_risk_threshold: float = 0.85  # alert fires when risk_probability >= this
+    sms_min_level: str = "warning"  # advisory | watch | warning | critical
+    sms_resend_delta: float = 0.10  # re-alert only when probability shifts by this much
+    sms_retry_count: int = 3
+    sms_retry_base_seconds: float = 2.0
+    sms_retry_max_seconds: float = 30.0
+    sms_provider_timeout_s: float = 10.0
+    sms_quiet_hours: str = ""  # e.g. "22:00-06:00" (UTC)
+    sms_template: str = ""
+    sms_otp_ttl_s: int = 600
+    sms_otp_secret: str = ""  # salt for OTP hashing; set a long random value in prod
+
+    # Provider credentials (never log these)
+    sms_twilio_account_sid: str = ""
+    sms_twilio_auth_token: str = ""
+    sms_twilio_from: str = ""
+    sms_messagebird_api_key: str = ""
+    sms_messagebird_originator: str = ""
+    sms_vonage_api_key: str = ""
+    sms_vonage_api_secret: str = ""
+    sms_vonage_from: str = ""
+    sms_textlocal_api_key: str = ""
+    sms_textlocal_sender: str = ""
+    sms_msg91_auth_key: str = ""
+    sms_msg91_sender: str = ""
+    sms_aws_access_key: str = ""
+    sms_aws_secret_key: str = ""
+    sms_aws_session_token: str = ""
+    sms_aws_region: str = "ap-south-1"
+
     @property
     def llm_enabled(self) -> bool:
         return self.llm_mode == "auto" and bool(self.openai_api_key)

@@ -50,6 +50,21 @@ class SlidingWindowRateLimiter:
             queue.append(now)
             return True
 
+    def reset(self) -> None:
+        """Test hook — clear all buckets."""
+        with self._lock:
+            self._hits.clear()
+
+
+# Shared buckets: every mutating endpoint funnels through these two instances,
+# so tests can flush them between suites.
+_MUTATION_LIMITER = SlidingWindowRateLimiter(
+    limit=float(get_settings().mutation_rate_per_minute), window_s=60.0
+)
+_CHAT_LIMITER = SlidingWindowRateLimiter(
+    limit=float(get_settings().mutation_rate_per_minute), window_s=60.0
+)
+
 
 def mutation_guard(*, require_api_key: bool = True) -> Callable[[Request], None]:
     """Dependency factory: throttles the client and (optionally) checks the key.
@@ -57,7 +72,7 @@ def mutation_guard(*, require_api_key: bool = True) -> Callable[[Request], None]
     Chat is user-facing conversational input — use `require_api_key=False` so the
     keyless copilot UX stays intact, but it still gets throttled.
     """
-    limiter = SlidingWindowRateLimiter(limit=float(get_settings().mutation_rate_per_minute), window_s=60.0)
+    limiter = _CHAT_LIMITER if not require_api_key else _MUTATION_LIMITER
 
     def dependency(request: Request) -> None:
         settings = get_settings()
@@ -82,3 +97,9 @@ def rate_limited() -> Callable[[Request], None]:
 # Pre-built dependencies for the mutating endpoints.
 require_api_key = Depends(mutation_guard(require_api_key=True))
 chat_throttle = Depends(mutation_guard(require_api_key=False))
+
+
+def reset_mutation_limiters() -> None:
+    """Test hook — flush the shared rate-limit buckets (mirrors ticker.reset())."""
+    _MUTATION_LIMITER.reset()
+    _CHAT_LIMITER.reset()

@@ -35,5 +35,6 @@ def get_db():
 
 def init_db() -> None:
     from app.core import models  # noqa: F401  ensure models registered
+    from app.notification import models as sms_models  # noqa: F401  ensure SMS tables registered
 
     Base.metadata.create_all(bind=engine)
