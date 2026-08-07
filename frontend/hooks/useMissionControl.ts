@@ -23,8 +23,14 @@ export function useMissionControl() {
 
   const connect = useCallback(() => {
     if (wsRef.current?.readyState === WebSocket.OPEN) return;
-    const proto = window.location.protocol === "https:" ? "wss" : "ws";
-    const ws = new WebSocket(`${proto}://${window.location.host}/ws`);
+    const apiBase = process.env.NEXT_PUBLIC_API_URL ?? "";
+    const apiOrigin = apiBase.startsWith("http")
+      ? apiBase
+      : typeof window !== "undefined"
+        ? window.location.origin
+        : "";
+    const proto = apiOrigin.startsWith("https") ? "wss" : "ws";
+    const ws = new WebSocket(`${proto}://${apiOrigin.replace(/^https?:\/\//, "")}/ws`);
     wsRef.current = ws;
     ws.onopen = () => {
       setWsLive(true);
